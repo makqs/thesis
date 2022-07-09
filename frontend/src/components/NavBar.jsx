@@ -22,16 +22,14 @@ const NavBar = () => {
         <Toolbar
           css={css`
             background-color: #ffffff;
-          `}
-        >
+          `}>
           <Box sx={{ flexGrow: 1, flexDirection: "column" }}>
             <Typography
               component="div"
               variant="h6"
               css={css`
                 color: #646c7d;
-              `}
-            >
+              `}>
               3707 Engineering (Honours) 2021
             </Typography>
             <Typography
@@ -39,8 +37,7 @@ const NavBar = () => {
               variant="subtitle2"
               css={css`
                 color: #818ca1;
-              `}
-            >
+              `}>
               SENGAH3707 Software Engineering Major
             </Typography>
           </Box>
@@ -50,8 +47,7 @@ const NavBar = () => {
               variant="h6"
               css={css`
                 color: #646c7d;
-              `}
-            >
+              `}>
               Sam Student
             </Typography>
             <Typography
@@ -59,8 +55,7 @@ const NavBar = () => {
               variant="subtitle2"
               css={css`
                 color: #818ca1;
-              `}
-            >
+              `}>
               z5555555
             </Typography>
           </Box>
@@ -70,8 +65,7 @@ const NavBar = () => {
               background-color: #4299e1;
               margin-left: 10px;
             `}
-            onClick={onLogout}
-          >
+            onClick={onLogout}>
             Log Out
           </Button>
         </Toolbar>

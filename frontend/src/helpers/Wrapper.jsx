@@ -1,7 +1,6 @@
 export const fetchWrapper = async (method, path, token, body) => {
   const requestOptions = {
-    method: method,
-    headers: { "Content-Type": "application/json" },
+    method
   };
 
   if (body != null) {
@@ -13,9 +12,9 @@ export const fetchWrapper = async (method, path, token, body) => {
     requestOptions.headers.Authorization = `Bearer ${token}`;
   }
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     // TODO: add backend port to config file
-    fetch(`http://localhost:5000/${path}`, requestOptions).then((response) => {
+    fetch(`http://127.0.0.1:5000/${path}`, requestOptions).then((response) => {
       response
         .json()
         .then((data) => {
@@ -35,3 +34,5 @@ export const fetchWrapper = async (method, path, token, body) => {
     // });
   });
 };
+
+export default fetchWrapper;

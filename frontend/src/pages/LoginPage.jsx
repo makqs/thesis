@@ -9,9 +9,9 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import FormHelperText from "@mui/material/FormHelperText";
 
-import { fetchWrapper } from "../helpers/Wrapper";
-
 import { useNavigate } from "react-router-dom";
+
+import { fetchWrapper } from "../helpers/Wrapper";
 
 const LoginPage = () => {
   const [zId, setZId] = useState("");
@@ -21,12 +21,12 @@ const LoginPage = () => {
 
   const navigate = useNavigate();
 
-  const loginCall = async (zId, zPass) => {
+  const loginCall = async (id, pass) => {
     const data = await fetchWrapper("POST", "user/auth/login", null, {
-      zId: zId,
-      zPass: zPass,
+      zId: id,
+      zPass: pass
     });
-    console.log(zId, zPass, data);
+    console.log(id, pass, data);
 
     navigate("/checker");
   };
@@ -57,21 +57,18 @@ const LoginPage = () => {
         justify-content: center;
         /* font-size: calc(10px + 2vmin);
         color: #646c7d; */
-      `}
-    >
+      `}>
       <div
         css={css`
           display: flex;
           flex-direction: column;
           width: min(300px, 60vw);
-        `}
-      >
+        `}>
         <div
           css={css`
             font-size: calc(35px + 2vmin);
             margin: 20px 0px;
-          `}
-        >
+          `}>
           UNSW Progression Checker
         </div>
         <FormControl variant="outlined">
@@ -90,8 +87,7 @@ const LoginPage = () => {
             id="zid-input-helper-text"
             css={css`
               color: #d32f2f;
-            `}
-          >
+            `}>
             {!zIdValid ? "Enter your zID" : " "}
           </FormHelperText>
         </FormControl>
@@ -112,8 +108,7 @@ const LoginPage = () => {
             id="zpass-input-helper-text"
             css={css`
               color: #d32f2f;
-            `}
-          >
+            `}>
             {!zPassValid ? "Enter your zPass" : " "}
           </FormHelperText>
         </FormControl>
@@ -123,8 +118,7 @@ const LoginPage = () => {
           css={css`
             background-color: #4299e1;
           `}
-          onClick={onLogin}
-        >
+          onClick={onLogin}>
           Log In
         </Button>
       </div>
