@@ -19,28 +19,38 @@ const CourseCard = ({ code, title, uoc, completed }) => {
         background-color: ${completionColor};
         box-shadow: 0px;
       `}>
-      <CardActionArea
+      <a
+        // TODO: get working with postgraduate, hardcoded to undergraduate atm
+        href={`https://www.handbook.unsw.edu.au/undergraduate/courses/2022/${code}`}
+        target="blank_"
         css={css`
-          font-size: 13pt;
-          padding: 8px;
+          color: inherit;
+          font-size: inherit;
+          text-decoration: inherit;
         `}>
-        <div
+        <CardActionArea
           css={css`
-            display: flex;
-            justify-content: space-between;
+            font-size: 13pt;
+            padding: 8px;
           `}>
-          <div>{code}</div>
-          <div>{uoc} UOC</div>
-        </div>
-        <div
-          css={css`
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          `}>
-          {title}
-        </div>
-      </CardActionArea>
+          <div
+            css={css`
+              display: flex;
+              justify-content: space-between;
+            `}>
+            <div>{code}</div>
+            <div>{uoc} UOC</div>
+          </div>
+          <div
+            css={css`
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            `}>
+            {title}
+          </div>
+        </CardActionArea>
+      </a>
     </Card>
   );
 };

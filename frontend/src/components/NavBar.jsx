@@ -9,7 +9,11 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 
-const NavBar = () => {
+import PropTypes from "prop-types";
+
+const NavBar = ({ zId, isStaff }) => {
+  console.log(zId, isStaff);
+
   const navigate = useNavigate();
 
   const onLogout = () => {
@@ -17,7 +21,7 @@ const NavBar = () => {
   };
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ flexGrow: 0 }}>
       <AppBar position="static">
         <Toolbar
           css={css`
@@ -72,6 +76,15 @@ const NavBar = () => {
       </AppBar>
     </Box>
   );
+};
+
+NavBar.propTypes = {
+  zId: PropTypes.string.isRequired,
+  isStaff: PropTypes.bool
+};
+
+NavBar.defaultProps = {
+  isStaff: false
 };
 
 export default NavBar;

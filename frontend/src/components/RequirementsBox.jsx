@@ -14,6 +14,7 @@ const RequirementsBox = ({ title, children }) => {
       css={css`
         border: 1px solid #b6b6b6;
         border-radius: 10px;
+        flex: none;
       `}>
       <CardHeader
         title={

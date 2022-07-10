@@ -10,11 +10,13 @@ import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 
+import PropTypes from "prop-types";
+
 import RequirementsBox from "../components/RequirementsBox";
 import NavBar from "../components/NavBar";
 import CourseCard from "../components/CourseCard";
 
-const CheckerPage = () => {
+const CheckerPage = ({ isStaff }) => {
   const [modsOpen, setModsOpen] = useState(true);
   const handleModsClick = () => {
     setModsOpen(!modsOpen);
@@ -26,31 +28,30 @@ const CheckerPage = () => {
   };
 
   return (
-    <>
-      <NavBar />
+    <div
+      css={css`
+        /* max-height: calc(100vh - 10px); */
+        max-height: 100vh;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+      `}>
+      <NavBar isStaff={isStaff} />
       <Box
         css={css`
           display: flex;
           flex-direction: row;
-          height: 100%;
+          flex-grow: 1;
+          overflow: hidden;
         `}>
-        {/* <Box
-          css={css`
-            background-color: red;
-            flex-grow: 1;
-            height: 100%;
-          `}
-        >
-          thing
-        </Box> */}
         <Box
           css={css`
-            flex-grow: 1;
-            height: 100%;
-            margin: 10px;
+            margin: 10px 10px 0px 10px;
             display: flex;
             flex-direction: column;
             gap: 10px;
+            overflow: auto;
           `}>
           <RequirementsBox title="Level 1 Cores">
             <CourseCard code="COMP1511" title="Programming Fundamentals" uoc={6} completed />
@@ -99,11 +100,18 @@ const CheckerPage = () => {
             />
             <CourseCard code="SENG2021" title="Requirements and Design Workshop" uoc={6} />
           </RequirementsBox>
+          <RequirementsBox title="blah" />
+          <RequirementsBox title="blah" />
+          <RequirementsBox title="blah" />
+          <RequirementsBox title="blah" />
+          <RequirementsBox title="blah" />
         </Box>
         <Box
           css={css`
             background-color: #f7fafc;
-            width: 350px;
+            min-width: 300px;
+            flex-grow: 1;
+            height: 100%;
           `}>
           <List
             css={css`
@@ -136,6 +144,7 @@ const CheckerPage = () => {
                     border-color: #bfbfbf;
                     border-width: 1px 0px 0px 0px;
                     padding: 8px 16px;
+                    background-color: white;
                   `}>
                   <ListItemText primary="Change program" />
                 </ListItemButton>
@@ -146,6 +155,7 @@ const CheckerPage = () => {
                     border-color: #bfbfbf;
                     border-width: 1px 0px 0px 0px;
                     padding: 8px 16px;
+                    background-color: white;
                   `}>
                   <ListItemText primary="Add course" />
                 </ListItemButton>
@@ -156,6 +166,7 @@ const CheckerPage = () => {
                     border-color: #bfbfbf;
                     border-width: 1px 0px 0px 0px;
                     padding: 8px 16px;
+                    background-color: white;
                   `}>
                   <ListItemText primary="Remove course" />
                 </ListItemButton>
@@ -197,6 +208,7 @@ const CheckerPage = () => {
                     border-color: #bfbfbf;
                     border-width: 1px 0px 0px 0px;
                     padding: 8px 16px;
+                    background-color: white;
                   `}>
                   <ListItemText primary="Discipline Component" />
                 </ListItemButton>
@@ -207,6 +219,7 @@ const CheckerPage = () => {
                     border-color: #bfbfbf;
                     border-width: 1px 0px 0px 0px;
                     padding: 8px 16px;
+                    background-color: white;
                   `}>
                   <ListItemText primary="Discipline Electives" />
                 </ListItemButton>
@@ -217,39 +230,25 @@ const CheckerPage = () => {
                     border-color: #bfbfbf;
                     border-width: 1px 0px;
                     padding: 8px 16px;
+                    background-color: white;
                   `}>
                   <ListItemText primary="General Education" />
                 </ListItemButton>
               </List>
             </Collapse>
           </List>
-          {/* <Accordion
-            expanded={expanded === "modifiers"}
-            onChange={handleChange("modifiers")}
-            disableGutters
-            square
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="modifiers-accordion"
-              id="modifiers-header"
-            >
-              <Typography>General settings</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <List>
-                <ListItem disablePadding disableGutters>
-                  <ListItemButton>
-                    <ListItemText primary="Add course" />
-                  </ListItemButton>
-                </ListItem>
-              </List>
-            </AccordionDetails>
-          </Accordion> */}
         </Box>
       </Box>
-    </>
+    </div>
   );
+};
+
+CheckerPage.propTypes = {
+  isStaff: PropTypes.bool
+};
+
+CheckerPage.defaultProps = {
+  isStaff: false
 };
 
 export default CheckerPage;
