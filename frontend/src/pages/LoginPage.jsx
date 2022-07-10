@@ -1,10 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 
 import FormControl from "@mui/material/FormControl";
 import Button from "@mui/material/Button";
-
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import FormHelperText from "@mui/material/FormHelperText";
@@ -12,12 +11,15 @@ import FormHelperText from "@mui/material/FormHelperText";
 import { useNavigate } from "react-router-dom";
 
 import { fetchWrapper } from "../helpers/Wrapper";
+import { UserContext } from "../helpers/UserContext";
 
 const LoginPage = () => {
   const [zId, setZId] = useState("");
   const [zIdValid, setZIdValid] = useState(true);
   const [zPass, setZPass] = useState("");
   const [zPassValid, setZPassValid] = useState(true);
+
+  const { userState, userDispatch } = useContext(UserContext);
 
   const navigate = useNavigate();
 
@@ -27,6 +29,10 @@ const LoginPage = () => {
       zPass: pass
     });
     console.log(id, pass, data);
+
+    // TODO: add error checking
+    // TODO: check if user is staff or not
+    userDispatch({ type: "login", zId: id, isStaff: false, token: data.token });
 
     navigate("/checker");
   };
@@ -44,6 +50,13 @@ const LoginPage = () => {
       loginCall(zId, zPass);
     }
   };
+
+  useEffect(() => {
+    console.log(userState);
+    if (!userState) {
+      userDispatch({ type: "logout" });
+    }
+  }, []);
 
   return (
     <div

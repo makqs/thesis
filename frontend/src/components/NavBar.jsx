@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import React from "react";
+import React, { useContext } from "react";
 
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -11,12 +11,17 @@ import { useNavigate } from "react-router-dom";
 
 import PropTypes from "prop-types";
 
-const NavBar = ({ zId, isStaff }) => {
-  console.log(zId, isStaff);
+import { UserContext } from "../helpers/UserContext";
+
+const NavBar = ({ zId }) => {
+  console.log(zId);
+
+  const { userDispatch } = useContext(UserContext);
 
   const navigate = useNavigate();
 
   const onLogout = () => {
+    userDispatch({ type: "logout" });
     navigate("/login");
   };
 
@@ -79,12 +84,9 @@ const NavBar = ({ zId, isStaff }) => {
 };
 
 NavBar.propTypes = {
-  zId: PropTypes.string.isRequired,
-  isStaff: PropTypes.bool
+  zId: PropTypes.string.isRequired
 };
 
-NavBar.defaultProps = {
-  isStaff: false
-};
+NavBar.defaultProps = {};
 
 export default NavBar;

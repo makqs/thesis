@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import React, { useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Box } from "@mui/material";
 
 import List from "@mui/material/List";
@@ -10,13 +10,18 @@ import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 
-import PropTypes from "prop-types";
+// import PropTypes from "prop-types";
 
+import { useNavigate } from "react-router-dom";
 import RequirementsBox from "../components/RequirementsBox";
 import NavBar from "../components/NavBar";
 import CourseCard from "../components/CourseCard";
+import { UserContext } from "../helpers/UserContext";
 
-const CheckerPage = ({ isStaff }) => {
+const CheckerPage = () => {
+  const navigate = useNavigate();
+  const { userState } = useContext(UserContext);
+
   const [modsOpen, setModsOpen] = useState(true);
   const handleModsClick = () => {
     setModsOpen(!modsOpen);
@@ -26,6 +31,12 @@ const CheckerPage = ({ isStaff }) => {
   const handleUocClick = () => {
     setUocOpen(!uocOpen);
   };
+
+  useEffect(() => {
+    if (!userState) {
+      navigate("/login");
+    }
+  }, []);
 
   return (
     <div
@@ -37,7 +48,7 @@ const CheckerPage = ({ isStaff }) => {
         display: flex;
         flex-direction: column;
       `}>
-      <NavBar isStaff={isStaff} />
+      <NavBar />
       <Box
         css={css`
           display: flex;
@@ -243,12 +254,12 @@ const CheckerPage = ({ isStaff }) => {
   );
 };
 
-CheckerPage.propTypes = {
-  isStaff: PropTypes.bool
-};
+// CheckerPage.propTypes = {
+//   isStaff: PropTypes.bool
+// };
 
-CheckerPage.defaultProps = {
-  isStaff: false
-};
+// CheckerPage.defaultProps = {
+//   isStaff: false
+// };
 
 export default CheckerPage;
