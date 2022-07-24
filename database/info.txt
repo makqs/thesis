@@ -1,0 +1,12 @@
+records and record instances - record isntances are basically versions
+record instances - PR program, ST stream, CS course, DA dual award
+record instances - versions
+records - base thing
+stream_courses - has status or elective or core (dont use though)
+acad_rules - 
+records - current_published_isntance gives the current instance for that thing
+records - id links to the record_instance table on column record_id
+same schema as comp3311 assignment which has an er diagram (should be roughly the same as this)
+ACTIVE_OBJECTS VIEW IS REALLY USEFUL - id = record id, instid = record instance id, career(RS) = research so no UOC, NA = non-award, HY = hybrid (courses), downside is doesn't work with older students, could maybe write a version with all the versions (we know the term they took it, and we know the effective and end dates of versions, so work out what term they did it and 
+maybe write a view or function that takes a term and course and returns the record
+active_rules - tied to records and record instances (raw definition is what i want, not definition)
