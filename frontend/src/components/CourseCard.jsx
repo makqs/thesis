@@ -6,6 +6,7 @@ import { Card, CardActionArea } from "@mui/material";
 import PropTypes from "prop-types";
 
 const CourseCard = ({ code, title, uoc, completed }) => {
+  // const CourseCard = ({ code, completed }) => {
   const completionColor = completed ? "#52b96a" : "#f7fafc";
   const textColor = completed ? "#ffffff" : "#646c7d";
   return (
@@ -54,6 +55,15 @@ const CourseCard = ({ code, title, uoc, completed }) => {
     </Card>
   );
 };
+
+// CourseCard.propTypes = {
+//   code: PropTypes.string.isRequired,
+//   completed: PropTypes.bool
+// };
+
+// CourseCard.defaultProps = {
+//   completed: false
+// };
 
 CourseCard.propTypes = {
   code: PropTypes.string.isRequired,

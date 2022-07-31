@@ -8,7 +8,7 @@ import CardContent from "@mui/material/CardContent";
 
 import PropTypes from "prop-types";
 
-const RequirementsBox = ({ title, children }) => {
+const RequirementsBox = ({ title, uocCompleted, minUoc, children }) => {
   return (
     <Card
       css={css`
@@ -25,7 +25,9 @@ const RequirementsBox = ({ title, children }) => {
               justify-content: space-between;
             `}>
             <div>{title}</div>
-            <div>12 / 42</div>
+            <div>
+              {uocCompleted} / {minUoc}
+            </div>
           </div>
         }
         css={css`
@@ -57,6 +59,8 @@ const RequirementsBox = ({ title, children }) => {
 
 RequirementsBox.propTypes = {
   title: PropTypes.string.isRequired,
+  uocCompleted: PropTypes.string.isRequired,
+  minUoc: PropTypes.string.isRequired,
   children: PropTypes.node
 };
 

@@ -24,15 +24,20 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const loginCall = async (id, pass) => {
-    const data = await fetchWrapper("POST", "user/auth/login", null, {
-      zId: id,
-      zPass: pass
+    const userData = await fetchWrapper("POST", "user/auth/login", null, {
+      zid: id,
+      zpass: pass
     });
-    console.log(id, pass, data);
 
     // TODO: add error checking
     // TODO: check if user is staff or not
-    userDispatch({ type: "login", zId: id, isStaff: false, token: data.token });
+    userDispatch({
+      type: "login",
+      zId: userData.zid,
+      name: userData.name,
+      isStaff: userData.is_staff,
+      token: userData.token
+    });
 
     navigate("/checker");
   };
@@ -52,7 +57,6 @@ const LoginPage = () => {
   };
 
   useEffect(() => {
-    console.log(userState);
     if (!userState) {
       userDispatch({ type: "logout" });
     }

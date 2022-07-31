@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import React, { useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -9,14 +9,19 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 
-import PropTypes from "prop-types";
+// import PropTypes from "prop-types";
 
 import { UserContext } from "../helpers/UserContext";
+import { fetchWrapper } from "../helpers/Wrapper";
 
-const NavBar = ({ zId }) => {
-  console.log(zId);
+const NavBar = () => {
+  const { userState, userDispatch } = useContext(UserContext);
 
-  const { userDispatch } = useContext(UserContext);
+  const [zId, setZId] = useState("");
+  const [name, setName] = useState("");
+
+  const [program, setProgram] = useState(null);
+  const [stream, setStream] = useState(null);
 
   const navigate = useNavigate();
 
@@ -25,21 +30,45 @@ const NavBar = ({ zId }) => {
     navigate("/login");
   };
 
+  const getProgram = async (id) => {
+    const programData = await fetchWrapper("POST", "/user/program", null, { zid: id });
+    setProgram(programData);
+  };
+
+  const getStream = async (id) => {
+    const streamData = await fetchWrapper("POST", "/user/stream", null, { zid: id });
+    setStream(streamData);
+  };
+
+  useEffect(() => {
+    setZId(userState.zId);
+    setName(userState.name);
+    getProgram(userState.zId);
+    getStream(userState.zId);
+  }, [userState]);
+
   return (
-    <Box sx={{ flexGrow: 0 }}>
+    <Box
+      css={css`
+        flex-grow: 0;
+      `}>
       <AppBar position="static">
         <Toolbar
           css={css`
             background-color: #ffffff;
           `}>
-          <Box sx={{ flexGrow: 1, flexDirection: "column" }}>
+          <Box
+            css={css`
+              flex-grow: 1;
+              flex-direction: column;
+            `}>
             <Typography
               component="div"
               variant="h6"
               css={css`
                 color: #646c7d;
               `}>
-              3707 Engineering (Honours) 2021
+              {program ? `${program.code} ${program.title} ${program.year}` : "..."}
             </Typography>
             <Typography
               component="div"
@@ -47,17 +76,27 @@ const NavBar = ({ zId }) => {
               css={css`
                 color: #818ca1;
               `}>
-              SENGAH3707 Software Engineering Major
+              {stream ? `${stream.code} ${stream.title} ${stream.year}` : "..."}
             </Typography>
           </Box>
-          <Box sx={{ flexDirection: "column" }}>
+          <Box
+            css={css`
+              flex-grow: 1;
+              flex-direction: column;
+            `}>
+            Search
+          </Box>
+          <Box
+            css={css`
+              flex-direction: column;
+            `}>
             <Typography
               component="div"
               variant="h6"
               css={css`
                 color: #646c7d;
               `}>
-              Sam Student
+              {name}
             </Typography>
             <Typography
               component="div"
@@ -65,7 +104,7 @@ const NavBar = ({ zId }) => {
               css={css`
                 color: #818ca1;
               `}>
-              z5555555
+              {zId}
             </Typography>
           </Box>
           <Button
@@ -83,9 +122,15 @@ const NavBar = ({ zId }) => {
   );
 };
 
-NavBar.propTypes = {
-  zId: PropTypes.string.isRequired
-};
+// NavBar.propTypes = {
+//   programId: PropTypes.string,
+//   streamId: PropTypes.string
+// };
+
+// NavBar.defaultProps = {
+//   programId: null,
+//   streamId: null
+// };
 
 NavBar.defaultProps = {};
 

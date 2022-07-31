@@ -10,7 +10,12 @@ export const UserContext = createContext({});
 export const userReducer = (state, action) => {
   switch (action.type) {
     case "login":
-      return { zId: action.zId, isStaff: action.isStaff, token: action.token };
+      return {
+        zId: action.zId,
+        name: action.name,
+        isStaff: action.isStaff,
+        token: action.token
+      };
     case "logout":
       return {};
     default:

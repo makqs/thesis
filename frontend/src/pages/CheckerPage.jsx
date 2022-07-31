@@ -17,10 +17,52 @@ import RequirementsBox from "../components/RequirementsBox";
 import NavBar from "../components/NavBar";
 import CourseCard from "../components/CourseCard";
 import { UserContext } from "../helpers/UserContext";
+import { fetchWrapper } from "../helpers/Wrapper";
 
 const CheckerPage = () => {
   const navigate = useNavigate();
   const { userState } = useContext(UserContext);
+
+  const [courses, setCourses] = useState([]);
+  console.log(courses);
+
+  const getCourses = async () => {
+    const courseData = await fetchWrapper("GET", "/courses", null, null);
+    setCourses(courseData.courses);
+  };
+
+  const [program, setProgram] = useState(null);
+  const [stream, setStream] = useState(null);
+  const [programRules, setProgramRules] = useState([]);
+  const [streamRules, setStreamRules] = useState([]);
+
+  const getProgramRules = async (id) => {
+    const programData = await fetchWrapper("POST", "/user/program", null, { zid: id });
+    setProgram(programData);
+    const programRulesData = await fetchWrapper("POST", "/user/program/rules", null, {
+      program_id: programData.program_id
+    });
+    setProgramRules(programRulesData.program_rules);
+  };
+  console.log(program, programRules);
+
+  const getStreamRules = async (id) => {
+    const streamData = await fetchWrapper("POST", "/user/stream", null, { zid: id });
+    setStream(streamData);
+    const streamRulesData = await fetchWrapper("POST", "/user/stream/rules", null, {
+      stream_id: streamData.stream_id
+    });
+    setStreamRules(streamRulesData.stream_rules);
+  };
+  console.log(stream, streamRules);
+
+  const [enrolments, setEnrolments] = useState([]);
+  const getEnrolments = async (id) => {
+    const enrolmentData = await fetchWrapper("POST", "/user/enrolments", null, { zid: id });
+    setEnrolments(enrolmentData.enrolments);
+    console.log(enrolmentData.enrolments);
+  };
+  console.log(enrolments, setEnrolments);
 
   const [modsOpen, setModsOpen] = useState(true);
   const handleModsClick = () => {
@@ -36,7 +78,14 @@ const CheckerPage = () => {
     if (!userState) {
       navigate("/login");
     }
+    getCourses();
   }, []);
+
+  useEffect(() => {
+    getProgramRules(userState.zId);
+    getStreamRules(userState.zId);
+    getEnrolments(userState.zId);
+  }, [userState]);
 
   return (
     <div
@@ -64,7 +113,34 @@ const CheckerPage = () => {
             gap: 10px;
             overflow: auto;
           `}>
-          <RequirementsBox title="Level 1 Cores">
+          {streamRules.map((rule) => {
+            let uocCompleted = 0;
+            const children = rule[3].split(",").map((code) => {
+              const completed = enrolments.some(
+                (e) => e[1] === code && ["PS", "CR", "DN", "HD"].includes(e[6])
+              );
+              const course = courses.find((c) => c[1] === code);
+              if (completed) {
+                uocCompleted += parseInt(course[4], 10);
+              }
+              if (course !== undefined) {
+                return (
+                  <CourseCard code={code} title={course[2]} uoc={course[4]} completed={completed} />
+                );
+              }
+              return <></>;
+            });
+            return (
+              <RequirementsBox
+                title={rule[1]}
+                uocCompleted={uocCompleted}
+                minUoc={rule[2]}
+                key={rule[0]}>
+                {children}
+              </RequirementsBox>
+            );
+          })}
+          {/* <RequirementsBox title="NOT ACTUAL THING">
             <CourseCard code="COMP1511" title="Programming Fundamentals" uoc={6} completed />
             <CourseCard code="COMP1521" title="Computer Systems Fundamentals" uoc={6} />
             <CourseCard
@@ -81,8 +157,8 @@ const CheckerPage = () => {
             <CourseCard code="MATH1131" title="Mathematics 1A" uoc={6} />
             <CourseCard code="MATH1231" title="Mathematics 1B" uoc={6} />
             <CourseCard code="MATH1081" title="Discrete Mathematics" uoc={6} />
-          </RequirementsBox>
-          <RequirementsBox title="Level 2 Cores">
+          </RequirementsBox> */}
+          {/* <RequirementsBox title="Level 2 Cores">
             <CourseCard
               code="COMP2041"
               title="Software Construction: Techniques and Tools"
@@ -115,7 +191,7 @@ const CheckerPage = () => {
           <RequirementsBox title="blah" />
           <RequirementsBox title="blah" />
           <RequirementsBox title="blah" />
-          <RequirementsBox title="blah" />
+          <RequirementsBox title="blah" /> */}
         </Box>
         <Box
           css={css`
@@ -255,11 +331,12 @@ const CheckerPage = () => {
 };
 
 // CheckerPage.propTypes = {
-//   isStaff: PropTypes.bool
+//   zId: PropTypes.string.isRequired,
+//   name: PropTypes.string
 // };
 
 // CheckerPage.defaultProps = {
-//   isStaff: false
+//   name: "no name"
 // };
 
 export default CheckerPage;
