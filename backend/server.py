@@ -129,6 +129,7 @@ def get_stream_rules():
         "stream_rules": rule_data
     }), 200
 
+# returns [ [ course_id, code, title, year, uoc, mark, grade ] ]
 @app.route("/user/enrolments", methods=['POST'])
 def get_enrolments():
     body = json.loads(request.get_data())
@@ -173,5 +174,25 @@ def get_courses():
         "courses": course_data
     }), 200
 
+# returns [ course_id, code, title, year, uoc ]
+@app.route("/course", methods=['POST'])
+def get_course():
+    body = json.loads(request.get_data())
+    code = body['code']
+
+    with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
+        with conn.cursor() as curs:
+            curs.execute(f"""SELECT course_id, code, title, year, uoc FROM courses WHERE code = '{code}' ORDER BY year DESC""")
+            course_data = curs.fetchone()
+
+    if course_data is None:
+        return json.dumps({
+            "error": f"course not found"
+        }), 400
+
+    return json.dumps({
+        "course_info": (str(course_data[0]), str(course_data[1]), str(course_data[2]), str(course_data[3]), str(course_data[4]))
+    }), 200
+
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
