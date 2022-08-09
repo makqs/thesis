@@ -59,7 +59,7 @@ const RequirementsBox = ({ title, uocCompleted, minUoc, children }) => {
 
 RequirementsBox.propTypes = {
   title: PropTypes.string.isRequired,
-  uocCompleted: PropTypes.string.isRequired,
+  uocCompleted: PropTypes.number.isRequired,
   minUoc: PropTypes.string.isRequired,
   children: PropTypes.node
 };

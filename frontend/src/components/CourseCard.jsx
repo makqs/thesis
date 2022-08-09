@@ -1,14 +1,28 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import { Card, CardActionArea } from "@mui/material";
 import PropTypes from "prop-types";
+import { fetchWrapper } from "../helpers/Wrapper";
 
-const CourseCard = ({ code, title, uoc, completed }) => {
-  // const CourseCard = ({ code, completed }) => {
+// const CourseCard = ({ code, title, uoc, completed }) => {
+const CourseCard = ({ code, completed }) => {
+  const [title, setTitle] = useState("title");
+  const [uoc, setUoc] = useState("uoc");
+  console.log(code);
+  const getCourseInfo = async () => {
+    const courseInfo = await fetchWrapper("POST", "/course", null, { code });
+    setTitle(courseInfo[2]);
+    setUoc(courseInfo[4]);
+  };
+
   const completionColor = completed ? "#52b96a" : "#f7fafc";
   const textColor = completed ? "#ffffff" : "#646c7d";
+
+  useEffect(() => {
+    getCourseInfo();
+  }, []);
   return (
     <Card
       css={css`
@@ -56,19 +70,8 @@ const CourseCard = ({ code, title, uoc, completed }) => {
   );
 };
 
-// CourseCard.propTypes = {
-//   code: PropTypes.string.isRequired,
-//   completed: PropTypes.bool
-// };
-
-// CourseCard.defaultProps = {
-//   completed: false
-// };
-
 CourseCard.propTypes = {
   code: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  uoc: PropTypes.number.isRequired,
   completed: PropTypes.bool
 };
 

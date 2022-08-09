@@ -20,16 +20,17 @@ import { UserContext } from "../helpers/UserContext";
 import { fetchWrapper } from "../helpers/Wrapper";
 
 const CheckerPage = () => {
+  console.log("IM RENDERING");
   const navigate = useNavigate();
   const { userState } = useContext(UserContext);
 
-  const [courses, setCourses] = useState([]);
-  console.log(courses);
+  // const [courses, setCourses] = useState([]);
+  // console.log(courses);
 
-  const getCourses = async () => {
-    const courseData = await fetchWrapper("GET", "/courses", null, null);
-    setCourses(courseData.courses);
-  };
+  // const getCourses = async () => {
+  //   const courseData = await fetchWrapper("GET", "/courses", null, null);
+  //   setCourses(courseData.courses);
+  // };
 
   const [program, setProgram] = useState(null);
   const [stream, setStream] = useState(null);
@@ -78,7 +79,7 @@ const CheckerPage = () => {
     if (!userState) {
       navigate("/login");
     }
-    getCourses();
+    // getCourses();
   }, []);
 
   useEffect(() => {
@@ -116,19 +117,16 @@ const CheckerPage = () => {
           {streamRules.map((rule) => {
             let uocCompleted = 0;
             const children = rule[3].split(",").map((code) => {
-              const completed = enrolments.some(
-                (e) => e[1] === code && ["PS", "CR", "DN", "HD"].includes(e[6])
-              );
-              const course = courses.find((c) => c[1] === code);
+              const course = enrolments.find((e) => e[1] === code);
+              if (course === undefined) {
+                return <CourseCard key={code} code={code} completed={false} />;
+              }
+              const completed =
+                course[1] === code && ["PS", "CR", "DN", "HD", "SY", "EC"].includes(course[6]);
               if (completed) {
                 uocCompleted += parseInt(course[4], 10);
               }
-              if (course !== undefined) {
-                return (
-                  <CourseCard code={code} title={course[2]} uoc={course[4]} completed={completed} />
-                );
-              }
-              return <></>;
+              return <CourseCard key={code} code={code} completed={completed} />;
             });
             return (
               <RequirementsBox
