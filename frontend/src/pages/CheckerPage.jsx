@@ -114,12 +114,33 @@ const CheckerPage = () => {
   }, []);
 
   const [cores, setCores] = useState([]);
+  const [totalCoreUoc, setTotalCoreUoc] = useState(0);
   const [disciplineElectives, setDisciplineElectives] = useState([]);
+  const [totalDiscUoc, setTotalDiscUoc] = useState(0);
   const [genEds, setGenEds] = useState([]);
+  const [totalGenedUoc, setTotalGenedUoc] = useState(0);
   const [freeElectives, setFreeElectives] = useState([]);
+  const [totalFreeUoc, setTotalFreeUoc] = useState(0);
   useEffect(() => {
     if (!enrolmentsIsLoading && !programRulesIsLoading && !streamRulesIsLoading) {
       const allRules = programRules.program_rules.concat(streamRules.stream_rules);
+
+      let coreUocCount = 0;
+      let discUocCount = 0;
+      let genedUocCount = 0;
+      let freeUocCount = 0;
+
+      allRules.forEach((r) => {
+        if (r[2] === "CC") coreUocCount += parseInt(r[3], 10);
+        else if (r[2] === "DE") discUocCount += parseInt(r[3], 10);
+        else if (r[2] === "GE") genedUocCount += parseInt(r[3], 10);
+        else if (r[2] === "FE") freeUocCount += parseInt(r[3], 10);
+      });
+
+      setTotalCoreUoc(coreUocCount);
+      setTotalDiscUoc(discUocCount);
+      setTotalGenedUoc(genedUocCount);
+      setTotalFreeUoc(freeUocCount);
 
       const coreList = [];
       const discElecList = [];
@@ -169,30 +190,6 @@ const CheckerPage = () => {
       setFreeElectives(freeElecList);
 
       console.log(cores, disciplineElectives, genEds, freeElectives);
-
-      // const coreList = enrolments.enrolments.filter((e) => {
-      //   if (!["PS", "CR", "DN", "HD", "SY", "EC"].includes(e[6])) return false;
-      //   return allRules.some((rule) => {
-      //     return rule[2] === "CC" && rule[4].split(",").includes(e[1]);
-      //   });
-      // });
-      // console.log(coreList);
-
-      // const discElecList = enrolments.enrolments.filter((e) => {
-      //   if (!["PS", "CR", "DN", "HD", "SY", "EC"].includes(e[6])) return false;
-      //   return allRules.some((rule) => {
-      //     if (rule[2] === "DE") {
-      //       return rule[4].split(",").some((code) => {
-      //         if (code === e[1]) return true;
-      //         if (new RegExp("^[A-Z]{4}[0-9]XXX$").test(code))
-      //           return new RegExp(`^${code.slice(0, 5)}...$`).test(e[1]);
-      //         return false;
-      //       });
-      //     }
-      //     return false;
-      //   });
-      // });
-      // console.log(discElecList);
     }
   }, [enrolments, programRules, streamRules]);
 
@@ -233,14 +230,32 @@ const CheckerPage = () => {
                   ) : (
                     streamRules.stream_rules.map((rule) => {
                       let uocCompleted = 0;
-                      const children =
-                        rule[4] === null ? (
-                          <></>
-                        ) : (
-                          rule[4].split(",").map((code) => {
-                            const course = enrolments.enrolments.find((e) => e[1] === code);
+                      let children = [];
+
+                      if (rule[2] === "CC") {
+                        children = rule[4].split(",").map((code) => {
+                          const course = cores.find((e) => e[1] === code);
+                          if (course === undefined) {
+                            return <CourseCard key={code} code={code} completed={false} />;
+                          }
+                          const completed =
+                            course[1] === code &&
+                            ["PS", "CR", "DN", "HD", "SY", "EC"].includes(course[6]);
+                          if (completed) {
+                            uocCompleted += parseInt(course[4], 10);
+                          }
+                          return <CourseCard key={code} code={code} completed={completed} />;
+                        });
+                      } else if (rule[2] === "DE") {
+                        const ranges = [];
+                        rule[4].split(",").forEach((code) => {
+                          if (new RegExp("^[A-Z]{4}[0-9]{4}$").test(code)) {
+                            const course = disciplineElectives.find((e) => e[1] === code);
                             if (course === undefined) {
-                              return <CourseCard key={code} code={code} completed={false} />;
+                              children.push(
+                                <CourseCard key={code} code={code} completed={false} />
+                              );
+                              return;
                             }
                             const completed =
                               course[1] === code &&
@@ -248,9 +263,38 @@ const CheckerPage = () => {
                             if (completed) {
                               uocCompleted += parseInt(course[4], 10);
                             }
-                            return <CourseCard key={code} code={code} completed={completed} />;
-                          })
-                        );
+                            children.push(
+                              <CourseCard key={code} code={code} completed={completed} />
+                            );
+                          } else if (new RegExp("^[A-Z]{4}[0-9]XXX$").test(code)) {
+                            ranges.push(<CourseCard key={code} code={code} completed={false} />);
+                            disciplineElectives.forEach((c) => {
+                              if (new RegExp(`^${code.slice(0, 5)}...$`).test(c[1])) {
+                                const completed = ["PS", "CR", "DN", "HD", "SY", "EC"].includes(
+                                  c[6]
+                                );
+                                if (completed) {
+                                  uocCompleted += parseInt(c[4], 10);
+                                }
+                                children.push(
+                                  <CourseCard key={c[1]} code={c[1]} completed={completed} />
+                                );
+                              }
+                            });
+                          }
+                        });
+                        children.push(...ranges);
+                      } else if (rule[2] === "GE") {
+                        children = genEds.map((c) => {
+                          uocCompleted += parseInt(c[4], 10);
+                          return <CourseCard key={c[1]} code={c[1]} completed />;
+                        });
+                      } else if (rule[2] === "FE") {
+                        children = freeElectives.map((c) => {
+                          uocCompleted += parseInt(c[4], 10);
+                          return <CourseCard key={c[1]} code={c[1]} completed />;
+                        });
+                      }
                       return (
                         <RequirementsBox
                           title={`Stream - ${rule[1]}`}
@@ -276,13 +320,22 @@ const CheckerPage = () => {
                   </RequirementsBox>
                 );
               }
+              let children = [];
+              let uocCompleted = 0;
+              if (prule[2] === "GE") {
+                children = genEds.map((c) => {
+                  uocCompleted += parseInt(c[4], 10);
+                  return <CourseCard key={c[1]} code={c[1]} completed />;
+                });
+              }
               return (
                 <RequirementsBox
                   key={prule[0]}
                   title={`Program - ${prule[1]}`}
-                  uocCompleted={0}
-                  minUoc={prule[3]}
-                />
+                  uocCompleted={uocCompleted}
+                  minUoc={prule[3]}>
+                  {children}
+                </RequirementsBox>
               );
             })
           )}
@@ -318,22 +371,20 @@ const CheckerPage = () => {
             </ListItemButton>
             <Collapse in={modsOpen} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                {["Change program", "Add course", "Remove course"].map((title) => {
-                  return (
-                    <ListItemButton
-                      key={title}
-                      sx={{ pl: 4 }}
-                      css={css`
-                        border-style: solid;
-                        border-color: #bfbfbf;
-                        border-width: 1px 0px 0px 0px;
-                        padding: 8px 16px;
-                        background-color: white;
-                      `}>
-                      <ListItemText primary={title} />
-                    </ListItemButton>
-                  );
-                })}
+                {["Change program", "Add course", "Remove course"].map((title) => (
+                  <ListItemButton
+                    key={title}
+                    sx={{ pl: 4 }}
+                    css={css`
+                      border-style: solid;
+                      border-color: #bfbfbf;
+                      border-width: 1px 0px 0px 0px;
+                      padding: 8px 16px;
+                      background-color: white;
+                    `}>
+                    <ListItemText primary={title} />
+                  </ListItemButton>
+                ))}
                 {/* <ListItemButton
                   sx={{ pl: 4 }}
                   css={css`
@@ -366,7 +417,7 @@ const CheckerPage = () => {
                     background-color: white;
                   `}>
                   <ListItemText primary="Remove course" />
-                </ListItemButton> */}
+                </ListItemButton>
                 <ListItemButton
                   sx={{ pl: 4 }}
                   css={css`
@@ -381,7 +432,7 @@ const CheckerPage = () => {
                     padding: 8px 16px;
                   `}>
                   <ListItemText primary="Reset modifiers" />
-                </ListItemButton>
+                </ListItemButton> */}
               </List>
             </Collapse>
             <ListItemButton
@@ -398,13 +449,30 @@ const CheckerPage = () => {
             </ListItemButton>
             <Collapse in={uocOpen} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                {programRulesIsLoading ? (
-                  <></>
-                ) : (
-                  programRules.program_rules.map((prule) => {
-                    return <SidebarElement key={prule[0]} title={prule[1]} />;
-                  })
-                )}
+                <SidebarElement
+                  title="Cores"
+                  completedUoc={cores.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0)}
+                  totalUoc={totalCoreUoc}
+                />
+                <SidebarElement
+                  title="Discipline Electives"
+                  completedUoc={disciplineElectives
+                    .map((c) => parseInt(c[4], 10))
+                    .reduce((a, b) => a + b, 0)}
+                  totalUoc={totalDiscUoc}
+                />
+                <SidebarElement
+                  title="General Education"
+                  completedUoc={genEds.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0)}
+                  totalUoc={totalGenedUoc}
+                />
+                <SidebarElement
+                  title="Free Electives"
+                  completedUoc={freeElectives
+                    .map((c) => parseInt(c[4], 10))
+                    .reduce((a, b) => a + b, 0)}
+                  totalUoc={totalFreeUoc}
+                />
               </List>
             </Collapse>
           </List>
