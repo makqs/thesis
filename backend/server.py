@@ -161,7 +161,7 @@ def get_enrolments():
 def get_courses():
     with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
         with conn.cursor() as curs:
-            curs.execute(f"""SELECT course_id, code, title, year, uoc, is_ge FROM courses ORDER BY year DESC""")
+            curs.execute(f"""SELECT course_id, code, title, year, uoc, is_ge FROM courses ORDER BY code ASC, year DESC""")
             course_data = curs.fetchall()
             course_data = [(row[0], row[1], row[2], str(row[3]), str(row[4]), str(row[5])) for row in course_data]
 
