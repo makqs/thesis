@@ -94,7 +94,7 @@ def get_program_rules():
 
     with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
         with conn.cursor() as curs:
-            curs.execute(f"""SELECT program_rule_id, name, min_uoc, definition FROM program_rules WHERE program_id = '{program_id}'""")
+            curs.execute(f"""SELECT program_rule_id, name, type, min_uoc, definition FROM program_rules WHERE program_id = '{program_id}'""")
             rule_data = curs.fetchall()
 
     if rule_data is None:
@@ -102,7 +102,7 @@ def get_program_rules():
             "error": f"program ID ({program_id}): not found"
         }), 400
 
-    rule_data = [(row[0], row[1], str(row[2]), row[3]) for row in rule_data]
+    rule_data = [(row[0], row[1], row[2], str(row[3]), row[4]) for row in rule_data]
 
     return json.dumps({
         "program_rules": rule_data
