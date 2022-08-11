@@ -14,7 +14,7 @@ import { useMutation } from "@tanstack/react-query";
 import { UserContext } from "../helpers/UserContext";
 
 const LoginPage = () => {
-  const [zId, setZId] = useState("z5263663");
+  const [zId, setZId] = useState("z5555555");
   const [zIdValid, setZIdValid] = useState(true);
   const [zPass, setZPass] = useState("asdf");
   const [zPassValid, setZPassValid] = useState(true);
@@ -36,7 +36,11 @@ const LoginPage = () => {
 
   const loginCall = async (zid, zpass) => {
     const data = await loginMutation.mutateAsync(zid, zpass);
-    // TODO: add error checking
+
+    if ("error" in data) {
+      return;
+    }
+
     // TODO: check if user is staff or not
     userDispatch({
       type: "login",

@@ -340,38 +340,41 @@ const CheckerPage = () => {
             })
           )}
         </Box>
-        <Box
-          css={css`
-            background-color: #f7fafc;
-            min-width: 300px;
-            flex-grow: 1;
-            height: 100%;
-          `}>
-          <List
+        {programRulesIsLoading || streamIsLoading ? (
+          <></>
+        ) : (
+          <Box
             css={css`
-              width: 100%;
-              padding-top: 0;
-              padding-bottom: 0;
-              border-style: solid;
-              border-color: #bfbfbf;
-              border-width: 0px 0px 1px 1px;
-            `}
-            component="nav"
-            aria-labelledby="nested-list-subheader">
-            <ListItemButton
-              onClick={handleModsClick}
+              background-color: #f7fafc;
+              min-width: 300px;
+              flex-grow: 1;
+              height: 100%;
+            `}>
+            <List
               css={css`
-                background-color: #f3f3f3;
+                width: 100%;
+                padding-top: 0;
+                padding-bottom: 0;
                 border-style: solid;
                 border-color: #bfbfbf;
-                border-width: 1px 0px 0px 0px;
-              `}>
-              <ListItemText primary="Modifiers" />
-              {modsOpen ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
-            <Collapse in={modsOpen} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                {["Change program", "Add course", "Remove course"].map((title) => (
+                border-width: 0px 0px 1px 1px;
+              `}
+              component="nav"
+              aria-labelledby="nested-list-subheader">
+              <ListItemButton
+                onClick={handleModsClick}
+                css={css`
+                  background-color: #f3f3f3;
+                  border-style: solid;
+                  border-color: #bfbfbf;
+                  border-width: 1px 0px 0px 0px;
+                `}>
+                <ListItemText primary="Modifiers" />
+                {modsOpen ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+              <Collapse in={modsOpen} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  {/* {["Change program", "Add course", "Remove course"].map((title) => (
                   <ListItemButton
                     key={title}
                     sx={{ pl: 4 }}
@@ -384,99 +387,100 @@ const CheckerPage = () => {
                     `}>
                     <ListItemText primary={title} />
                   </ListItemButton>
-                ))}
-                {/* <ListItemButton
-                  sx={{ pl: 4 }}
-                  css={css`
-                    border-style: solid;
-                    border-color: #bfbfbf;
-                    border-width: 1px 0px 0px 0px;
-                    padding: 8px 16px;
-                    background-color: white;
-                  `}>
-                  <ListItemText primary="Change program" />
-                </ListItemButton>
-                <ListItemButton
-                  sx={{ pl: 4 }}
-                  css={css`
-                    border-style: solid;
-                    border-color: #bfbfbf;
-                    border-width: 1px 0px 0px 0px;
-                    padding: 8px 16px;
-                    background-color: white;
-                  `}>
-                  <ListItemText primary="Add course" />
-                </ListItemButton>
-                <ListItemButton
-                  sx={{ pl: 4 }}
-                  css={css`
-                    border-style: solid;
-                    border-color: #bfbfbf;
-                    border-width: 1px 0px 0px 0px;
-                    padding: 8px 16px;
-                    background-color: white;
-                  `}>
-                  <ListItemText primary="Remove course" />
-                </ListItemButton>
-                <ListItemButton
-                  sx={{ pl: 4 }}
-                  css={css`
-                    background-color: #f18787;
-                    color: white;
-                    &:hover {
-                      background-color: #f16565;
-                    }
-                    border-style: solid;
-                    border-color: #bfbfbf;
-                    border-width: 1px 0px 0px 0px;
-                    padding: 8px 16px;
-                  `}>
-                  <ListItemText primary="Reset modifiers" />
-                </ListItemButton> */}
-              </List>
-            </Collapse>
-            <ListItemButton
-              onClick={handleUocClick}
-              css={css`
-                background-color: #f3f3f3;
-                border-style: solid;
-                border-color: #bfbfbf;
-                border-width: 1px 0px 0px 0px;
-                padding: 8px 16px;
-              `}>
-              <ListItemText primary="UOC" />
-              {uocOpen ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
-            <Collapse in={uocOpen} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                <SidebarElement
-                  title="Cores"
-                  completedUoc={cores.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0)}
-                  totalUoc={totalCoreUoc}
-                />
-                <SidebarElement
-                  title="Discipline Electives"
-                  completedUoc={disciplineElectives
-                    .map((c) => parseInt(c[4], 10))
-                    .reduce((a, b) => a + b, 0)}
-                  totalUoc={totalDiscUoc}
-                />
-                <SidebarElement
-                  title="General Education"
-                  completedUoc={genEds.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0)}
-                  totalUoc={totalGenedUoc}
-                />
-                <SidebarElement
-                  title="Free Electives"
-                  completedUoc={freeElectives
-                    .map((c) => parseInt(c[4], 10))
-                    .reduce((a, b) => a + b, 0)}
-                  totalUoc={totalFreeUoc}
-                />
-              </List>
-            </Collapse>
-          </List>
-        </Box>
+                ))} */}
+                  <ListItemButton
+                    sx={{ pl: 4 }}
+                    css={css`
+                      border-style: solid;
+                      border-color: #bfbfbf;
+                      border-width: 1px 0px 0px 0px;
+                      padding: 8px 16px;
+                      background-color: white;
+                    `}>
+                    <ListItemText primary="Change program" />
+                  </ListItemButton>
+                  <ListItemButton
+                    sx={{ pl: 4 }}
+                    css={css`
+                      border-style: solid;
+                      border-color: #bfbfbf;
+                      border-width: 1px 0px 0px 0px;
+                      padding: 8px 16px;
+                      background-color: white;
+                    `}>
+                    <ListItemText primary="Add course" />
+                  </ListItemButton>
+                  <ListItemButton
+                    sx={{ pl: 4 }}
+                    css={css`
+                      border-style: solid;
+                      border-color: #bfbfbf;
+                      border-width: 1px 0px 0px 0px;
+                      padding: 8px 16px;
+                      background-color: white;
+                    `}>
+                    <ListItemText primary="Remove course" />
+                  </ListItemButton>
+                  <ListItemButton
+                    sx={{ pl: 4 }}
+                    css={css`
+                      background-color: #f18787;
+                      color: white;
+                      &:hover {
+                        background-color: #f16565;
+                      }
+                      border-style: solid;
+                      border-color: #bfbfbf;
+                      border-width: 1px 0px 0px 0px;
+                      padding: 8px 16px;
+                    `}>
+                    <ListItemText primary="Reset modifiers" />
+                  </ListItemButton>
+                </List>
+              </Collapse>
+              <ListItemButton
+                onClick={handleUocClick}
+                css={css`
+                  background-color: #f3f3f3;
+                  border-style: solid;
+                  border-color: #bfbfbf;
+                  border-width: 1px 0px 0px 0px;
+                  padding: 8px 16px;
+                `}>
+                <ListItemText primary="UOC" />
+                {uocOpen ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+              <Collapse in={uocOpen} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <SidebarElement
+                    title="Cores"
+                    completedUoc={cores.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0)}
+                    totalUoc={totalCoreUoc}
+                  />
+                  <SidebarElement
+                    title="Discipline Electives"
+                    completedUoc={disciplineElectives
+                      .map((c) => parseInt(c[4], 10))
+                      .reduce((a, b) => a + b, 0)}
+                    totalUoc={totalDiscUoc}
+                  />
+                  <SidebarElement
+                    title="General Education"
+                    completedUoc={genEds.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0)}
+                    totalUoc={totalGenedUoc}
+                  />
+                  <SidebarElement
+                    title="Free Electives"
+                    completedUoc={freeElectives
+                      .map((c) => parseInt(c[4], 10))
+                      .reduce((a, b) => a + b, 0)}
+                    totalUoc={totalFreeUoc}
+                  />
+                </List>
+              </Collapse>
+            </List>
+          </Box>
+        )}
       </Box>
     </div>
   );
