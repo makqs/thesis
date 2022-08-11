@@ -10,33 +10,40 @@ import FormHelperText from "@mui/material/FormHelperText";
 
 import { useNavigate } from "react-router-dom";
 
-import { fetchWrapper } from "../helpers/Wrapper";
+import { useMutation } from "@tanstack/react-query";
 import { UserContext } from "../helpers/UserContext";
 
 const LoginPage = () => {
-  const [zId, setZId] = useState("");
+  const [zId, setZId] = useState("z5263663");
   const [zIdValid, setZIdValid] = useState(true);
-  const [zPass, setZPass] = useState("");
+  const [zPass, setZPass] = useState("asdf");
   const [zPassValid, setZPassValid] = useState(true);
 
   const { userState, userDispatch } = useContext(UserContext);
 
   const navigate = useNavigate();
 
-  const loginCall = async (id, pass) => {
-    const userData = await fetchWrapper("POST", "user/auth/login", null, {
-      zid: id,
-      zpass: pass
-    });
+  const loginMutation = useMutation((zid, zpass) => {
+    const requestOptions = {
+      method: "POST",
+      body: JSON.stringify({
+        zid,
+        zpass
+      })
+    };
+    return fetch("http://127.0.0.1:5000/user/auth/login", requestOptions).then((res) => res.json());
+  });
 
+  const loginCall = async (zid, zpass) => {
+    const data = await loginMutation.mutateAsync(zid, zpass);
     // TODO: add error checking
     // TODO: check if user is staff or not
     userDispatch({
       type: "login",
-      zId: userData.zid,
-      name: userData.name,
-      isStaff: userData.is_staff,
-      token: userData.token
+      zId: data.zid,
+      name: data.name,
+      isStaff: data.is_staff,
+      token: data.token
     });
 
     navigate("/checker");

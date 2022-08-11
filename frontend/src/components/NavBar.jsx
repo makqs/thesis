@@ -9,19 +9,14 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 
-// import PropTypes from "prop-types";
-
+import { useQuery } from "@tanstack/react-query";
 import { UserContext } from "../helpers/UserContext";
-import { fetchWrapper } from "../helpers/Wrapper";
 
 const NavBar = () => {
   const { userState, userDispatch } = useContext(UserContext);
 
   const [zId, setZId] = useState("");
   const [name, setName] = useState("");
-
-  const [program, setProgram] = useState(null);
-  const [stream, setStream] = useState(null);
 
   const navigate = useNavigate();
 
@@ -30,21 +25,39 @@ const NavBar = () => {
     navigate("/login");
   };
 
-  const getProgram = async (id) => {
-    const programData = await fetchWrapper("POST", "/user/program", null, { zid: id });
-    setProgram(programData);
-  };
+  const { data: programData, isLoading: programIsLoading } = useQuery(
+    [userState, "programData"],
+    () => {
+      const requestOptions = {
+        method: "POST",
+        body: JSON.stringify({
+          zid: userState.zId
+        })
+      };
+      return fetch("http://127.0.0.1:5000/user/program", requestOptions).then((res) => res.json());
+    }
+  );
 
-  const getStream = async (id) => {
-    const streamData = await fetchWrapper("POST", "/user/stream", null, { zid: id });
-    setStream(streamData);
-  };
+  console.log(programData);
+
+  const { data: streamData, isLoading: streamIsLoading } = useQuery(
+    [userState, "streamData"],
+    () => {
+      const requestOptions = {
+        method: "POST",
+        body: JSON.stringify({
+          zid: userState.zId
+        })
+      };
+      return fetch("http://127.0.0.1:5000/user/stream", requestOptions).then((res) => res.json());
+    }
+  );
+
+  console.log(streamData);
 
   useEffect(() => {
     setZId(userState.zId);
     setName(userState.name);
-    getProgram(userState.zId);
-    getStream(userState.zId);
   }, [userState]);
 
   return (
@@ -68,7 +81,9 @@ const NavBar = () => {
               css={css`
                 color: #646c7d;
               `}>
-              {program ? `${program.code} ${program.title} ${program.year}` : "..."}
+              {programIsLoading
+                ? "..."
+                : `${programData.code} ${programData.title} ${programData.year}`}
             </Typography>
             <Typography
               component="div"
@@ -76,7 +91,9 @@ const NavBar = () => {
               css={css`
                 color: #818ca1;
               `}>
-              {stream ? `${stream.code} ${stream.title} ${stream.year}` : "..."}
+              {streamIsLoading
+                ? "..."
+                : `${streamData.code} ${streamData.title} ${streamData.year}`}
             </Typography>
           </Box>
           <Box
