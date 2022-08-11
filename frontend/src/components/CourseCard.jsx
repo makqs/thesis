@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
 import { useQuery } from "@tanstack/react-query";
 
 const CourseCard = ({ code, completed }) => {
-  const { data, isLoading, status } = useQuery(
+  const { data, isLoading } = useQuery(
     [code],
     () => {
       const requestOptions = {
@@ -20,8 +20,6 @@ const CourseCard = ({ code, completed }) => {
     },
     { enabled: new RegExp("^[A-Z]{4}[0-9]{4}$").test(code) }
   );
-
-  console.log(code, status);
 
   const completionColor = completed ? "#52b96a" : "#f7fafc";
   const textColor = completed ? "#ffffff" : "#646c7d";
