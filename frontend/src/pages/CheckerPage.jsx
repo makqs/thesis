@@ -16,6 +16,7 @@ import NavBar from "../components/NavBar";
 import RequirementsBox from "../components/RequirementsBox";
 import CourseCard from "../components/CourseCard";
 import { UserContext } from "../helpers/UserContext";
+import SidebarElement from "../components/SidebarElement";
 
 const CheckerPage = () => {
   const navigate = useNavigate();
@@ -109,10 +110,91 @@ const CheckerPage = () => {
   };
 
   useEffect(() => {
-    if (!userState) {
-      navigate("/login");
-    }
+    if (!userState) navigate("/login");
   }, []);
+
+  const [cores, setCores] = useState([]);
+  const [disciplineElectives, setDisciplineElectives] = useState([]);
+  const [genEds, setGenEds] = useState([]);
+  const [freeElectives, setFreeElectives] = useState([]);
+  useEffect(() => {
+    if (!enrolmentsIsLoading && !programRulesIsLoading && !streamRulesIsLoading) {
+      const allRules = programRules.program_rules.concat(streamRules.stream_rules);
+
+      const coreList = [];
+      const discElecList = [];
+      const genEdList = [];
+      const freeElecList = [];
+
+      enrolments.enrolments.forEach((e) => {
+        if (["PS", "CR", "DN", "HD", "SY", "EC"].includes(e[6])) {
+          if (
+            allRules.some((rule) => {
+              return rule[2] === "CC" && rule[4].split(",").includes(e[1]);
+            })
+          ) {
+            coreList.push(e);
+            return;
+          }
+
+          if (
+            allRules.some((rule) => {
+              if (rule[2] === "DE") {
+                return rule[4].split(",").some((code) => {
+                  if (code === e[1]) return true;
+                  if (new RegExp("^[A-Z]{4}[0-9]XXX$").test(code))
+                    return new RegExp(`^${code.slice(0, 5)}...$`).test(e[1]);
+                  return false;
+                });
+              }
+              return false;
+            })
+          ) {
+            discElecList.push(e);
+            return;
+          }
+
+          if (e[7] === "True") {
+            genEdList.push(e);
+            return;
+          }
+
+          freeElecList.push(e);
+        }
+      });
+
+      setCores(coreList);
+      setDisciplineElectives(discElecList);
+      setGenEds(genEdList);
+      setFreeElectives(freeElecList);
+
+      console.log(cores, disciplineElectives, genEds, freeElectives);
+
+      // const coreList = enrolments.enrolments.filter((e) => {
+      //   if (!["PS", "CR", "DN", "HD", "SY", "EC"].includes(e[6])) return false;
+      //   return allRules.some((rule) => {
+      //     return rule[2] === "CC" && rule[4].split(",").includes(e[1]);
+      //   });
+      // });
+      // console.log(coreList);
+
+      // const discElecList = enrolments.enrolments.filter((e) => {
+      //   if (!["PS", "CR", "DN", "HD", "SY", "EC"].includes(e[6])) return false;
+      //   return allRules.some((rule) => {
+      //     if (rule[2] === "DE") {
+      //       return rule[4].split(",").some((code) => {
+      //         if (code === e[1]) return true;
+      //         if (new RegExp("^[A-Z]{4}[0-9]XXX$").test(code))
+      //           return new RegExp(`^${code.slice(0, 5)}...$`).test(e[1]);
+      //         return false;
+      //       });
+      //     }
+      //     return false;
+      //   });
+      // });
+      // console.log(discElecList);
+    }
+  }, [enrolments, programRules, streamRules]);
 
   return (
     <div
@@ -140,110 +222,70 @@ const CheckerPage = () => {
             gap: 10px;
             overflow: auto;
           `}>
-          {
-            programRulesIsLoading || streamIsLoading ? (
-              <></>
-            ) : (
-              programRules.program_rules.map((prule) => {
-                if (prule[2] === "ST") {
-                  if (prule[4].split(",").includes(stream.code)) {
-                    return streamRulesIsLoading ? (
-                      <></>
-                    ) : (
-                      streamRules.stream_rules.map((rule) => {
-                        let uocCompleted = 0;
-                        const children =
-                          rule[3] === null ? (
-                            <></>
-                          ) : (
-                            rule[3].split(",").map((code) => {
-                              const course = enrolments.enrolments.find((e) => e[1] === code);
-                              if (course === undefined) {
-                                return <CourseCard key={code} code={code} completed={false} />;
-                              }
-                              const completed =
-                                course[1] === code &&
-                                ["PS", "CR", "DN", "HD", "SY", "EC"].includes(course[6]);
-                              if (completed) {
-                                uocCompleted += parseInt(course[4], 10);
-                              }
-                              return <CourseCard key={code} code={code} completed={completed} />;
-                            })
-                          );
-                        return (
-                          <RequirementsBox
-                            title={rule[1]}
-                            uocCompleted={uocCompleted}
-                            minUoc={rule[2]}
-                            key={rule[0]}>
-                            {children}
-                          </RequirementsBox>
+          {programRulesIsLoading || streamIsLoading ? (
+            <></>
+          ) : (
+            programRules.program_rules.map((prule) => {
+              if (prule[2] === "ST") {
+                if (prule[4].split(",").includes(stream.code)) {
+                  return streamRulesIsLoading ? (
+                    <></>
+                  ) : (
+                    streamRules.stream_rules.map((rule) => {
+                      let uocCompleted = 0;
+                      const children =
+                        rule[4] === null ? (
+                          <></>
+                        ) : (
+                          rule[4].split(",").map((code) => {
+                            const course = enrolments.enrolments.find((e) => e[1] === code);
+                            if (course === undefined) {
+                              return <CourseCard key={code} code={code} completed={false} />;
+                            }
+                            const completed =
+                              course[1] === code &&
+                              ["PS", "CR", "DN", "HD", "SY", "EC"].includes(course[6]);
+                            if (completed) {
+                              uocCompleted += parseInt(course[4], 10);
+                            }
+                            return <CourseCard key={code} code={code} completed={completed} />;
+                          })
                         );
-                      })
-                    );
-                  }
-                  const children = prule[4]
-                    .split(",")
-                    .map((s) => <CourseCard key={s} code={s} completed={false} />);
-                  return (
-                    <RequirementsBox
-                      key={prule[0]}
-                      title={prule[1]}
-                      uocCompleted={0}
-                      minUoc={prule[3]}>
-                      {children}
-                    </RequirementsBox>
+                      return (
+                        <RequirementsBox
+                          title={`Stream - ${rule[1]}`}
+                          uocCompleted={uocCompleted}
+                          minUoc={rule[3]}
+                          key={rule[0]}>
+                          {children}
+                        </RequirementsBox>
+                      );
+                    })
                   );
                 }
+                const children = prule[4]
+                  .split(",")
+                  .map((s) => <CourseCard key={s} code={s} completed={false} />);
                 return (
                   <RequirementsBox
                     key={prule[0]}
-                    title={prule[1]}
+                    title={`Stream - ${prule[1]}`}
                     uocCompleted={0}
-                    minUoc={prule[3]}
-                  />
+                    minUoc={prule[3]}>
+                    {children}
+                  </RequirementsBox>
                 );
-              })
-            )
-            // (
-            //   <>
-            //     {streamRulesIsLoading ? (
-            //       <></>
-            //     ) : (
-            //       streamRules.stream_rules.map((rule) => {
-            //         let uocCompleted = 0;
-            //         const children =
-            //           rule[3] === null ? (
-            //             <></>
-            //           ) : (
-            //             rule[3].split(",").map((code) => {
-            //               const course = enrolments.enrolments.find((e) => e[1] === code);
-            //               if (course === undefined) {
-            //                 return <CourseCard key={code} code={code} completed={false} />;
-            //               }
-            //               const completed =
-            //                 course[1] === code &&
-            //                 ["PS", "CR", "DN", "HD", "SY", "EC"].includes(course[6]);
-            //               if (completed) {
-            //                 uocCompleted += parseInt(course[4], 10);
-            //               }
-            //               return <CourseCard key={code} code={code} completed={completed} />;
-            //             })
-            //           );
-            //         return (
-            //           <RequirementsBox
-            //             title={rule[1]}
-            //             uocCompleted={uocCompleted}
-            //             minUoc={rule[2]}
-            //             key={rule[0]}>
-            //             {children}
-            //           </RequirementsBox>
-            //         );
-            //       })
-            //     )}
-            //   </>
-            // )
-          }
+              }
+              return (
+                <RequirementsBox
+                  key={prule[0]}
+                  title={`Program - ${prule[1]}`}
+                  uocCompleted={0}
+                  minUoc={prule[3]}
+                />
+              );
+            })
+          )}
         </Box>
         <Box
           css={css`
@@ -259,7 +301,7 @@ const CheckerPage = () => {
               padding-bottom: 0;
               border-style: solid;
               border-color: #bfbfbf;
-              border-width: 0px 0px 0px 1px;
+              border-width: 0px 0px 1px 1px;
             `}
             component="nav"
             aria-labelledby="nested-list-subheader">
@@ -276,7 +318,23 @@ const CheckerPage = () => {
             </ListItemButton>
             <Collapse in={modsOpen} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                <ListItemButton
+                {["Change program", "Add course", "Remove course"].map((title) => {
+                  return (
+                    <ListItemButton
+                      key={title}
+                      sx={{ pl: 4 }}
+                      css={css`
+                        border-style: solid;
+                        border-color: #bfbfbf;
+                        border-width: 1px 0px 0px 0px;
+                        padding: 8px 16px;
+                        background-color: white;
+                      `}>
+                      <ListItemText primary={title} />
+                    </ListItemButton>
+                  );
+                })}
+                {/* <ListItemButton
                   sx={{ pl: 4 }}
                   css={css`
                     border-style: solid;
@@ -308,7 +366,7 @@ const CheckerPage = () => {
                     background-color: white;
                   `}>
                   <ListItemText primary="Remove course" />
-                </ListItemButton>
+                </ListItemButton> */}
                 <ListItemButton
                   sx={{ pl: 4 }}
                   css={css`
@@ -340,39 +398,13 @@ const CheckerPage = () => {
             </ListItemButton>
             <Collapse in={uocOpen} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                <ListItemButton
-                  sx={{ pl: 4 }}
-                  css={css`
-                    border-style: solid;
-                    border-color: #bfbfbf;
-                    border-width: 1px 0px 0px 0px;
-                    padding: 8px 16px;
-                    background-color: white;
-                  `}>
-                  <ListItemText primary="Discipline Component" />
-                </ListItemButton>
-                <ListItemButton
-                  sx={{ pl: 4 }}
-                  css={css`
-                    border-style: solid;
-                    border-color: #bfbfbf;
-                    border-width: 1px 0px 0px 0px;
-                    padding: 8px 16px;
-                    background-color: white;
-                  `}>
-                  <ListItemText primary="Discipline Electives" />
-                </ListItemButton>
-                <ListItemButton
-                  sx={{ pl: 4 }}
-                  css={css`
-                    border-style: solid;
-                    border-color: #bfbfbf;
-                    border-width: 1px 0px;
-                    padding: 8px 16px;
-                    background-color: white;
-                  `}>
-                  <ListItemText primary="General Education" />
-                </ListItemButton>
+                {programRulesIsLoading ? (
+                  <></>
+                ) : (
+                  programRules.program_rules.map((prule) => {
+                    return <SidebarElement key={prule[0]} title={prule[1]} />;
+                  })
+                )}
               </List>
             </Collapse>
           </List>
