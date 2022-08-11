@@ -118,6 +118,7 @@ const NavBar = () => {
               variant="h6"
               css={css`
                 color: #646c7d;
+                text-align: right;
               `}>
               {name}
             </Typography>
@@ -126,6 +127,7 @@ const NavBar = () => {
               variant="subtitle2"
               css={css`
                 color: #818ca1;
+                text-align: right;
               `}>
               {zId}
             </Typography>
