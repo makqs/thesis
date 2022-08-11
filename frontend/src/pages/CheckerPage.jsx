@@ -1,7 +1,16 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import React, { useContext, useState, useEffect } from "react";
-import { Box } from "@mui/material";
+import {
+  Autocomplete,
+  Backdrop,
+  Box,
+  Button,
+  Fade,
+  Modal,
+  TextField,
+  Typography
+} from "@mui/material";
 
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -16,11 +25,32 @@ import NavBar from "../components/NavBar";
 import RequirementsBox from "../components/RequirementsBox";
 import CourseCard from "../components/CourseCard";
 import { UserContext } from "../helpers/UserContext";
-import SidebarElement from "../components/SidebarElement";
+import SidebarItem from "../components/SidebarItem";
+import SidebarButton from "../components/SidebarButton";
 
 const CheckerPage = () => {
   const navigate = useNavigate();
   const { userState } = useContext(UserContext);
+
+  const [addedCourses, setAddedCourses] = useState([]);
+
+  const [openAdd, setOpenAdd] = useState(false);
+  const handleOpenAdd = () => setOpenAdd(true);
+  const handleCloseAdd = () => setOpenAdd(false);
+  const [addValue, setAddValue] = useState(null);
+
+  const [openRemove, setOpenRemove] = useState(false);
+  const handleOpenRemove = () => setOpenRemove(true);
+  const handleCloseRemove = () => setOpenRemove(false);
+  const [removeValue, setRemoveValue] = useState(null);
+
+  const { data: courses, isLoading: coursesIsLoading } = useQuery(["coursesData"], () => {
+    const requestOptions = {
+      method: "GET"
+    };
+    return fetch("http://127.0.0.1:5000/courses", requestOptions).then((res) => res.json());
+  });
+  console.log(courses, coursesIsLoading);
 
   const { data: enrolments, isLoading: enrolmentsIsLoading } = useQuery(
     [userState, "enrolmentsData"],
@@ -147,7 +177,8 @@ const CheckerPage = () => {
       const genEdList = [];
       const freeElecList = [];
 
-      enrolments.enrolments.forEach((e) => {
+      console.log(enrolments.enrolments.concat(addedCourses));
+      enrolments.enrolments.concat(addedCourses).forEach((e) => {
         if (["PS", "CR", "DN", "HD", "SY", "EC"].includes(e[6])) {
           if (
             allRules.some((rule) => {
@@ -191,7 +222,7 @@ const CheckerPage = () => {
 
       console.log(cores, disciplineElectives, genEds, freeElectives);
     }
-  }, [enrolments, programRules, streamRules]);
+  }, [enrolments, programRules, streamRules, addedCourses]);
 
   return (
     <div
@@ -374,54 +405,149 @@ const CheckerPage = () => {
               </ListItemButton>
               <Collapse in={modsOpen} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                  {/* {["Change program", "Add course", "Remove course"].map((title) => (
-                  <ListItemButton
-                    key={title}
-                    sx={{ pl: 4 }}
-                    css={css`
-                      border-style: solid;
-                      border-color: #bfbfbf;
-                      border-width: 1px 0px 0px 0px;
-                      padding: 8px 16px;
-                      background-color: white;
-                    `}>
-                    <ListItemText primary={title} />
-                  </ListItemButton>
-                ))} */}
-                  <ListItemButton
-                    sx={{ pl: 4 }}
-                    css={css`
-                      border-style: solid;
-                      border-color: #bfbfbf;
-                      border-width: 1px 0px 0px 0px;
-                      padding: 8px 16px;
-                      background-color: white;
-                    `}>
-                    <ListItemText primary="Change program" />
-                  </ListItemButton>
-                  <ListItemButton
-                    sx={{ pl: 4 }}
-                    css={css`
-                      border-style: solid;
-                      border-color: #bfbfbf;
-                      border-width: 1px 0px 0px 0px;
-                      padding: 8px 16px;
-                      background-color: white;
-                    `}>
-                    <ListItemText primary="Add course" />
-                  </ListItemButton>
-                  <ListItemButton
-                    sx={{ pl: 4 }}
-                    css={css`
-                      border-style: solid;
-                      border-color: #bfbfbf;
-                      border-width: 1px 0px 0px 0px;
-                      padding: 8px 16px;
-                      background-color: white;
-                    `}>
-                    <ListItemText primary="Remove course" />
-                  </ListItemButton>
-                  <ListItemButton
+                  <SidebarButton title="Change program" />
+                  <SidebarButton title="Add course" onClick={handleOpenAdd} />
+                  <Modal
+                    open={openAdd}
+                    onClose={handleCloseAdd}
+                    closeAfterTransition
+                    BackdropComponent={Backdrop}
+                    BackdropProps={{
+                      timeout: 500
+                    }}>
+                    <Fade in={openAdd}>
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                          width: 400,
+                          bgcolor: "background.paper",
+                          border: "2px solid #000",
+                          boxShadow: 24,
+                          p: 4,
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "centre"
+                        }}>
+                        <Typography id="transition-modal-title" variant="h6" component="h2">
+                          Add a course
+                        </Typography>
+                        <Autocomplete
+                          value={addValue}
+                          onChange={(event, newValue) => {
+                            setAddValue(newValue);
+                          }}
+                          disablePortal
+                          options={
+                            coursesIsLoading
+                              ? []
+                              : courses.courses.map((c) => {
+                                  return { label: c[1], id: c[0] };
+                                })
+                          }
+                          sx={{ width: 300 }}
+                          // eslint-disable-next-line react/jsx-props-no-spreading
+                          renderInput={(params) => <TextField {...params} label="Course" />}
+                        />
+                        <Button
+                          variant="contained"
+                          css={css`
+                            background-color: #4299e1;
+                            margin-left: 10px;
+                          `}
+                          onClick={() => {
+                            if (addValue === null) return;
+                            const course = courses.courses.find((c) => c[0] === addValue.id);
+                            setAddedCourses([
+                              ...addedCourses,
+                              [
+                                course[0],
+                                course[1],
+                                course[2],
+                                course[3],
+                                course[4],
+                                50,
+                                "SY",
+                                course[5]
+                              ]
+                            ]);
+                            setAddValue(null);
+                            handleCloseAdd();
+                          }}>
+                          Add course
+                        </Button>
+                      </Box>
+                    </Fade>
+                  </Modal>
+                  <SidebarButton title="Remove course" onClick={handleOpenRemove} />
+                  <Modal
+                    open={openRemove}
+                    onClose={handleCloseRemove}
+                    closeAfterTransition
+                    BackdropComponent={Backdrop}
+                    BackdropProps={{
+                      timeout: 500
+                    }}>
+                    <Fade in={openRemove}>
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                          width: 400,
+                          bgcolor: "background.paper",
+                          border: "2px solid #000",
+                          boxShadow: 24,
+                          p: 4,
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "centre"
+                        }}>
+                        <Typography id="transition-modal-title" variant="h6" component="h2">
+                          Remove a course
+                        </Typography>
+                        <Autocomplete
+                          value={removeValue}
+                          onChange={(event, newValue) => {
+                            setRemoveValue(newValue);
+                          }}
+                          disablePortal
+                          options={addedCourses.map((c) => {
+                            return { label: c[1], id: c[0] };
+                          })}
+                          sx={{ width: 300 }}
+                          // eslint-disable-next-line react/jsx-props-no-spreading
+                          renderInput={(params) => <TextField {...params} label="Course" />}
+                        />
+                        <Button
+                          variant="contained"
+                          css={css`
+                            background-color: #4299e1;
+                            margin-left: 10px;
+                          `}
+                          onClick={() => {
+                            if (removeValue === null) return;
+                            const newCourses = addedCourses.filter((c) => c[0] !== removeValue.id);
+                            setAddedCourses(newCourses);
+                            setRemoveValue(null);
+                            handleCloseRemove();
+                          }}>
+                          Remove course
+                        </Button>
+                      </Box>
+                    </Fade>
+                  </Modal>
+                  <SidebarButton
+                    title="Reset modifiers"
+                    isRed
+                    onClick={() => {
+                      setAddedCourses([]);
+                    }}
+                  />
+                  {/* <ListItemButton
                     sx={{ pl: 4 }}
                     css={css`
                       background-color: #f18787;
@@ -435,7 +561,7 @@ const CheckerPage = () => {
                       padding: 8px 16px;
                     `}>
                     <ListItemText primary="Reset modifiers" />
-                  </ListItemButton>
+                  </ListItemButton> */}
                 </List>
               </Collapse>
               <ListItemButton
@@ -452,24 +578,24 @@ const CheckerPage = () => {
               </ListItemButton>
               <Collapse in={uocOpen} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                  <SidebarElement
+                  <SidebarItem
                     title="Cores"
                     completedUoc={cores.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0)}
                     totalUoc={totalCoreUoc}
                   />
-                  <SidebarElement
+                  <SidebarItem
                     title="Discipline Electives"
                     completedUoc={disciplineElectives
                       .map((c) => parseInt(c[4], 10))
                       .reduce((a, b) => a + b, 0)}
                     totalUoc={totalDiscUoc}
                   />
-                  <SidebarElement
+                  <SidebarItem
                     title="General Education"
                     completedUoc={genEds.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0)}
                     totalUoc={totalGenedUoc}
                   />
-                  <SidebarElement
+                  <SidebarItem
                     title="Free Electives"
                     completedUoc={freeElectives
                       .map((c) => parseInt(c[4], 10))
