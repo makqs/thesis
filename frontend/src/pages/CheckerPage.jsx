@@ -74,7 +74,11 @@ const CheckerPage = () => {
     };
     return fetch("http://127.0.0.1:5000/user/stream", requestOptions).then((res) => res.json());
   });
-  const { data: streamRules, isLoading: streamRulesIsLoading } = useQuery(
+  const {
+    data: streamRules,
+    isLoading: streamRulesIsLoading,
+    refetch: streamRulesRefetch
+  } = useQuery(
     [stream, "streamRulesData"],
     () => {
       const requestOptions = {
@@ -86,8 +90,12 @@ const CheckerPage = () => {
       return fetch("http://127.0.0.1:5000/user/stream/rules", requestOptions).then((res) =>
         res.json()
       );
-    }
+    },
+    { enabled: false }
   );
+  useEffect(() => {
+    if (stream !== undefined && "stream_id" in stream) streamRulesRefetch();
+  }, [stream]);
   console.log(stream, streamIsLoading, streamRules, streamRulesIsLoading);
 
   const [modsOpen, setModsOpen] = useState(true);
@@ -132,46 +140,110 @@ const CheckerPage = () => {
             gap: 10px;
             overflow: auto;
           `}>
-          {programRulesIsLoading ? (
-            <>PROGRAM RULES LOADING</>
-          ) : (
-            <>
-              {streamRulesIsLoading ? (
-                <></>
-              ) : (
-                streamRules.stream_rules.map((rule) => {
-                  let uocCompleted = 0;
-                  const children =
-                    rule[3] === null ? (
+          {
+            programRulesIsLoading || streamIsLoading ? (
+              <></>
+            ) : (
+              programRules.program_rules.map((prule) => {
+                if (prule[2] === "ST") {
+                  if (prule[4].split(",").includes(stream.code)) {
+                    return streamRulesIsLoading ? (
                       <></>
                     ) : (
-                      rule[3].split(",").map((code) => {
-                        const course = enrolments.enrolments.find((e) => e[1] === code);
-                        if (course === undefined) {
-                          return <CourseCard key={code} code={code} completed={false} />;
-                        }
-                        const completed =
-                          course[1] === code &&
-                          ["PS", "CR", "DN", "HD", "SY", "EC"].includes(course[6]);
-                        if (completed) {
-                          uocCompleted += parseInt(course[4], 10);
-                        }
-                        return <CourseCard key={code} code={code} completed={completed} />;
+                      streamRules.stream_rules.map((rule) => {
+                        let uocCompleted = 0;
+                        const children =
+                          rule[3] === null ? (
+                            <></>
+                          ) : (
+                            rule[3].split(",").map((code) => {
+                              const course = enrolments.enrolments.find((e) => e[1] === code);
+                              if (course === undefined) {
+                                return <CourseCard key={code} code={code} completed={false} />;
+                              }
+                              const completed =
+                                course[1] === code &&
+                                ["PS", "CR", "DN", "HD", "SY", "EC"].includes(course[6]);
+                              if (completed) {
+                                uocCompleted += parseInt(course[4], 10);
+                              }
+                              return <CourseCard key={code} code={code} completed={completed} />;
+                            })
+                          );
+                        return (
+                          <RequirementsBox
+                            title={rule[1]}
+                            uocCompleted={uocCompleted}
+                            minUoc={rule[2]}
+                            key={rule[0]}>
+                            {children}
+                          </RequirementsBox>
+                        );
                       })
                     );
+                  }
+                  const children = prule[4]
+                    .split(",")
+                    .map((s) => <CourseCard key={s} code={s} completed={false} />);
                   return (
                     <RequirementsBox
-                      title={rule[1]}
-                      uocCompleted={uocCompleted}
-                      minUoc={rule[2]}
-                      key={rule[0]}>
+                      key={prule[0]}
+                      title={prule[1]}
+                      uocCompleted={0}
+                      minUoc={prule[3]}>
                       {children}
                     </RequirementsBox>
                   );
-                })
-              )}{" "}
-            </>
-          )}
+                }
+                return (
+                  <RequirementsBox
+                    key={prule[0]}
+                    title={prule[1]}
+                    uocCompleted={0}
+                    minUoc={prule[3]}
+                  />
+                );
+              })
+            )
+            // (
+            //   <>
+            //     {streamRulesIsLoading ? (
+            //       <></>
+            //     ) : (
+            //       streamRules.stream_rules.map((rule) => {
+            //         let uocCompleted = 0;
+            //         const children =
+            //           rule[3] === null ? (
+            //             <></>
+            //           ) : (
+            //             rule[3].split(",").map((code) => {
+            //               const course = enrolments.enrolments.find((e) => e[1] === code);
+            //               if (course === undefined) {
+            //                 return <CourseCard key={code} code={code} completed={false} />;
+            //               }
+            //               const completed =
+            //                 course[1] === code &&
+            //                 ["PS", "CR", "DN", "HD", "SY", "EC"].includes(course[6]);
+            //               if (completed) {
+            //                 uocCompleted += parseInt(course[4], 10);
+            //               }
+            //               return <CourseCard key={code} code={code} completed={completed} />;
+            //             })
+            //           );
+            //         return (
+            //           <RequirementsBox
+            //             title={rule[1]}
+            //             uocCompleted={uocCompleted}
+            //             minUoc={rule[2]}
+            //             key={rule[0]}>
+            //             {children}
+            //           </RequirementsBox>
+            //         );
+            //       })
+            //     )}
+            //   </>
+            // )
+          }
         </Box>
         <Box
           css={css`

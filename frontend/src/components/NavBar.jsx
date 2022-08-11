@@ -91,9 +91,15 @@ const NavBar = () => {
               css={css`
                 color: #818ca1;
               `}>
-              {streamIsLoading
-                ? "..."
-                : `${streamData.code} ${streamData.title} ${streamData.year}`}
+              {streamIsLoading ? (
+                "..."
+              ) : (
+                <>
+                  {"error" in streamData
+                    ? "No stream enrolment"
+                    : `${streamData.code} ${streamData.title} ${streamData.year}`}
+                </>
+              )}
             </Typography>
           </Box>
           <Box
