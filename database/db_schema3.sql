@@ -23,6 +23,7 @@ CREATE TABLE courses (
     title VARCHAR,
     year int,
     uoc numeric,
+    is_ge boolean,
     PRIMARY KEY (course_id)
 );
 

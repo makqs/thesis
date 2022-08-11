@@ -74,7 +74,7 @@ def get_stream():
             if stream_id is None:
                 return json.dumps({
                     "error": f"zID ({zid}): not enrolled in a stream"
-                }), 400
+                }), 200
 
             curs.execute(f"""SELECT year, code, title, total_uoc FROM streams WHERE stream_id = '{stream_id[0]}'""")
             stream_data = curs.fetchone()
@@ -115,7 +115,7 @@ def get_stream_rules():
 
     with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
         with conn.cursor() as curs:
-            curs.execute(f"""SELECT stream_rule_id, name, min_uoc, definition FROM stream_rules WHERE stream_id = '{stream_id}'""")
+            curs.execute(f"""SELECT stream_rule_id, name, type, min_uoc, definition FROM stream_rules WHERE stream_id = '{stream_id}'""")
             rule_data = curs.fetchall()
 
     if rule_data is None:
@@ -123,13 +123,13 @@ def get_stream_rules():
             "error": f"stream ID ({stream_id}): not found"
         }), 400
 
-    rule_data = [(row[0], row[1], str(row[2]), row[3]) for row in rule_data]
+    rule_data = [(row[0], row[1], row[2], str(row[3]), row[4]) for row in rule_data]
 
     return json.dumps({
         "stream_rules": rule_data
     }), 200
 
-# returns [ [ course_id, code, title, year, uoc, mark, grade ] ]
+# returns [ [ course_id, code, title, year, uoc, mark, grade, is_ge ] ]
 @app.route("/user/enrolments", methods=['POST'])
 def get_enrolments():
     body = json.loads(request.get_data())
@@ -148,10 +148,10 @@ def get_enrolments():
             courses = []
 
             for enrolment in enrolment_data:
-                curs.execute(f"""SELECT code, title, year, uoc FROM courses WHERE course_id = '{enrolment[0]}'""")
+                curs.execute(f"""SELECT code, title, year, uoc, is_ge FROM courses WHERE course_id = '{enrolment[0]}'""")
                 course_data = curs.fetchone()
                 enrolment_data = [(row[0], str(row[1]), row[2]) for row in enrolment_data]
-                courses.append((enrolment[0], course_data[0], course_data[1], str(course_data[2]), str(course_data[3]), str(enrolment[1]), enrolment[2]))
+                courses.append((enrolment[0], course_data[0], course_data[1], str(course_data[2]), str(course_data[3]), str(enrolment[1]), enrolment[2], str(course_data[4])))
 
     return json.dumps({
         "enrolments": courses
@@ -161,9 +161,9 @@ def get_enrolments():
 def get_courses():
     with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
         with conn.cursor() as curs:
-            curs.execute(f"""SELECT course_id, code, title, year, uoc FROM courses ORDER BY year DESC""")
+            curs.execute(f"""SELECT course_id, code, title, year, uoc, is_ge FROM courses ORDER BY year DESC""")
             course_data = curs.fetchall()
-            course_data = [(row[0], row[1], row[2], str(row[3]), str(row[4])) for row in course_data]
+            course_data = [(row[0], row[1], row[2], str(row[3]), str(row[4]), str(row[5])) for row in course_data]
 
     if course_data is None:
         return json.dumps({
@@ -174,7 +174,7 @@ def get_courses():
         "courses": course_data
     }), 200
 
-# returns [ course_id, code, title, year, uoc ]
+# returns [ course_id, code, title, year, uoc, is_ge ]
 @app.route("/course", methods=['POST'])
 def get_course():
     body = json.loads(request.get_data())
@@ -182,7 +182,7 @@ def get_course():
 
     with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
         with conn.cursor() as curs:
-            curs.execute(f"""SELECT course_id, code, title, year, uoc FROM courses WHERE code = '{code}' ORDER BY year DESC""")
+            curs.execute(f"""SELECT course_id, code, title, year, uoc, is_ge FROM courses WHERE code = '{code}' ORDER BY year DESC""")
             course_data = curs.fetchone()
 
     if course_data is None:
@@ -191,7 +191,7 @@ def get_course():
         }), 400
 
     return json.dumps({
-        "course_info": (str(course_data[0]), str(course_data[1]), str(course_data[2]), str(course_data[3]), str(course_data[4]))
+        "course_info": (str(course_data[0]), course_data[1], course_data[2], str(course_data[3]), str(course_data[4]), str(course_data[5]))
     }), 200
 
 if __name__ == "__main__":
