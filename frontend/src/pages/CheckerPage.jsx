@@ -19,8 +19,11 @@ import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 
+import { useSnackbar } from "notistack";
+
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+
 import NavBar from "../components/NavBar";
 import RequirementsBox from "../components/RequirementsBox";
 import CourseCard from "../components/CourseCard";
@@ -31,6 +34,8 @@ import SidebarButton from "../components/SidebarButton";
 const CheckerPage = () => {
   const navigate = useNavigate();
   const { userState } = useContext(UserContext);
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const [addedCourses, setAddedCourses] = useState([]);
 
@@ -44,90 +49,158 @@ const CheckerPage = () => {
   const handleCloseRemove = () => setOpenRemove(false);
   const [removeValue, setRemoveValue] = useState(null);
 
-  const { data: courses, isLoading: coursesIsLoading } = useQuery(["coursesData"], () => {
+  const { data: courses, isLoading: coursesIsLoading } = useQuery(["coursesData"], async () => {
     const requestOptions = {
       method: "GET"
     };
-    return fetch("http://127.0.0.1:5000/courses", requestOptions).then((res) => res.json());
+    try {
+      const res = await fetch("http://127.0.0.1:5000/courses", requestOptions);
+      return await res.json();
+    } catch (err) {
+      console.log("COURSES FETCH ERROR: ", err);
+      return enqueueSnackbar(err, { variant: "error" });
+    }
   });
   console.log(courses, coursesIsLoading);
 
+  const userId = userState.zId;
   const { data: enrolments, isLoading: enrolmentsIsLoading } = useQuery(
-    [userState, "enrolmentsData"],
-    () => {
+    ["enrolmentsData", userId],
+    async () => {
       const requestOptions = {
         method: "POST",
         body: JSON.stringify({
-          zid: userState.zId
+          zid: userId
         })
       };
-      return fetch("http://127.0.0.1:5000/user/enrolments", requestOptions).then((res) =>
-        res.json()
-      );
+      try {
+        const res = await fetch("http://127.0.0.1:5000/user/enrolments", requestOptions);
+        return await res.json();
+      } catch (err) {
+        console.log("ENROLMENTS FETCH ERROR: ", err);
+        return enqueueSnackbar(err, { variant: "error" });
+      }
+    },
+    {
+      enabled: !!userId
     }
   );
   console.log(enrolments, enrolmentsIsLoading);
 
   const { data: program, isLoading: programIsLoading } = useQuery(
-    [userState, "programData"],
-    () => {
+    ["programData", userId],
+    async () => {
       const requestOptions = {
         method: "POST",
         body: JSON.stringify({
-          zid: userState.zId
+          zid: userId
         })
       };
-      return fetch("http://127.0.0.1:5000/user/program", requestOptions).then((res) => res.json());
-    }
-  );
-  const { data: programRules, isLoading: programRulesIsLoading } = useQuery(
-    [program, "programRulesData"],
-    () => {
-      const requestOptions = {
-        method: "POST",
-        body: JSON.stringify({
-          program_id: program.program_id
-        })
-      };
-      return fetch("http://127.0.0.1:5000/user/program/rules", requestOptions).then((res) =>
-        res.json()
-      );
-    }
-  );
-  console.log(program, programIsLoading, programRules, programRulesIsLoading);
-
-  const { data: stream, isLoading: streamIsLoading } = useQuery([userState, "streamData"], () => {
-    const requestOptions = {
-      method: "POST",
-      body: JSON.stringify({
-        zid: userState.zId
-      })
-    };
-    return fetch("http://127.0.0.1:5000/user/stream", requestOptions).then((res) => res.json());
-  });
-  const {
-    data: streamRules,
-    isLoading: streamRulesIsLoading,
-    refetch: streamRulesRefetch
-  } = useQuery(
-    [stream, "streamRulesData"],
-    () => {
-      const requestOptions = {
-        method: "POST",
-        body: JSON.stringify({
-          stream_id: stream.stream_id
-        })
-      };
-      return fetch("http://127.0.0.1:5000/user/stream/rules", requestOptions).then((res) =>
-        res.json()
-      );
+      try {
+        const res = await fetch("http://127.0.0.1:5000/user/program", requestOptions);
+        return await res.json();
+      } catch (err) {
+        console.log("PROGRAM FETCH ERROR: ", err);
+        return enqueueSnackbar(err, { variant: "error" });
+      }
     },
-    { enabled: false }
+    {
+      enabled: !!userId
+    }
   );
-  useEffect(() => {
-    if (stream !== undefined && "stream_id" in stream) streamRulesRefetch();
-  }, [stream]);
+  console.log(program, programIsLoading);
+
+  const programId = program?.program_id;
+  const { data: programRules, isLoading: programRulesIsLoading } = useQuery(
+    ["programRulesData", programId],
+    async () => {
+      const requestOptions = {
+        method: "POST",
+        body: JSON.stringify({
+          program_id: programId
+        })
+      };
+      try {
+        const res = await fetch("http://127.0.0.1:5000/user/program/rules", requestOptions);
+        return await res.json();
+      } catch (err) {
+        console.log("PROGRAM RULES FETCH ERROR:", err);
+        return enqueueSnackbar(err, { variant: "error" });
+      }
+    },
+    {
+      enabled: !!programId
+    }
+  );
+  console.log(programRules, programRulesIsLoading);
+
+  const { data: stream, isLoading: streamIsLoading } = useQuery(
+    ["streamData", userId],
+    async () => {
+      const requestOptions = {
+        method: "POST",
+        body: JSON.stringify({
+          zid: userId
+        })
+      };
+      try {
+        const res = await fetch("http://127.0.0.1:5000/user/stream", requestOptions);
+        return await res.json();
+      } catch (err) {
+        console.log("STREAM FETCH ERROR: ", err);
+        return enqueueSnackbar(err, { variant: "error" });
+      }
+    },
+    {
+      enabled: !!userId
+    }
+  );
+
+  const streamId = stream?.stream_id;
+  const { data: streamRules, isLoading: streamRulesIsLoading } = useQuery(
+    ["streamRulesData", streamId],
+    async () => {
+      const requestOptions = {
+        method: "POST",
+        body: JSON.stringify({
+          stream_id: streamId
+        })
+      };
+      try {
+        const res = await fetch("http://127.0.0.1:5000/user/stream/rules", requestOptions);
+        return await res.json();
+      } catch (err) {
+        console.log("STREAM RULES FETCH ERROR", err);
+        return enqueueSnackbar(err, { variant: "error" });
+      }
+    },
+    { enabled: !!streamId }
+  );
   console.log(stream, streamIsLoading, streamRules, streamRulesIsLoading);
+
+  // const {
+  //   data: streamRules,
+  //   isLoading: streamRulesIsLoading,
+  //   refetch: streamRulesRefetch
+  // } = useQuery(
+  //   ["streamRulesData", stream],
+  //   () => {
+  //     const requestOptions = {
+  //       method: "POST",
+  //       body: JSON.stringify({
+  //         stream_id: stream.stream_id
+  //       })
+  //     };
+  //     return fetch("http://127.0.0.1:5000/user/stream/rules", requestOptions)
+  //       .then((res) => res.json())
+  //       .catch((err) => console.log("STREAM RULES FETCH ERROR", err));
+  //   },
+  //   { enabled: false }
+  // );
+  // useEffect(() => {
+  //   if (stream !== undefined && "stream_id" in stream) streamRulesRefetch();
+  // }, [stream]);
+  // console.log(stream, streamIsLoading, streamRules, streamRulesIsLoading);
 
   const [modsOpen, setModsOpen] = useState(true);
   const handleModsClick = () => {
@@ -405,7 +478,7 @@ const CheckerPage = () => {
               </ListItemButton>
               <Collapse in={modsOpen} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                  <SidebarButton title="Change program" />
+                  {/* <SidebarButton title="Change program" /> */}
                   <SidebarButton title="Add course" onClick={handleOpenAdd} />
                   <Modal
                     open={openAdd}
@@ -443,9 +516,20 @@ const CheckerPage = () => {
                           options={
                             coursesIsLoading
                               ? []
-                              : courses.courses.map((c) => {
-                                  return { label: c[1], id: c[0] };
-                                })
+                              : courses.courses
+                                  .filter((c) => {
+                                    console.log(enrolments.enrolments.concat(addedCourses));
+                                    return enrolments.enrolments
+                                      .concat(addedCourses)
+                                      .every(
+                                        (e) =>
+                                          c[0] !== e[0] ||
+                                          !["PS", "CR", "DN", "HD", "SY", "EC"].includes(e[6])
+                                      );
+                                  })
+                                  .map((c) => {
+                                    return { label: c[1], id: c[0] };
+                                  })
                           }
                           sx={{ width: 300 }}
                           // eslint-disable-next-line react/jsx-props-no-spreading
@@ -547,21 +631,6 @@ const CheckerPage = () => {
                       setAddedCourses([]);
                     }}
                   />
-                  {/* <ListItemButton
-                    sx={{ pl: 4 }}
-                    css={css`
-                      background-color: #f18787;
-                      color: white;
-                      &:hover {
-                        background-color: #f16565;
-                      }
-                      border-style: solid;
-                      border-color: #bfbfbf;
-                      border-width: 1px 0px 0px 0px;
-                      padding: 8px 16px;
-                    `}>
-                    <ListItemText primary="Reset modifiers" />
-                  </ListItemButton> */}
                 </List>
               </Collapse>
               <ListItemButton
@@ -574,9 +643,26 @@ const CheckerPage = () => {
                   padding: 8px 16px;
                 `}>
                 <ListItemText primary="UOC" />
-                {uocOpen ? <ExpandLess /> : <ExpandMore />}
+                <div
+                  css={css`
+                    display: flex;
+                    flex-direction: row;
+                  `}>
+                  <ListItemText
+                    primary={`${
+                      cores.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0) +
+                      disciplineElectives
+                        .map((c) => parseInt(c[4], 10))
+                        .reduce((a, b) => a + b, 0) +
+                      genEds.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0) +
+                      freeElectives.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0)
+                    } / ${totalCoreUoc + totalDiscUoc + totalGenedUoc + totalFreeUoc}`}
+                  />
+                  {uocOpen ? <ExpandLess /> : <ExpandMore />}
+                </div>
               </ListItemButton>
               <Collapse in={uocOpen} timeout="auto" unmountOnExit>
+                {/* {totalCoreUoc + totalDiscUoc + totalGenedUoc + totalFreeUoc} */}
                 <List component="div" disablePadding>
                   <SidebarItem
                     title="Cores"
