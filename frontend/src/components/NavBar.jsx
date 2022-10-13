@@ -9,15 +9,18 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import { Autocomplete, TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import { useSnackbar } from "notistack";
 
 import { useQuery } from "@tanstack/react-query";
 import { UserContext } from "../helpers/UserContext";
+import { StudentContext } from "../helpers/StudentContext";
 
 const NavBar = () => {
   const { userState, userDispatch } = useContext(UserContext);
+  const { studentDispatch } = useContext(StudentContext);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -78,6 +81,27 @@ const NavBar = () => {
   );
   console.log(stream, streamIsLoading);
 
+  const isStaff = userState?.isStaff;
+  const { data: students, isLoading: studentsIsLoading } = useQuery(
+    ["studentsData", isStaff],
+    async () => {
+      const requestOptions = {
+        method: "GET"
+      };
+      try {
+        const res = await fetch("http://127.0.0.1:5000/students", requestOptions);
+        return await res.json();
+      } catch (err) {
+        console.log("STUDENTS FETCH ERROR: ", err);
+        return enqueueSnackbar(err, { variant: "error" });
+      }
+    },
+    {
+      enabled: !!isStaff
+    }
+  );
+  console.log(students, studentsIsLoading);
+
   useEffect(() => {
     setZId(userState.zId);
     setName(userState.name);
@@ -104,6 +128,10 @@ const NavBar = () => {
         <Toolbar
           css={css`
             background-color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            padding-top: 2px;
+            padding-bottom: 2px;
           `}>
           <Box
             css={css`
@@ -143,13 +171,37 @@ const NavBar = () => {
               )}
             </Typography>
           </Box>
-          <Box
-            css={css`
-              flex-grow: 1;
-              flex-direction: column;
-            `}>
-            Search
-          </Box>
+          {isStaff && (
+            <Box
+              css={css`
+                flex-grow: 1;
+                flex-direction: column;
+                color: #646c7d;
+              `}>
+              <Autocomplete
+                disablePortal
+                options={
+                  studentsIsLoading
+                    ? []
+                    : students.students.map((s) => {
+                        return { label: `${s[0]} ${s[1]}`, id: s[0] };
+                      })
+                }
+                sx={{ width: 300 }}
+                onChange={(e, value) => {
+                  console.log(e, value);
+                  if (value) {
+                    studentDispatch({
+                      type: "setStudent",
+                      zId: value.id
+                    });
+                  }
+                }}
+                // eslint-disable-next-line react/jsx-props-no-spreading
+                renderInput={(params) => <TextField {...params} label="Student" />}
+              />
+            </Box>
+          )}
           <Box
             css={css`
               flex-direction: column;

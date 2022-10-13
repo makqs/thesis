@@ -167,7 +167,7 @@ def get_courses():
 
     if course_data is None:
         return json.dumps({
-            "error": f"no courses found"
+            "error": f"Could not retrieve courses"
         }), 400
 
     return json.dumps({
@@ -187,11 +187,29 @@ def get_course():
 
     if course_data is None:
         return json.dumps({
-            "error": f"course not found"
+            "error": f"Could not retrieve course with code '{code}'"
         }), 400
 
     return json.dumps({
         "course_info": (str(course_data[0]), course_data[1], course_data[2], str(course_data[3]), str(course_data[4]), str(course_data[5]))
+    }), 200
+
+# returns [( zid, name )]
+@app.route("/students", methods=['GET'])
+def get_students():
+    with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
+        with conn.cursor() as curs:
+            curs.execute(f"""SELECT zid, name FROM users WHERE is_staff = 'f' ORDER BY zid ASC, name ASC""")
+            students = curs.fetchall()
+            students = [(str(row[0]), str(row[1])) for row in students]
+
+    if students is None:
+        return json.dumps({
+            "error": "Could not retrieve students"
+        }), 400
+
+    return json.dumps({
+        "students": students
     }), 200
 
 if __name__ == "__main__":

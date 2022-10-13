@@ -28,12 +28,14 @@ import NavBar from "../components/NavBar";
 import RequirementsBox from "../components/RequirementsBox";
 import CourseCard from "../components/CourseCard";
 import { UserContext } from "../helpers/UserContext";
+// import { StudentContext } from "../helpers/StudentContext";
 import SidebarItem from "../components/SidebarItem";
 import SidebarButton from "../components/SidebarButton";
 
 const CheckerPage = () => {
   const navigate = useNavigate();
   const { userState } = useContext(UserContext);
+  // const { studentState } = useContext(StudentContext);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -177,30 +179,6 @@ const CheckerPage = () => {
     { enabled: !!streamId }
   );
   console.log(stream, streamIsLoading, streamRules, streamRulesIsLoading);
-
-  // const {
-  //   data: streamRules,
-  //   isLoading: streamRulesIsLoading,
-  //   refetch: streamRulesRefetch
-  // } = useQuery(
-  //   ["streamRulesData", stream],
-  //   () => {
-  //     const requestOptions = {
-  //       method: "POST",
-  //       body: JSON.stringify({
-  //         stream_id: stream.stream_id
-  //       })
-  //     };
-  //     return fetch("http://127.0.0.1:5000/user/stream/rules", requestOptions)
-  //       .then((res) => res.json())
-  //       .catch((err) => console.log("STREAM RULES FETCH ERROR", err));
-  //   },
-  //   { enabled: false }
-  // );
-  // useEffect(() => {
-  //   if (stream !== undefined && "stream_id" in stream) streamRulesRefetch();
-  // }, [stream]);
-  // console.log(stream, streamIsLoading, streamRules, streamRulesIsLoading);
 
   const [modsOpen, setModsOpen] = useState(true);
   const handleModsClick = () => {
