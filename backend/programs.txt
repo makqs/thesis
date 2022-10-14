@@ -1,0 +1,225 @@
+3053_Biotechnology (Honours)_2021_192_Faculty of Science_School of Biotechnology and Biomolecular Sciences
+3061_Food Science (Honours)_2021_192_Faculty of Engineering_School of Chemical Engineering
+3131_Materials Science and Engineering (Honours)_2021_192_Faculty of Science_School of Materials Science & Engineering
+3132_Materials Science and Engineering (Honours) / Engineering Science_2021_240_Faculty of Science_School of Materials Science & Engineering
+3133_Materials Science and Engineering (Honours) / Biomedical Engineering_2021_240_Faculty of Science_School of Materials Science & Engineering
+3134_Materials Science and Engineering (Honours) / Commerce_2021_264_Faculty of Science_School of Materials Science & Engineering
+3154_Actuarial Studies / Science_2021_192_UNSW Business School_School of Risk and Actuarial Studies
+3155_Actuarial Studies / Commerce_2021_192_UNSW Business School_UNSW Business School
+3181_Vision Science_2021_144_Faculty of Medicine and Health_School of Optometry and Vision Science
+3182_Vision Science / Clinical Optometry_2021_240_Faculty of Medicine and Health_School of Optometry and Vision Science
+3256_Interior Architecture (Honours)_2021_192_Faculty of Arts, Design and Architecture_School of Built Environment
+3261_Architectural Studies_2021_144_Faculty of Arts, Design and Architecture_School of Built Environment
+3264_Architecture (UNSW-Tongji)_2021_192_Faculty of Arts, Design and Architecture_School of Built Environment
+3268_Computational Design_2021_144_Faculty of Arts, Design and Architecture_School of Built Environment
+3321_Social Science_2021_144_Faculty of Arts, Design and Architecture_School of Social Sciences
+3322_Social Work (Honours) / Social Science_2021_264_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+3323_Advanced Science (Honours) / Social Science_2021_264_Faculty of Science_Faculty of Science
+3323_Advanced Science (Honours) / Social Science_2021_264_Faculty of Science_Faculty of Science
+3324_Science / Social Science_2021_216_Faculty of Science_Faculty of Science
+3332_Construction Management and Property_2021_144_Faculty of Arts, Design and Architecture_School of Built Environment
+3362_City Planning (Honours)_2021_192_Faculty of Arts, Design and Architecture_School of Built Environment
+3381_Landscape Architecture (Hons)_2021_192_Faculty of Arts, Design and Architecture_School of Built Environment
+3387_Industrial Design_2021_144_Faculty of Arts, Design and Architecture_School of Built Environment
+3409_Arts_2021_144_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+3417_Language Studies_2021_48_Faculty of Arts, Design and Architecture_School of Humanities and Languages
+3420_Social Research and Policy_2021_144_Faculty of Arts, Design and Architecture_School of Social Sciences
+3422_Criminology & Criminal Justice_2021_144_Faculty of Law and Justice_School of Law, Society and Criminology
+3429_Media (Comm & Journalism)_2021_144_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3434_Media (PR and Advertising)_2021_144_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3435_Psychological Science_2021_144_Faculty of Science_School of Psychology
+3436_Music_2021_192_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3438_Media (Screen and Sound Production)_2021_144_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3440_Music (Honours)_2021_192_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3444_Arts and Business_2021_144_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+3446_Music / Education (Secondary)_2021_240_Faculty of Arts, Design and Architecture_School of Education
+3447_International Studies_2021_192_Faculty of Arts, Design and Architecture_School of Humanities and Languages
+3452_Music / Arts_2021_240_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3453_Media (Public Relations and Advertising)_2021_144_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3454_Media (Communication and Journalism)_2021_144_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3455_Media (Communication and Journalism) / Arts_2021_192_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+3457_Music / Science_2021_240_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3458_Music / Advanced Science (Honours)_2021_288_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3460_Music / Commerce_2021_240_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3462_Commerce / Education (Secondary)_2021_192_Faculty of Arts, Design and Architecture_School of Education
+3463_Music / Media (PR and Advertising)_2021_240_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3464_Music / Media (Screen and Sound Production)_2021_240_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3465_Music / Media (Comm & Journalism)_2021_240_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3466_Music (Honours) / Media (Comm & Journalism)_2021_240_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3467_Music (Honours) / Media (PR and Advertising)_2021_240_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3468_Music (Honours) / Media (Screen and Sound Production)_2021_240_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3470_Music (Honours) / Education (Secondary)_2021_240_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3471_Music (Honours) / Science_2021_240_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3472_Music (Honours) / Advanced Science (Honours)_2021_288_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3473_Music (Honours) / Commerce_2021_240_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3474_Music (Honours) / Arts_2021_240_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3475_International Studies / Media (Comm & Journalism)_2021_240_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+3476_International Studies / Media (PR and Advertising)_2021_240_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+3477_International Studies / Media (Screen and Sound Production)_2021_240_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+3478_Politics, Philosophy and Economics_2021_144_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+3479_Media (Screen and Sound Production) / Arts_2021_192_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+3487_Media (Public Relations and Advertising) / Arts_2021_192_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+3502_Commerce_2021_144_UNSW Business School_UNSW Business School
+3521_Commerce / Economics_2021_192_UNSW Business School_UNSW Business School
+3523_Advanced Mathematics (Honours) / Commerce_2021_240_UNSW Business School_UNSW Business School
+3529_Commerce / Science_2021_192_UNSW Business School_UNSW Business School
+3543_Economics_2021_144_UNSW Business School_UNSW Business School
+3554_Commerce (Co-op)_2021_192_UNSW Business School_UNSW Business School
+3558_Commerce (International)_2021_192_UNSW Business School_UNSW Business School
+3563_Economics / Science_2021_192_UNSW Business School_School of Economics
+3564_Economics / Advanced Mathematics (Honours)_2021_240_UNSW Business School_UNSW Business School
+3565_Commerce (Co-op) (Honours)_2021_192_UNSW Business School_UNSW Business School
+3566_Economics / Advanced Science (Honours)_2021_240_UNSW Business School_UNSW Business School
+3572_Commerce / Fine Arts_2021_192_UNSW Business School_UNSW Business School
+3573_Commerce / Arts_2021_192_UNSW Business School_UNSW Business School
+3574_Economics / Arts_2021_192_UNSW Business School_UNSW Business School
+3575_Commerce / Design_2021_216_UNSW Business School_UNSW Business School
+3577_International Studies / Media (Public Relations and Advertising)_2021_240_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+3578_Music / Media (Public Relations and Advertising)_2021_240_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3579_Music (Honours) / Media (Public Relations and Advertising)_2021_240_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3582_International Studies / Media (Communication and Journalism)_2021_240_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+3583_Music / Media (Communication and Journalism)_2021_240_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3584_Commerce / Information Systems_2021_192_UNSW Business School_UNSW Business School
+3586_Actuarial Studies_2021_144_UNSW Business School_School of Risk and Actuarial Studies
+3587_Actuarial Studies (Co op)_2021_192_UNSW Business School_School of Risk and Actuarial Studies
+3588_Actuarial Studies / Economics_2021_192_UNSW Business School_School of Risk and Actuarial Studies
+3589_Actuarial Studies / Advanced Mathematics (Honours)_2021_240_UNSW Business School_School of Risk and Actuarial Studies
+3593_Commerce / Advanced Science (Honours)_2021_240_UNSW Business School_UNSW Business School
+3593_Commerce / Advanced Science (Honours)_2021_240_UNSW Business School_UNSW Business School
+3594_Music (Honours) / Media (Communication and Journalism)_2021_240_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3596_Commerce / Media (Public Relations and Advertising)_2021_192_UNSW Business School_UNSW Business School
+3632_Psychology (Honours)_2021_192_Faculty of Science_School of Psychology
+3635_Engineering (Civil Eng w Arch) (Honours)_2021_192_Faculty of Engineering_School of Civil and Environmental Engineering
+3671_Actuarial Studies / Information Systems_2021_192_UNSW Business School_UNSW Business School
+3673_Economics / Computer Science_2021_192_UNSW Business School_UNSW Business School
+3674_Actuarial Studies / Computer Science_2021_192_UNSW Business School_UNSW Business School
+3706_Engineering Science_2021_144_Faculty of Engineering_Faculty of Engineering
+3707_Engineering (Honours)_2021_192_Faculty of Engineering_Faculty of Engineering
+3736_Engineering (Honours) / Engineering_2021_240_Faculty of Engineering_School of Electrical Engineering & Telecommunications
+3761_Advanced Mathematics (Honours) / Engineering (Honours)_2021_288_Faculty of Science_Faculty of Science
+3762_Advanced Science (Honours) / Engineering (Honours)_2021_288_Faculty of Science_Faculty of Science
+3764_Engineering (Honours) / Commerce_2021_264_Faculty of Engineering_Faculty of Engineering
+3764_Engineering (Honours) / Commerce_2021_264_Faculty of Engineering_Faculty of Engineering
+3765_Engineering (Honours) / Law_2021_312_Faculty of Law and Justice_Faculty of Law and Justice
+3766_Music / Engineering (Honours)_2021_312_Faculty of Arts and Social Sciences_School of the Arts and Media
+3766_Music / Engineering (Honours)_2021_312_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3767_Engineering (Honours) / Science_2021_240_Faculty of Engineering_Faculty of Engineering
+3768_Engineering (Honours) / Biomedical Engineering_2021_240_Faculty of Engineering_Faculty of Engineering
+3769_Music (Honours) / Engineering (Honours)_2021_312_Faculty of Arts, Design and Architecture_School of the Arts and Media
+3773_Engineering (Honours) / Engineering Science_2021_240_Faculty of Engineering_Faculty of Engineering
+3775_Surveying_2021_192_Faculty of Engineering_School of Civil and Environmental Engineering
+3776_Engineering (Honours) / Surveying_2021_240_Faculty of Engineering_Faculty of Engineering
+3778_Computer Science_2021_144_Faculty of Engineering_School of Computer Science and Engineering
+3781_Advanced Mathematics (Honours) / Computer Science_2021_240_Faculty of Science_Faculty of Science
+3782_Advanced Science (Honours) / Computer Science_2021_240_Faculty of Science_Faculty of Science
+3783_Computer Science / Arts_2021_192_Faculty of Engineering_Faculty of Engineering
+3784_Commerce / Computer Science_2021_192_UNSW Business School_UNSW Business School
+3785_Engineering (Honours) / Computer Science_2021_240_Faculty of Engineering_Faculty of Engineering
+3786_Computer Science / Law_2021_240_Faculty of Law and Justice_Faculty of Law and Justice
+3789_Science / Computer Science_2021_192_Faculty of Engineering_Faculty of Engineering
+3791_Computer Science / Media Arts_2021_192_Faculty of Engineering_Faculty of Engineering
+3805_Medicine_2021_288_Faculty of Medicine and Health_Faculty of Medicine and Health
+3831_Science (Medicine) Honours_2021_48_Faculty of Medicine and Health_Faculty of Medicine and Health
+3835_Commerce / Aviation (Management)_2021_192_UNSW Business School_UNSW Business School
+3856_Medicine / Arts_2021_372_Faculty of Medicine and Health_Faculty of Medicine and Health
+3871_Exercise Physiology_2021_192_Faculty of Medicine and Health_School of Health Sciences
+3880_International Public Health_2021_144_Faculty of Medicine and Health_School of Population Health
+3925_Science and Business_2021_144_Faculty of Science_Faculty of Science
+3947_Science / Arts_2021_192_Faculty of Science_Faculty of Science
+3948_Advanced Science (Honours) / Arts_2021_240_Faculty of Science_Faculty of Science
+3949_Advanced Mathematics (Honours) / Arts_2021_240_Faculty of Science_Faculty of Science
+3955_Environmental Management / Arts_2021_216_Faculty of Science_Faculty of Science
+3956_Advanced Mathematics (Honours)_2021_192_Faculty of Science_Faculty of Science
+3957_Advanced Science (Honours) / Fine Arts_2021_240_Faculty of Science_Faculty of Science
+3957_Advanced Science (Honours) / Fine Arts_2021_240_Faculty of Science_Faculty of Science
+3958_Science / Fine Arts_2021_192_Faculty of Science_Faculty of Science
+3959_Data Science and Decisions_2021_144_Faculty of Science_Faculty of Science
+3961_Engineering (Honours) / Arts_2021_264_Faculty of Engineering_Faculty of Engineering
+3962_Advanced Science (Honours)_2021_192_Faculty of Science_Faculty of Science
+3964_Information Systems (Co-op) (Honours)_2021_192_UNSW Business School_School of Information Systems and Technology Management
+3965_Environmental Management_2021_144_Faculty of Science_School of Biological, Earth and Environmental Sciences
+3966_Life Sciences_2021_144_Faculty of Science_Faculty of Science
+3970_Science_2021_144_Faculty of Science_Faculty of Science
+3979_Information Systems_2021_144_UNSW Business School_School of Information Systems and Technology Management
+3980_Aviation (Flying)_2021_144_Faculty of Science_School of Aviation
+3981_Aviation (Management)_2021_144_Faculty of Science_School of Aviation
+3987_Science (International)_2021_192_Faculty of Science_Faculty of Science
+3991_Medical Science_2021_144_Faculty of Science_Faculty of Science
+3997_Advanced Science (Honours) / Law_2021_288_Faculty of Law and Justice_Faculty of Law and Justice
+3998_Advanced Mathematics (Honours) / Law_2021_288_Faculty of Law and Justice_Faculty of Law and Justice
+3999_Medicinal Chemistry (Honours)_2021_192_Faculty of Science_School of Chemistry
+4033_Social Work (Honours)_2021_192_Faculty of Arts, Design and Architecture_School of Social Sciences
+4034_Social Work (Honours) / Criminology & Criminal Justice_2021_240_Faculty of Arts, Design and Architecture_School of Social Sciences
+4045_Social Work (Honours) / Arts_2021_264_Faculty of Arts, Design and Architecture_School of Social Sciences
+4053_Arts / Education (Secondary)_2021_192_Faculty of Arts, Design and Architecture_School of Education
+4056_Education (Secondary)_2021_144_Faculty of Arts, Design and Architecture_School of Education
+4058_Economics / Education (Secondary)_2021_192_Faculty of Arts, Design and Architecture_School of Education
+4063_Fine Arts / Education (Secondary)_2021_192_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+4064_Media Arts / Education (Secondary)_2021_192_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+4066_Design / Education (Secondary)_2021_216_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+4076_Science / Education (Secondary)_2021_192_Faculty of Arts, Design and Architecture_School of Education
+4500_Science (Honours)_2021_48_Faculty of Science_Faculty of Science
+4501_Commerce (Honours)_2021_48_UNSW Business School_UNSW Business School
+4502_Economics (Honours)_2021_48_UNSW Business School_UNSW Business School
+4504_Arts & Social Sciences (Hons)_2021_48_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+4505_Criminology (Honours)_2021_48_Faculty of Law and Justice_School of Law, Society and Criminology
+4508_Music (Honours)_2021_48_Faculty of Arts, Design and Architecture_School of the Arts and Media
+4509_Education (Secondary) (Hons)_2021_48_Faculty of Arts, Design and Architecture_School of Education
+4510_Media (Honours)_2021_48_Faculty of Arts, Design and Architecture_School of the Arts and Media
+4515_Computer Science & Engineering (Honours)_2021_48_Faculty of Engineering_School of Computer Science and Engineering
+4516_Art Theory (Honours)_2021_48_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+4518_Psychological Science (Honours)_2021_48_Faculty of Science_School of Psychology
+4519_Arts (Honours)_2021_48_DVC (Academic) Board of Studies_Nura Gili Indigenous Programs
+4520_Actuarial Studies (Honours)_2021_48_UNSW Business School_UNSW Business School
+4521_Architectural Studies (Honours)_2021_48_Faculty of Arts, Design and Architecture_School of Built Environment
+4522_Construction Management and Property (Honours)_2021_48_Faculty of Arts, Design and Architecture_School of Built Environment
+4523_Computational Design (Honours)_2021_48_Faculty of Arts, Design and Architecture_School of Built Environment
+4525_Industrial Design (Honours)_2021_48_Faculty of Arts, Design and Architecture_School of Built Environment
+4526_Fine Arts (Honours)_2021_48_Faculty of Arts, Design and Architecture_School of Art & Design
+4527_Design (Honours)_2021_48_Faculty of Arts, Design and Architecture_School of Art & Design
+4528_Media Arts (Honours)_2021_48_Faculty of Arts, Design and Architecture_School of Art & Design
+4529_Social Science (Honours)_2021_48_Faculty of Arts, Design and Architecture_School of Social Sciences
+4701_Law_2021_144_Faculty of Law and Justice_Faculty of Law and Justice
+4702_Law (Honours)_2021_144_Faculty of Law and Justice_Faculty of Law and Justice
+4703_Art Theory / Law_2021_240_Faculty of Law and Justice_Faculty of Law and Justice
+4706_City Planning (Honours) / Law_2021_312_Faculty of Law and Justice_Faculty of Law and Justice
+4721_Psychology (Honours) / Law_2021_288_Faculty of Law and Justice_Faculty of Law and Justice
+4722_Psychological Science / Law_2021_240_Faculty of Law and Justice_Faculty of Law and Justice
+4733_Commerce / Law_2021_240_Faculty of Law and Justice_Faculty of Law and Justice
+4737_Actuarial Studies / Law_2021_240_Faculty of Law and Justice_Faculty of Law and Justice
+4744_Economics / Law_2021_240_Faculty of Law and Justice_Faculty of Law and Justice
+4751_Media (PR and Advertising) / Law_2021_240_Faculty of Law and Justice_Faculty of Law and Justice
+4752_Media (Screen and Sound Production) / Law_2021_240_Faculty of Law and Justice_Faculty of Law and Justice
+4753_Media (Comm & Journalism) / Law_2021_240_Faculty of Law and Justice_Faculty of Law and Justice
+4755_Medicinal Chemistry (Honours) / Law_2021_312_Faculty of Law and Justice_Faculty of Law and Justice
+4759_Fine Arts / Law_2021_240_Faculty of Law and Justice_Faculty of Law and Justice
+4763_Criminology & Criminal Justice / Law_2021_240_Faculty of Law and Justice_Faculty of Law and Justice
+4770_Science / Law_2021_240_Faculty of Law and Justice_Faculty of Law and Justice
+4772_Science and Business / Law_2021_288_Faculty of Law and Justice_Faculty of Law and Justice
+4774_Music / Law_2021_288_Faculty of Law and Justice_Faculty of Law and Justice
+4779_Music (Honours) / Law_2021_288_Faculty of Law and Justice_Faculty of Law and Justice
+4782_Arts / Law_2021_240_Faculty of Law and Justice_Faculty of Law and Justice
+4783_Arts and Business / Law_2021_288_Faculty of Law and Justice_Faculty of Law and Justice
+4787_Social Work (Honours) / Law_2021_312_Faculty of Law and Justice_Faculty of Law and Justice
+4788_International Studies / Law_2021_288_Faculty of Law and Justice_Faculty of Law and Justice
+4789_Media (Public Relations and Advertising) / Law_2021_240_Faculty of Law and Justice_Faculty of Law and Justice
+4792_Media (Communication and Journalism) / Law_2021_240_Faculty of Law and Justice_Faculty of Law and Justice
+4795_Data Science and Decisions / Law_2021_264_Faculty of Law and Justice_Faculty of Law and Justice
+4797_Politics, Philosophy and Economics / Law_2021_288_Faculty of Law and Justice_Faculty of Law and Justice
+4803_Art Theory_2021_144_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+4813_Media Arts_2021_144_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+4815_Art Theory / Social Research and Policy_2021_216_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+4817_Art Theory / Arts_2021_192_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+4821_Fine Arts_2021_144_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+4822_Design_2021_144_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+4823_Fine Arts / Arts_2021_192_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+4824_Design / Media (Public Relations and Advertising)_2021_216_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
+4871_Law / Social Science_2021_264_Faculty of Law and Justice_Faculty of Law and Justice
+6114_University Preparation Program_2021_18_DVC (Academic) Board of Studies_DVC (Academic) Board of Studies
+6115_UNSW Preparation Program 17-19_2021_36_DVC (Academic) Board of Studies_DVC (Academic) Board of Studies
+7001_Science_2021_48_UNSW Global_UNSW Global Diplomas
+7002_Engineering_2021_48_UNSW Global_UNSW Global Diplomas
+7003_Computer Science_2021_48_UNSW Global_UNSW Global Diplomas
+7004_Business_2021_54_UNSW Global_UNSW Global Diplomas
+7016_Humanities_2021_48_DVC (Academic) Board of Studies_Nura Gili Indigenous Programs
+7019_Indigenous Preparatory Program_2021_12_DVC (Academic) Board of Studies_Nura Gili Indigenous Programs
