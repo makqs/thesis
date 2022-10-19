@@ -193,98 +193,173 @@ const CheckerPage = () => {
     }
   }, []);
 
-  const [cores, setCores] = useState([]);
-  const [totalCoreUoc, setTotalCoreUoc] = useState(0);
-  const [disciplineElectives, setDisciplineElectives] = useState([]);
-  const [totalDiscUoc, setTotalDiscUoc] = useState(0);
-  const [genEds, setGenEds] = useState([]);
-  const [totalGenedUoc, setTotalGenedUoc] = useState(0);
-  const [freeElectives, setFreeElectives] = useState([]);
-  const [totalFreeUoc, setTotalFreeUoc] = useState(0);
+  const [totalRules, setTotalRules] = useState({});
+  console.log(totalRules, setTotalRules);
+
+  const getCompletedUoc = (type) =>
+    Object.keys(totalRules).reduce(
+      (a, b) =>
+        b.split(",")[2] !== type
+          ? a
+          : a + totalRules[b].reduce((x, y) => x + parseInt(y[4], 10), 0),
+      0
+    );
+
+  const getTotalUoc = (type) =>
+    Object.keys(totalRules).reduce(
+      (a, b) => (b.split(",")[2] !== type ? a : a + parseInt(b.split(",")[3], 10)),
+      0
+    );
+
   useEffect(() => {
-    if (
-      !enrolmentsIsLoading &&
-      !programIsLoading &&
-      !programRulesIsLoading &&
-      !streamIsLoading &&
-      !streamRulesIsLoading
-    ) {
-      const allRules = programRules.program_rules.concat(streamRules.stream_rules);
+    if (!enrolmentsIsLoading && !programIsLoading && !programRulesIsLoading && !streamIsLoading) {
+      // MANTRA: tie the rule to the courses that fulfil that rule, i.e. do all the calculations here and just pass off to components
+      // TODO: add looping through specific rules and split courses based on that rather than all rules altogether
 
-      let coreUocCount = 0;
-      let discUocCount = 0;
-      let genedUocCount = 0;
-      let freeUocCount = 0;
+      // { rule definition => list of courses that fulfil that definition }
+      const rules = {};
+      // list of enrolments that havent been sorted into rules yet
+      let enrolmentsLeft = enrolments.enrolments
+        .concat(addedCourses)
+        .filter((course) => ["PS", "CR", "DN", "HD", "SY", "EC"].includes(course[6]));
 
-      allRules.forEach((r) => {
-        if (r[2] === "CC") coreUocCount += parseInt(r[3], 10);
-        else if (r[2] === "DE") discUocCount += parseInt(r[3], 10);
-        else if (r[2] === "GE") genedUocCount += parseInt(r[3], 10);
-        else if (r[2] === "FE") freeUocCount += parseInt(r[3], 10);
-      });
+      console.log(rules, enrolmentsLeft);
 
-      setTotalCoreUoc(coreUocCount);
-      setTotalDiscUoc(discUocCount);
-      setTotalGenedUoc(genedUocCount);
-      setTotalFreeUoc(freeUocCount);
+      programRules.program_rules.forEach((programRule) => {
+        // console.log(programRule);
 
-      const coreList = [];
-      const discElecList = [];
-      const genEdList = [];
-      const freeElecList = [];
+        // stream case
+        if (programRule[2] === "ST") {
+          // student has selected stream
+          if (programRule[4].split(",").includes(stream.code) && !streamRulesIsLoading) {
+            // console.log(`yay student selected stream ${stream.code}`);
+            streamRules.stream_rules.forEach((streamRule) => {
+              // console.log(streamRule);
+              rules[streamRule] = [];
 
-      // console.log(enrolments.enrolments.concat(addedCourses));
-      enrolments.enrolments.concat(addedCourses).forEach((e) => {
-        if (["PS", "CR", "DN", "HD", "SY", "EC"].includes(e[6])) {
-          // core course check
-          if (
-            allRules.some((rule) => {
-              return rule[2] === "CC" && rule[4].split(",").includes(e[1]);
-            })
-          ) {
-            coreList.push(e);
-            return;
-          }
-
-          // discipline elective check
-          if (
-            allRules.some((rule) => {
-              if (rule[2] === "DE") {
-                return rule[4].split(",").some((code) => {
-                  if (code === e[1]) return true;
-                  if (new RegExp("^[A-Z]{4}[0-9]XXX$").test(code))
-                    return new RegExp(`^${code.slice(0, 5)}...$`).test(e[1]);
-                  return false;
+              // rule definition looks like COMP1511,MATH1131;MATH1231 or COMP3XXX,COMP4XXX
+              // should cover CC and DE cases
+              if (
+                new RegExp(
+                  "^[A-Z]{4}[0-9]([0-9]{3}|X{3})([,;][A-Z]{4}[0-9]([0-9]{3}|X{3}))*$"
+                ).test(streamRule[4])
+              ) {
+                enrolmentsLeft = enrolmentsLeft.filter((course) => {
+                  streamRule[4].split(",").forEach((code) => {
+                    if (
+                      // COMP1511 = COMP1511
+                      code === course[1] ||
+                      // COMP6771 like COMP6XXX
+                      (new RegExp("^[A-Z]{4}[0-9]XXX$").test(code) &&
+                        new RegExp(`^${code.slice(0, 5)}...$`).test(course[1]))
+                    ) {
+                      if (
+                        // havent exceeded UOC for this rule yet
+                        rules[streamRule].reduce((a, b) => a + parseInt(b[4], 10), 0) +
+                          parseInt(course[4], 10) <=
+                        parseInt(streamRule[3], 10)
+                      )
+                        rules[streamRule].push(course);
+                    }
+                  });
+                  if (rules[streamRule].includes(course)) return false;
+                  return true;
                 });
               }
+
+              // should cover every gen ed case
+              if (streamRule[2] === "GE") {
+                enrolmentsLeft = enrolmentsLeft.filter((course) => {
+                  if (
+                    course[7] === "True" &&
+                    rules[streamRule].reduce((a, b) => a + parseInt(b[4], 10), 0) +
+                      parseInt(course[4], 10) <=
+                      parseInt(streamRule[3], 10)
+                  ) {
+                    rules[streamRule].push(course);
+                    return false;
+                  }
+                  return true;
+                });
+              }
+
+              // leave stream free electives to the end
+            });
+          } else {
+            // user hasn't selected stream
+            rules[programRule] = [];
+          }
+        }
+
+        // rule definition looks like COMP1511,MATH1131;MATH1231 or COMP3XXX,COMP4XXX
+        // should cover CC and DE cases
+        if (
+          new RegExp("^[A-Z]{4}[0-9]([0-9]{3}|X{3})([,;][A-Z]{4}[0-9]([0-9]{3}|X{3}))*$").test(
+            programRule[4]
+          )
+        ) {
+          rules[programRule] = [];
+          enrolmentsLeft = enrolmentsLeft.filter((course) => {
+            programRule[4].split(",").forEach((code) => {
+              if (
+                // COMP1511 = COMP1511
+                code === course[1] ||
+                // COMP6771 like COMP6XXX
+                (new RegExp("^[A-Z]{4}[0-9]XXX$").test(code) &&
+                  new RegExp(`^${code.slice(0, 5)}...$`).test(course[1]))
+              ) {
+                if (
+                  // havent exceeded UOC for this rule yet
+                  rules[programRule].reduce((a, b) => a + parseInt(b[4], 10), 0) +
+                    parseInt(course[4], 10) <=
+                  parseInt(programRule[3], 10)
+                )
+                  rules[programRule].push(course);
+              }
+            });
+            if (rules[programRule].includes(course)) return false;
+            return true;
+          });
+        }
+
+        // should cover every gen ed case
+        if (programRule[2] === "GE") {
+          rules[programRule] = [];
+          enrolmentsLeft = enrolmentsLeft.filter((course) => {
+            if (
+              course[7] === "True" &&
+              rules[programRule].reduce((a, b) => a + parseInt(b[4], 10), 0) +
+                parseInt(course[4], 10) <=
+                parseInt(programRule[3], 10)
+            ) {
+              rules[programRule].push(course);
               return false;
-            })
-          ) {
-            discElecList.push(e);
-            return;
-          }
+            }
+            return true;
+          });
+        }
 
-          // gen ed check
-          if (
-            e[7] === "True" &&
-            genEdList.reduce((a, b) => a + parseInt(b[4], 10), 0) + parseInt(e[4], 10) <=
-              genedUocCount
-          ) {
-            genEdList.push(e);
-            return;
-          }
-
-          // everything else in free electives
-          freeElecList.push(e);
+        // do all free electives at the end
+        if (programRule[2] === "FE") {
+          rules[programRule] = [];
+          enrolmentsLeft = enrolmentsLeft.filter((course) => {
+            rules[programRule].push(course);
+            return false;
+          });
         }
       });
 
-      setCores(coreList);
-      setDisciplineElectives(discElecList);
-      setGenEds(genEdList);
-      setFreeElectives(freeElecList);
+      // do stream free electives last
+      const feRule = Object.keys(rules).find((rule) => rule.split(",")[2] === "FE");
+      if (feRule) {
+        enrolmentsLeft = enrolmentsLeft.filter((course) => {
+          rules[feRule].push(course);
+          return false;
+        });
+      }
 
-      // console.log(cores, disciplineElectives, genEds, freeElectives);
+      console.log(rules, enrolmentsLeft);
+      setTotalRules(rules);
     }
   }, [enrolments, programRules, streamRules, addedCourses]);
 
@@ -317,119 +392,87 @@ const CheckerPage = () => {
           {programRulesIsLoading || streamIsLoading ? (
             <></>
           ) : (
-            programRules.program_rules.map((prule) => {
-              if (prule[2] === "ST") {
-                if (prule[4].split(",").includes(stream.code)) {
-                  if (streamRulesIsLoading) return <></>;
-                  // const excessCourses = [];
-                  return streamRules.stream_rules.map((rule) => {
-                    let uocCompleted = 0;
-                    let children = [];
+            Object.keys(totalRules).map((rawRule) => {
+              const rule = rawRule.split(",");
 
-                    if (rule[2] === "CC") {
-                      children = rule[4].split(",").map((code) => {
-                        const course = cores.find((e) => e[1] === code);
-                        // console.log(code, excessCourses, excessCourses.includes(course));
-                        // if (course === undefined || course in excessCourses)
-                        if (course === undefined)
-                          return <CourseCard key={code} code={code} completed={false} />;
-                        const completed =
-                          course[1] === code &&
-                          ["PS", "CR", "DN", "HD", "SY", "EC"].includes(course[6]);
-                        // if (uocCompleted + parseInt(course[4], 10) > parseInt(rule[3], 10)) {
-                        //   excessCourses.push(course);
-                        //   return <></>;
-                        // }
-                        if (completed) uocCompleted += parseInt(course[4], 10);
-                        return <CourseCard key={code} code={code} completed={completed} />;
-                      });
-                    } else if (rule[2] === "DE") {
-                      const ranges = [];
-                      rule[4].split(",").forEach((code) => {
-                        if (new RegExp("^[A-Z]{4}[0-9]{4}$").test(code)) {
-                          const course = disciplineElectives.find((e) => e[1] === code);
-                          if (course === undefined) {
-                            children.push(<CourseCard key={code} code={code} completed={false} />);
-                            return;
-                          }
-                          const completed =
-                            course[1] === code &&
-                            ["PS", "CR", "DN", "HD", "SY", "EC"].includes(course[6]);
-                          if (completed) {
-                            uocCompleted += parseInt(course[4], 10);
-                          }
-                          children.push(
-                            <CourseCard key={code} code={code} completed={completed} />
-                          );
-                        } else if (new RegExp("^[A-Z]{4}[0-9]XXX$").test(code)) {
-                          ranges.push(<CourseCard key={code} code={code} completed={false} />);
-                          disciplineElectives.forEach((c) => {
-                            if (new RegExp(`^${code.slice(0, 5)}...$`).test(c[1])) {
-                              const completed = ["PS", "CR", "DN", "HD", "SY", "EC"].includes(c[6]);
-                              if (completed) {
-                                uocCompleted += parseInt(c[4], 10);
-                              }
-                              children.push(
-                                <CourseCard key={c[1]} code={c[1]} completed={completed} />
-                              );
-                            }
-                          });
-                        }
-                      });
-                      children.push(...ranges);
-                    } else if (rule[2] === "GE") {
-                      children = genEds.map((c) => {
-                        uocCompleted += parseInt(c[4], 10);
-                        return <CourseCard key={c[1]} code={c[1]} completed />;
-                      });
-                    } else if (rule[2] === "FE") {
-                      // children = [...freeElectives, ...excessCourses].map((c) => {
-                      children = freeElectives.map((c) => {
-                        uocCompleted += parseInt(c[4], 10);
-                        return <CourseCard key={c[1]} code={c[1]} completed />;
-                      });
-                    }
-                    return (
-                      <RequirementsBox
-                        title={`Stream - ${rule[1]}`}
-                        uocCompleted={uocCompleted}
-                        minUoc={rule[3]}
-                        key={rule[0]}>
-                        {children}
-                      </RequirementsBox>
-                    );
-                  });
-                }
-                const children = prule[4]
-                  .split(",")
-                  .map((s) => <CourseCard key={s} code={s} completed={false} />);
+              // stream will only be in the rules if a stream wasn't selected
+              if (rule[2] === "ST") {
+                const children = rule
+                  .splice(4)
+                  .map((s) => <CourseCard key={`${rawRule}-${s}`} code={s} completed={false} />);
+                console.log(children);
                 return (
                   <RequirementsBox
-                    key={prule[0]}
-                    title={`Stream - ${prule[1]}`}
+                    key={rawRule}
+                    title={`Program - ${rule[1]}`}
                     uocCompleted={0}
-                    minUoc={prule[3]}>
+                    minUoc={rule[3]}>
                     {children}
                   </RequirementsBox>
                 );
               }
-              let children = [];
-              let uocCompleted = 0;
-              if (prule[2] === "GE") {
-                children = genEds.map((c) => {
-                  uocCompleted += parseInt(c[4], 10);
-                  return <CourseCard key={c[1]} code={c[1]} completed />;
+
+              // core courses and discipline electives
+              if (rule[2] === "CC" || rule[2] === "DE") {
+                const ranges = [];
+                const children = [];
+                rule.splice(4).forEach((code) => {
+                  if (new RegExp("^[A-Z]{4}[0-9]XXX$").test(code)) {
+                    ranges.push(
+                      <CourseCard key={`${rawRule}-${code}`} code={code} completed={false} />
+                    );
+                    return;
+                  }
+
+                  // [A-Z]{4}[0-9]{4} (e.g. COMP1511) case
+                  if (totalRules[rawRule].some((r) => r[1] === code)) {
+                    children.push(<CourseCard key={`${rawRule}-${code}`} code={code} completed />);
+                    return;
+                  }
+                  children.push(
+                    <CourseCard key={`${rawRule}-${code}`} code={code} completed={false} />
+                  );
                 });
+
+                if (rule[2] === "DE")
+                  children.push(
+                    ...totalRules[rawRule].map((code) => (
+                      <CourseCard key={`${rawRule}-${code}`} code={code[1]} completed />
+                    ))
+                  );
+
+                children.push(...ranges);
+
+                return (
+                  <RequirementsBox
+                    title={`Stream - ${rule[1]}`}
+                    uocCompleted={totalRules[rawRule].reduce((a, b) => a + parseInt(b[4], 10), 0)}
+                    minUoc={rule[3]}
+                    key={rawRule}>
+                    {children}
+                  </RequirementsBox>
+                );
               }
-              return (
-                <RequirementsBox
-                  key={prule[0]}
-                  title={`Program - ${prule[1]}`}
-                  uocCompleted={uocCompleted}
-                  minUoc={prule[3]}>
-                  {children}
-                </RequirementsBox>
-              );
+
+              // general educations and free electives
+              if (rule[2] === "GE" || rule[2] === "FE") {
+                const children = totalRules[rawRule].map((code) => (
+                  <CourseCard key={`${rawRule}-${code}`} code={code[1]} completed />
+                ));
+                return (
+                  <RequirementsBox
+                    title={`Stream - ${rule[1]}`}
+                    uocCompleted={totalRules[rawRule].reduce((a, b) => a + parseInt(b[4], 10), 0)}
+                    minUoc={rule[3]}
+                    key={rawRule}>
+                    {children}
+                  </RequirementsBox>
+                );
+              }
+
+              console.log(rule, totalRules[rule]);
+
+              return <></>;
             })
           )}
         </Box>
@@ -639,63 +682,43 @@ const CheckerPage = () => {
                   `}>
                   <ListItemText
                     primary={`${
-                      Math.min(
-                        cores.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0),
-                        totalCoreUoc
-                      ) +
-                      Math.min(
-                        disciplineElectives
-                          .map((c) => parseInt(c[4], 10))
-                          .reduce((a, b) => a + b, 0),
-                        totalDiscUoc
-                      ) +
-                      Math.min(
-                        genEds.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0),
-                        totalGenedUoc
-                      ) +
-                      Math.min(
-                        freeElectives.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0),
-                        totalFreeUoc
-                      )
-                    } / ${totalCoreUoc + totalDiscUoc + totalGenedUoc + totalFreeUoc}`}
+                      getCompletedUoc("CC") +
+                      getCompletedUoc("DE") +
+                      getCompletedUoc("GE") +
+                      getCompletedUoc("FE") +
+                      getCompletedUoc("ST")
+                    } / ${
+                      getTotalUoc("CC") +
+                      getTotalUoc("DE") +
+                      getTotalUoc("GE") +
+                      getTotalUoc("FE") +
+                      getTotalUoc("ST")
+                    }`}
                   />
                   {uocOpen ? <ExpandLess /> : <ExpandMore />}
                 </div>
               </ListItemButton>
               <Collapse in={uocOpen} timeout="auto" unmountOnExit>
-                {/* {totalCoreUoc + totalDiscUoc + totalGenedUoc + totalFreeUoc} */}
                 <List component="div" disablePadding>
                   <SidebarItem
                     title="Cores"
-                    completedUoc={Math.min(
-                      cores.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0),
-                      totalCoreUoc
-                    )}
-                    totalUoc={totalCoreUoc}
+                    completedUoc={getCompletedUoc("CC")}
+                    totalUoc={getTotalUoc("CC")}
                   />
                   <SidebarItem
                     title="Discipline Electives"
-                    completedUoc={Math.min(
-                      disciplineElectives.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0),
-                      totalDiscUoc
-                    )}
-                    totalUoc={totalDiscUoc}
+                    completedUoc={getCompletedUoc("DE")}
+                    totalUoc={getTotalUoc("DE")}
                   />
                   <SidebarItem
                     title="General Education"
-                    completedUoc={Math.min(
-                      genEds.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0),
-                      totalGenedUoc
-                    )}
-                    totalUoc={totalGenedUoc}
+                    completedUoc={getCompletedUoc("GE")}
+                    totalUoc={getTotalUoc("GE")}
                   />
                   <SidebarItem
                     title="Free Electives"
-                    completedUoc={Math.min(
-                      freeElectives.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0),
-                      totalFreeUoc
-                    )}
-                    totalUoc={totalFreeUoc}
+                    completedUoc={getCompletedUoc("FE")}
+                    totalUoc={getTotalUoc("FE")}
                   />
                 </List>
               </Collapse>

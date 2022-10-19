@@ -105,7 +105,7 @@ def get_program_rules():
 
     rule_data = [(row[0], row[1], row[2], str(row[3]), row[4]) for row in rule_data]
 
-    sort_order = { "ST": 0, "DE": 1, "GE": 2 }
+    sort_order = { "CC": 0, "ST": 1, "DE": 2, "GE": 3, "FE": 4 }
     rule_data.sort(key=lambda val: sort_order[val[2]])
 
     return json.dumps({
