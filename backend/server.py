@@ -37,10 +37,9 @@ def logout():
     pass
 
 # returns { program_id: program_id, year: year, code: code, title: title, total_uoc: total_uoc }
-@app.route("/user/program", methods=['POST'])
+@app.route("/program", methods=['GET'])
 def get_program():
-    body = json.loads(request.get_data())
-    zid = body['zid']
+    zid = request.args.get("zid")
 
     with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
         with conn.cursor() as curs:
@@ -64,10 +63,9 @@ def get_program():
     }), 200
 
 # returns { stream_id: stream_id, year: year, code: code, title: title, total_uoc: total_uoc }
-@app.route("/user/stream", methods=['POST'])
+@app.route("/stream", methods=['GET'])
 def get_stream():
-    body = json.loads(request.get_data())
-    zid = body['zid']
+    zid = request.args.get("zid")
 
     with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
         with conn.cursor() as curs:
@@ -91,10 +89,9 @@ def get_stream():
     }), 200
 
 # returns [ ( program_rule_id, name, type, min_uoc, definition ) ]
-@app.route("/user/program/rules", methods=['POST'])
+@app.route("/program/rules", methods=['GET'])
 def get_program_rules():
-    body = json.loads(request.get_data())
-    program_id = body['program_id']
+    program_id = request.args.get("program_id")
 
     with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
         with conn.cursor() as curs:
@@ -108,15 +105,17 @@ def get_program_rules():
 
     rule_data = [(row[0], row[1], row[2], str(row[3]), row[4]) for row in rule_data]
 
+    sort_order = { "ST": 0, "DE": 1, "GE": 2 }
+    rule_data.sort(key=lambda val: sort_order[val[2]])
+
     return json.dumps({
         "program_rules": rule_data
     }), 200
 
 # returns [ ( stream_rule_id, name, type, min_uoc, definition ) ]
-@app.route("/user/stream/rules", methods=['POST'])
+@app.route("/stream/rules", methods=['GET'])
 def get_stream_rules():
-    body = json.loads(request.get_data())
-    stream_id = body['stream_id']
+    stream_id = request.args.get("stream_id")
 
     with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
         with conn.cursor() as curs:
@@ -130,15 +129,17 @@ def get_stream_rules():
 
     rule_data = [(row[0], row[1], row[2], str(row[3]), row[4]) for row in rule_data]
 
+    sort_order = { "CC": 0, "DE": 1, "GE": 2, "FE": 3 }
+    rule_data.sort(key=lambda val: sort_order[val[2]])
+
     return json.dumps({
         "stream_rules": rule_data
     }), 200
 
 # returns [ ( course_id, code, title, year, uoc, mark, grade, is_ge ) ]
-@app.route("/user/enrolments", methods=['POST'])
+@app.route("/user/enrolments", methods=['GET'])
 def get_enrolments():
-    body = json.loads(request.get_data())
-    zid = body['zid']
+    zid = request.args.get("zid")
 
     with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
         with conn.cursor() as curs:
@@ -181,10 +182,9 @@ def get_courses():
     }), 200
 
 # returns ( course_id, code, title, year, uoc, is_ge )
-@app.route("/course", methods=['POST'])
+@app.route("/course", methods=['GET'])
 def get_course():
-    body = json.loads(request.get_data())
-    code = body['code']
+    code = request.args.get("code")
 
     with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
         with conn.cursor() as curs:

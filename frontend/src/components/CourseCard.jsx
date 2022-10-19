@@ -11,12 +11,11 @@ const CourseCard = ({ code, completed }) => {
     [code],
     () => {
       const requestOptions = {
-        method: "POST",
-        body: JSON.stringify({
-          code
-        })
+        method: "GET"
       };
-      return fetch("http://127.0.0.1:5000/course", requestOptions).then((res) => res.json());
+      return fetch(`http://127.0.0.1:5000/course?code=${code}`, requestOptions).then((res) =>
+        res.json()
+      );
     },
     { enabled: new RegExp("^[A-Z]{4}[0-9]{4}$").test(code) }
   );

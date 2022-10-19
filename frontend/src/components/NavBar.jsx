@@ -40,13 +40,10 @@ const NavBar = () => {
     ["programData", studentId],
     async () => {
       const requestOptions = {
-        method: "POST",
-        body: JSON.stringify({
-          zid: studentId
-        })
+        method: "GET"
       };
       try {
-        const res = await fetch("http://127.0.0.1:5000/user/program", requestOptions);
+        const res = await fetch(`http://127.0.0.1:5000/program?zid=${studentId}`, requestOptions);
         return await res.json();
       } catch (err) {
         console.log("PROGRAM FETCH ERROR: ", err);
@@ -57,19 +54,16 @@ const NavBar = () => {
       enabled: !!studentId
     }
   );
-  console.log(program, programIsLoading);
+  // console.log(program, programIsLoading);
 
   const { data: stream, isLoading: streamIsLoading } = useQuery(
     ["streamData", studentId],
     async () => {
       const requestOptions = {
-        method: "POST",
-        body: JSON.stringify({
-          zid: studentId
-        })
+        method: "GET"
       };
       try {
-        const res = await fetch("http://127.0.0.1:5000/user/stream", requestOptions);
+        const res = await fetch(`http://127.0.0.1:5000/stream?zid=${studentId}`, requestOptions);
         return await res.json();
       } catch (err) {
         console.log("STREAM FETCH ERROR: ", err);
@@ -80,7 +74,7 @@ const NavBar = () => {
       enabled: !!studentId
     }
   );
-  console.log(stream, streamIsLoading);
+  // console.log(stream, streamIsLoading);
 
   const isStaff = userState?.isStaff;
   const { data: students, isLoading: studentsIsLoading } = useQuery(
@@ -101,7 +95,7 @@ const NavBar = () => {
       enabled: !!isStaff
     }
   );
-  console.log(students, studentsIsLoading);
+  // console.log(students, studentsIsLoading);
 
   useEffect(() => {
     setUserZId(userState.zId);
@@ -192,7 +186,7 @@ const NavBar = () => {
                 }
                 sx={{ width: 300 }}
                 onChange={(e, value) => {
-                  console.log(e, value);
+                  // console.log(e, value);
                   if (value) {
                     studentDispatch({
                       type: "setStudent",

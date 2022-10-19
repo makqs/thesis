@@ -63,20 +63,20 @@ const CheckerPage = () => {
       return enqueueSnackbar(err, { variant: "error" });
     }
   });
-  console.log(courses, coursesIsLoading);
+  // console.log(courses, coursesIsLoading);
 
   const studentId = studentState.zId;
   const { data: enrolments, isLoading: enrolmentsIsLoading } = useQuery(
     ["enrolmentsData", studentId],
     async () => {
       const requestOptions = {
-        method: "POST",
-        body: JSON.stringify({
-          zid: studentId
-        })
+        method: "GET"
       };
       try {
-        const res = await fetch("http://127.0.0.1:5000/user/enrolments", requestOptions);
+        const res = await fetch(
+          `http://127.0.0.1:5000/user/enrolments?zid=${studentId}`,
+          requestOptions
+        );
         return await res.json();
       } catch (err) {
         console.log("ENROLMENTS FETCH ERROR: ", err);
@@ -87,19 +87,16 @@ const CheckerPage = () => {
       enabled: !!studentId
     }
   );
-  console.log(enrolments, enrolmentsIsLoading);
+  // console.log(enrolments, enrolmentsIsLoading);
 
   const { data: program, isLoading: programIsLoading } = useQuery(
     ["programData", studentId],
     async () => {
       const requestOptions = {
-        method: "POST",
-        body: JSON.stringify({
-          zid: studentId
-        })
+        method: "GET"
       };
       try {
-        const res = await fetch("http://127.0.0.1:5000/user/program", requestOptions);
+        const res = await fetch(`http://127.0.0.1:5000/program?zid=${studentId}`, requestOptions);
         return await res.json();
       } catch (err) {
         console.log("PROGRAM FETCH ERROR: ", err);
@@ -110,20 +107,20 @@ const CheckerPage = () => {
       enabled: !!studentId
     }
   );
-  console.log(program, programIsLoading);
+  // console.log(program, programIsLoading);
 
   const programId = program?.program_id;
   const { data: programRules, isLoading: programRulesIsLoading } = useQuery(
     ["programRulesData", programId],
     async () => {
       const requestOptions = {
-        method: "POST",
-        body: JSON.stringify({
-          program_id: programId
-        })
+        method: "GET"
       };
       try {
-        const res = await fetch("http://127.0.0.1:5000/user/program/rules", requestOptions);
+        const res = await fetch(
+          `http://127.0.0.1:5000/program/rules?program_id=${programId}`,
+          requestOptions
+        );
         return await res.json();
       } catch (err) {
         console.log("PROGRAM RULES FETCH ERROR:", err);
@@ -134,19 +131,16 @@ const CheckerPage = () => {
       enabled: !!programId
     }
   );
-  console.log(programRules, programRulesIsLoading);
+  // console.log(programRules, programRulesIsLoading);
 
   const { data: stream, isLoading: streamIsLoading } = useQuery(
     ["streamData", studentId],
     async () => {
       const requestOptions = {
-        method: "POST",
-        body: JSON.stringify({
-          zid: studentId
-        })
+        method: "GET"
       };
       try {
-        const res = await fetch("http://127.0.0.1:5000/user/stream", requestOptions);
+        const res = await fetch(`http://127.0.0.1:5000/stream?zid=${studentId}`, requestOptions);
         return await res.json();
       } catch (err) {
         console.log("STREAM FETCH ERROR: ", err);
@@ -157,19 +151,20 @@ const CheckerPage = () => {
       enabled: !!studentId
     }
   );
+  // console.log(stream, streamIsLoading);
 
   const streamId = stream?.stream_id;
   const { data: streamRules, isLoading: streamRulesIsLoading } = useQuery(
     ["streamRulesData", streamId],
     async () => {
       const requestOptions = {
-        method: "POST",
-        body: JSON.stringify({
-          stream_id: streamId
-        })
+        method: "GET"
       };
       try {
-        const res = await fetch("http://127.0.0.1:5000/user/stream/rules", requestOptions);
+        const res = await fetch(
+          `http://127.0.0.1:5000/stream/rules?stream_id=${streamId}`,
+          requestOptions
+        );
         return await res.json();
       } catch (err) {
         console.log("STREAM RULES FETCH ERROR", err);
@@ -178,7 +173,7 @@ const CheckerPage = () => {
     },
     { enabled: !!streamId }
   );
-  console.log(stream, streamIsLoading, streamRules, streamRulesIsLoading);
+  // console.log(streamRules, streamRulesIsLoading);
 
   const [modsOpen, setModsOpen] = useState(true);
   const handleModsClick = () => {
@@ -207,7 +202,13 @@ const CheckerPage = () => {
   const [freeElectives, setFreeElectives] = useState([]);
   const [totalFreeUoc, setTotalFreeUoc] = useState(0);
   useEffect(() => {
-    if (!enrolmentsIsLoading && !programRulesIsLoading && !streamRulesIsLoading) {
+    if (
+      !enrolmentsIsLoading &&
+      !programIsLoading &&
+      !programRulesIsLoading &&
+      !streamIsLoading &&
+      !streamRulesIsLoading
+    ) {
       const allRules = programRules.program_rules.concat(streamRules.stream_rules);
 
       let coreUocCount = 0;
@@ -232,7 +233,7 @@ const CheckerPage = () => {
       const genEdList = [];
       const freeElecList = [];
 
-      console.log(enrolments.enrolments.concat(addedCourses));
+      // console.log(enrolments.enrolments.concat(addedCourses));
       enrolments.enrolments.concat(addedCourses).forEach((e) => {
         if (["PS", "CR", "DN", "HD", "SY", "EC"].includes(e[6])) {
           // core course check
@@ -283,7 +284,7 @@ const CheckerPage = () => {
       setGenEds(genEdList);
       setFreeElectives(freeElecList);
 
-      console.log(cores, disciplineElectives, genEds, freeElectives);
+      // console.log(cores, disciplineElectives, genEds, freeElectives);
     }
   }, [enrolments, programRules, streamRules, addedCourses]);
 
@@ -319,18 +320,37 @@ const CheckerPage = () => {
             programRules.program_rules.map((prule) => {
               if (prule[2] === "ST") {
                 if (prule[4].split(",").includes(stream.code)) {
-                  return streamRulesIsLoading ? (
-                    <></>
-                  ) : (
-                    streamRules.stream_rules.map((rule) => {
-                      let uocCompleted = 0;
-                      let children = [];
+                  if (streamRulesIsLoading) return <></>;
+                  // const excessCourses = [];
+                  return streamRules.stream_rules.map((rule) => {
+                    let uocCompleted = 0;
+                    let children = [];
 
-                      if (rule[2] === "CC") {
-                        children = rule[4].split(",").map((code) => {
-                          const course = cores.find((e) => e[1] === code);
+                    if (rule[2] === "CC") {
+                      children = rule[4].split(",").map((code) => {
+                        const course = cores.find((e) => e[1] === code);
+                        // console.log(code, excessCourses, excessCourses.includes(course));
+                        // if (course === undefined || course in excessCourses)
+                        if (course === undefined)
+                          return <CourseCard key={code} code={code} completed={false} />;
+                        const completed =
+                          course[1] === code &&
+                          ["PS", "CR", "DN", "HD", "SY", "EC"].includes(course[6]);
+                        // if (uocCompleted + parseInt(course[4], 10) > parseInt(rule[3], 10)) {
+                        //   excessCourses.push(course);
+                        //   return <></>;
+                        // }
+                        if (completed) uocCompleted += parseInt(course[4], 10);
+                        return <CourseCard key={code} code={code} completed={completed} />;
+                      });
+                    } else if (rule[2] === "DE") {
+                      const ranges = [];
+                      rule[4].split(",").forEach((code) => {
+                        if (new RegExp("^[A-Z]{4}[0-9]{4}$").test(code)) {
+                          const course = disciplineElectives.find((e) => e[1] === code);
                           if (course === undefined) {
-                            return <CourseCard key={code} code={code} completed={false} />;
+                            children.push(<CourseCard key={code} code={code} completed={false} />);
+                            return;
                           }
                           const completed =
                             course[1] === code &&
@@ -338,68 +358,47 @@ const CheckerPage = () => {
                           if (completed) {
                             uocCompleted += parseInt(course[4], 10);
                           }
-                          return <CourseCard key={code} code={code} completed={completed} />;
-                        });
-                      } else if (rule[2] === "DE") {
-                        const ranges = [];
-                        rule[4].split(",").forEach((code) => {
-                          if (new RegExp("^[A-Z]{4}[0-9]{4}$").test(code)) {
-                            const course = disciplineElectives.find((e) => e[1] === code);
-                            if (course === undefined) {
-                              children.push(
-                                <CourseCard key={code} code={code} completed={false} />
-                              );
-                              return;
-                            }
-                            const completed =
-                              course[1] === code &&
-                              ["PS", "CR", "DN", "HD", "SY", "EC"].includes(course[6]);
-                            if (completed) {
-                              uocCompleted += parseInt(course[4], 10);
-                            }
-                            children.push(
-                              <CourseCard key={code} code={code} completed={completed} />
-                            );
-                          } else if (new RegExp("^[A-Z]{4}[0-9]XXX$").test(code)) {
-                            ranges.push(<CourseCard key={code} code={code} completed={false} />);
-                            disciplineElectives.forEach((c) => {
-                              if (new RegExp(`^${code.slice(0, 5)}...$`).test(c[1])) {
-                                const completed = ["PS", "CR", "DN", "HD", "SY", "EC"].includes(
-                                  c[6]
-                                );
-                                if (completed) {
-                                  uocCompleted += parseInt(c[4], 10);
-                                }
-                                children.push(
-                                  <CourseCard key={c[1]} code={c[1]} completed={completed} />
-                                );
+                          children.push(
+                            <CourseCard key={code} code={code} completed={completed} />
+                          );
+                        } else if (new RegExp("^[A-Z]{4}[0-9]XXX$").test(code)) {
+                          ranges.push(<CourseCard key={code} code={code} completed={false} />);
+                          disciplineElectives.forEach((c) => {
+                            if (new RegExp(`^${code.slice(0, 5)}...$`).test(c[1])) {
+                              const completed = ["PS", "CR", "DN", "HD", "SY", "EC"].includes(c[6]);
+                              if (completed) {
+                                uocCompleted += parseInt(c[4], 10);
                               }
-                            });
-                          }
-                        });
-                        children.push(...ranges);
-                      } else if (rule[2] === "GE") {
-                        children = genEds.map((c) => {
-                          uocCompleted += parseInt(c[4], 10);
-                          return <CourseCard key={c[1]} code={c[1]} completed />;
-                        });
-                      } else if (rule[2] === "FE") {
-                        children = freeElectives.map((c) => {
-                          uocCompleted += parseInt(c[4], 10);
-                          return <CourseCard key={c[1]} code={c[1]} completed />;
-                        });
-                      }
-                      return (
-                        <RequirementsBox
-                          title={`Stream - ${rule[1]}`}
-                          uocCompleted={uocCompleted}
-                          minUoc={rule[3]}
-                          key={rule[0]}>
-                          {children}
-                        </RequirementsBox>
-                      );
-                    })
-                  );
+                              children.push(
+                                <CourseCard key={c[1]} code={c[1]} completed={completed} />
+                              );
+                            }
+                          });
+                        }
+                      });
+                      children.push(...ranges);
+                    } else if (rule[2] === "GE") {
+                      children = genEds.map((c) => {
+                        uocCompleted += parseInt(c[4], 10);
+                        return <CourseCard key={c[1]} code={c[1]} completed />;
+                      });
+                    } else if (rule[2] === "FE") {
+                      // children = [...freeElectives, ...excessCourses].map((c) => {
+                      children = freeElectives.map((c) => {
+                        uocCompleted += parseInt(c[4], 10);
+                        return <CourseCard key={c[1]} code={c[1]} completed />;
+                      });
+                    }
+                    return (
+                      <RequirementsBox
+                        title={`Stream - ${rule[1]}`}
+                        uocCompleted={uocCompleted}
+                        minUoc={rule[3]}
+                        key={rule[0]}>
+                        {children}
+                      </RequirementsBox>
+                    );
+                  });
                 }
                 const children = prule[4]
                   .split(",")
@@ -508,7 +507,7 @@ const CheckerPage = () => {
                               ? []
                               : courses.courses
                                   .filter((c) => {
-                                    console.log(enrolments.enrolments.concat(addedCourses));
+                                    // console.log(enrolments.enrolments.concat(addedCourses));
                                     return enrolments.enrolments
                                       .concat(addedCourses)
                                       .every(
@@ -640,12 +639,24 @@ const CheckerPage = () => {
                   `}>
                   <ListItemText
                     primary={`${
-                      cores.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0) +
-                      disciplineElectives
-                        .map((c) => parseInt(c[4], 10))
-                        .reduce((a, b) => a + b, 0) +
-                      genEds.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0) +
-                      freeElectives.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0)
+                      Math.min(
+                        cores.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0),
+                        totalCoreUoc
+                      ) +
+                      Math.min(
+                        disciplineElectives
+                          .map((c) => parseInt(c[4], 10))
+                          .reduce((a, b) => a + b, 0),
+                        totalDiscUoc
+                      ) +
+                      Math.min(
+                        genEds.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0),
+                        totalGenedUoc
+                      ) +
+                      Math.min(
+                        freeElectives.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0),
+                        totalFreeUoc
+                      )
                     } / ${totalCoreUoc + totalDiscUoc + totalGenedUoc + totalFreeUoc}`}
                   />
                   {uocOpen ? <ExpandLess /> : <ExpandMore />}
@@ -656,26 +667,34 @@ const CheckerPage = () => {
                 <List component="div" disablePadding>
                   <SidebarItem
                     title="Cores"
-                    completedUoc={cores.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0)}
+                    completedUoc={Math.min(
+                      cores.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0),
+                      totalCoreUoc
+                    )}
                     totalUoc={totalCoreUoc}
                   />
                   <SidebarItem
                     title="Discipline Electives"
-                    completedUoc={disciplineElectives
-                      .map((c) => parseInt(c[4], 10))
-                      .reduce((a, b) => a + b, 0)}
+                    completedUoc={Math.min(
+                      disciplineElectives.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0),
+                      totalDiscUoc
+                    )}
                     totalUoc={totalDiscUoc}
                   />
                   <SidebarItem
                     title="General Education"
-                    completedUoc={genEds.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0)}
+                    completedUoc={Math.min(
+                      genEds.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0),
+                      totalGenedUoc
+                    )}
                     totalUoc={totalGenedUoc}
                   />
                   <SidebarItem
                     title="Free Electives"
-                    completedUoc={freeElectives
-                      .map((c) => parseInt(c[4], 10))
-                      .reduce((a, b) => a + b, 0)}
+                    completedUoc={Math.min(
+                      freeElectives.map((c) => parseInt(c[4], 10)).reduce((a, b) => a + b, 0),
+                      totalFreeUoc
+                    )}
                     totalUoc={totalFreeUoc}
                   />
                 </List>
