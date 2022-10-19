@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useMutation } from "@tanstack/react-query";
 import { UserContext } from "../helpers/UserContext";
+import { StudentContext } from "../helpers/StudentContext";
 
 const LoginPage = () => {
   const [zId, setZId] = useState("z5555555");
@@ -20,6 +21,7 @@ const LoginPage = () => {
   const [zPassValid, setZPassValid] = useState(true);
 
   const { userState, userDispatch } = useContext(UserContext);
+  const { studentDispatch } = useContext(StudentContext);
 
   const navigate = useNavigate();
 
@@ -50,6 +52,12 @@ const LoginPage = () => {
       token: data.token
     });
 
+    if (data.is_staff) {
+      studentDispatch({ type: "resetStudent" });
+    } else {
+      studentDispatch({ type: "setStudent", zId: data.zid });
+    }
+
     navigate("/checker");
   };
 
@@ -70,6 +78,7 @@ const LoginPage = () => {
   useEffect(() => {
     if (!userState) {
       userDispatch({ type: "logout" });
+      studentDispatch({ type: "resetStudent" });
     }
   }, []);
 

@@ -12,6 +12,8 @@ export const studentReducer = (state, action) => {
       return {
         zId: action.zId
       };
+    case "resetStudent":
+      return {};
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
   }

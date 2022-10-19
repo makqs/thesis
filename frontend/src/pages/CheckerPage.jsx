@@ -28,14 +28,14 @@ import NavBar from "../components/NavBar";
 import RequirementsBox from "../components/RequirementsBox";
 import CourseCard from "../components/CourseCard";
 import { UserContext } from "../helpers/UserContext";
-// import { StudentContext } from "../helpers/StudentContext";
+import { StudentContext } from "../helpers/StudentContext";
 import SidebarItem from "../components/SidebarItem";
 import SidebarButton from "../components/SidebarButton";
 
 const CheckerPage = () => {
   const navigate = useNavigate();
-  const { userState } = useContext(UserContext);
-  // const { studentState } = useContext(StudentContext);
+  const { userState, userDispatch } = useContext(UserContext);
+  const { studentState, studentDispatch } = useContext(StudentContext);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -65,14 +65,14 @@ const CheckerPage = () => {
   });
   console.log(courses, coursesIsLoading);
 
-  const userId = userState.zId;
+  const studentId = studentState.zId;
   const { data: enrolments, isLoading: enrolmentsIsLoading } = useQuery(
-    ["enrolmentsData", userId],
+    ["enrolmentsData", studentId],
     async () => {
       const requestOptions = {
         method: "POST",
         body: JSON.stringify({
-          zid: userId
+          zid: studentId
         })
       };
       try {
@@ -84,18 +84,18 @@ const CheckerPage = () => {
       }
     },
     {
-      enabled: !!userId
+      enabled: !!studentId
     }
   );
   console.log(enrolments, enrolmentsIsLoading);
 
   const { data: program, isLoading: programIsLoading } = useQuery(
-    ["programData", userId],
+    ["programData", studentId],
     async () => {
       const requestOptions = {
         method: "POST",
         body: JSON.stringify({
-          zid: userId
+          zid: studentId
         })
       };
       try {
@@ -107,7 +107,7 @@ const CheckerPage = () => {
       }
     },
     {
-      enabled: !!userId
+      enabled: !!studentId
     }
   );
   console.log(program, programIsLoading);
@@ -137,12 +137,12 @@ const CheckerPage = () => {
   console.log(programRules, programRulesIsLoading);
 
   const { data: stream, isLoading: streamIsLoading } = useQuery(
-    ["streamData", userId],
+    ["streamData", studentId],
     async () => {
       const requestOptions = {
         method: "POST",
         body: JSON.stringify({
-          zid: userId
+          zid: studentId
         })
       };
       try {
@@ -154,7 +154,7 @@ const CheckerPage = () => {
       }
     },
     {
-      enabled: !!userId
+      enabled: !!studentId
     }
   );
 
@@ -191,7 +191,11 @@ const CheckerPage = () => {
   };
 
   useEffect(() => {
-    if (!userState) navigate("/login");
+    if (!userState) {
+      userDispatch({ type: "logout" });
+      studentDispatch({ type: "resetStudent" });
+      navigate("/login");
+    }
   }, []);
 
   const [cores, setCores] = useState([]);
@@ -231,6 +235,7 @@ const CheckerPage = () => {
       console.log(enrolments.enrolments.concat(addedCourses));
       enrolments.enrolments.concat(addedCourses).forEach((e) => {
         if (["PS", "CR", "DN", "HD", "SY", "EC"].includes(e[6])) {
+          // core course check
           if (
             allRules.some((rule) => {
               return rule[2] === "CC" && rule[4].split(",").includes(e[1]);
@@ -240,6 +245,7 @@ const CheckerPage = () => {
             return;
           }
 
+          // discipline elective check
           if (
             allRules.some((rule) => {
               if (rule[2] === "DE") {
@@ -257,11 +263,17 @@ const CheckerPage = () => {
             return;
           }
 
-          if (e[7] === "True") {
+          // gen ed check
+          if (
+            e[7] === "True" &&
+            genEdList.reduce((a, b) => a + parseInt(b[4], 10), 0) + parseInt(e[4], 10) <=
+              genedUocCount
+          ) {
             genEdList.push(e);
             return;
           }
 
+          // everything else in free electives
           freeElecList.push(e);
         }
       });
@@ -492,7 +504,7 @@ const CheckerPage = () => {
                           }}
                           disablePortal
                           options={
-                            coursesIsLoading
+                            coursesIsLoading || !enrolments || "error" in enrolments
                               ? []
                               : courses.courses
                                   .filter((c) => {

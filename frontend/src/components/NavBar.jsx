@@ -20,28 +20,29 @@ import { StudentContext } from "../helpers/StudentContext";
 
 const NavBar = () => {
   const { userState, userDispatch } = useContext(UserContext);
-  const { studentDispatch } = useContext(StudentContext);
+  const { studentState, studentDispatch } = useContext(StudentContext);
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const [zId, setZId] = useState("");
-  const [name, setName] = useState("");
+  const [userZId, setUserZId] = useState("");
+  const [userName, setUserName] = useState("");
 
   const navigate = useNavigate();
 
   const onLogout = () => {
     userDispatch({ type: "logout" });
+    studentDispatch({ type: "resetStudent" });
     navigate("/login");
   };
 
-  const userId = userState?.zId;
+  const studentId = studentState?.zId;
   const { data: program, isLoading: programIsLoading } = useQuery(
-    ["programData", userId],
+    ["programData", studentId],
     async () => {
       const requestOptions = {
         method: "POST",
         body: JSON.stringify({
-          zid: userId
+          zid: studentId
         })
       };
       try {
@@ -53,18 +54,18 @@ const NavBar = () => {
       }
     },
     {
-      enabled: !!userId
+      enabled: !!studentId
     }
   );
   console.log(program, programIsLoading);
 
   const { data: stream, isLoading: streamIsLoading } = useQuery(
-    ["streamData", userId],
+    ["streamData", studentId],
     async () => {
       const requestOptions = {
         method: "POST",
         body: JSON.stringify({
-          zid: userId
+          zid: studentId
         })
       };
       try {
@@ -76,7 +77,7 @@ const NavBar = () => {
       }
     },
     {
-      enabled: !!userId
+      enabled: !!studentId
     }
   );
   console.log(stream, streamIsLoading);
@@ -103,8 +104,8 @@ const NavBar = () => {
   console.log(students, studentsIsLoading);
 
   useEffect(() => {
-    setZId(userState.zId);
-    setName(userState.name);
+    setUserZId(userState.zId);
+    setUserName(userState.name);
   }, [userState]);
 
   useEffect(() => {
@@ -144,7 +145,8 @@ const NavBar = () => {
               css={css`
                 color: #646c7d;
               `}>
-              {programIsLoading ? (
+              {(userState.isStaff && programIsLoading && Object.keys(studentState).length !== 0) ||
+              (!userState.isStaff && programIsLoading) ? (
                 "..."
               ) : (
                 <>
@@ -160,7 +162,8 @@ const NavBar = () => {
               css={css`
                 color: #818ca1;
               `}>
-              {streamIsLoading ? (
+              {(userState.isStaff && streamIsLoading && Object.keys(studentState).length !== 0) ||
+              (!userState.isStaff && streamIsLoading) ? (
                 "..."
               ) : (
                 <>
@@ -213,7 +216,7 @@ const NavBar = () => {
                 color: #646c7d;
                 text-align: right;
               `}>
-              {name}
+              {userName}
             </Typography>
             <Typography
               component="div"
@@ -222,7 +225,7 @@ const NavBar = () => {
                 color: #818ca1;
                 text-align: right;
               `}>
-              {zId}
+              {userZId}
             </Typography>
           </Box>
           <Button
