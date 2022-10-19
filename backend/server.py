@@ -8,6 +8,7 @@ import psycopg2
 app = Flask(__name__)
 CORS(app)
 
+# returns { token: token, zid: zid, name: name, is_staff: is_staff }
 @app.route("/user/auth/login", methods=['POST'])
 def login():
     body = json.loads(request.get_data())
@@ -35,6 +36,7 @@ def logout():
     # TODO
     pass
 
+# returns { program_id: program_id, year: year, code: code, title: title, total_uoc: total_uoc }
 @app.route("/user/program", methods=['POST'])
 def get_program():
     body = json.loads(request.get_data())
@@ -61,6 +63,7 @@ def get_program():
         "total_uoc": str(program_data[3]),
     }), 200
 
+# returns { stream_id: stream_id, year: year, code: code, title: title, total_uoc: total_uoc }
 @app.route("/user/stream", methods=['POST'])
 def get_stream():
     body = json.loads(request.get_data())
@@ -87,6 +90,7 @@ def get_stream():
         "total_uoc": str(stream_data[3]),
     }), 200
 
+# returns [ ( program_rule_id, name, type, min_uoc, definition ) ]
 @app.route("/user/program/rules", methods=['POST'])
 def get_program_rules():
     body = json.loads(request.get_data())
@@ -108,6 +112,7 @@ def get_program_rules():
         "program_rules": rule_data
     }), 200
 
+# returns [ ( stream_rule_id, name, type, min_uoc, definition ) ]
 @app.route("/user/stream/rules", methods=['POST'])
 def get_stream_rules():
     body = json.loads(request.get_data())
@@ -129,7 +134,7 @@ def get_stream_rules():
         "stream_rules": rule_data
     }), 200
 
-# returns [ [ course_id, code, title, year, uoc, mark, grade, is_ge ] ]
+# returns [ ( course_id, code, title, year, uoc, mark, grade, is_ge ) ]
 @app.route("/user/enrolments", methods=['POST'])
 def get_enrolments():
     body = json.loads(request.get_data())
@@ -157,6 +162,7 @@ def get_enrolments():
         "enrolments": courses
     }), 200
 
+# returns [ ( course_id, code, title, year, uoc, is_ge ) ]
 @app.route("/courses", methods=['GET'])
 def get_courses():
     with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
@@ -174,7 +180,7 @@ def get_courses():
         "courses": course_data
     }), 200
 
-# returns [ course_id, code, title, year, uoc, is_ge ]
+# returns ( course_id, code, title, year, uoc, is_ge )
 @app.route("/course", methods=['POST'])
 def get_course():
     body = json.loads(request.get_data())
@@ -194,7 +200,7 @@ def get_course():
         "course_info": (str(course_data[0]), course_data[1], course_data[2], str(course_data[3]), str(course_data[4]), str(course_data[5]))
     }), 200
 
-# returns [( zid, name )]
+# returns [ ( zid, name ) ]
 @app.route("/students", methods=['GET'])
 def get_students():
     with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
