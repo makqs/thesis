@@ -8,7 +8,7 @@ import psycopg2
 app = Flask(__name__)
 CORS(app)
 
-# returns { token: token, zid: zid, name: name, is_staff: is_staff }
+# returns { token, zid, name, is_staff }
 @app.route("/user/auth/login", methods=['POST'])
 def login():
     body = json.loads(request.get_data())
@@ -36,7 +36,7 @@ def logout():
     # TODO
     pass
 
-# returns { program_id: program_id, year: year, code: code, title: title, total_uoc: total_uoc }
+# returns { program_id, year, code, title, total_uoc }
 @app.route("/program", methods=['GET'])
 def get_program():
     zid = request.args.get("zid")
@@ -62,7 +62,7 @@ def get_program():
         "total_uoc": str(program_data[3]),
     }), 200
 
-# returns { stream_id: stream_id, year: year, code: code, title: title, total_uoc: total_uoc }
+# returns { stream_id, year, code, title, total_uoc }
 @app.route("/stream", methods=['GET'])
 def get_stream():
     zid = request.args.get("zid")
@@ -88,7 +88,7 @@ def get_stream():
         "total_uoc": str(stream_data[3]),
     }), 200
 
-# returns { stream_id: stream_id, year: year, code: code, title: title, total_uoc: total_uoc }
+# returns [ { stream_id, year, code, title, total_uoc } ]
 @app.route("/streams", methods=['GET'])
 def get_streams():
     program_id = request.args.get("program_id")
@@ -124,7 +124,7 @@ def get_streams():
         streams
     ), 200
 
-# returns [ ( program_rule_id, name, type, min_uoc, definition ) ]
+# returns [ { program_rule_id, name, type, min_uoc, definition } ]
 @app.route("/program/rules", methods=['GET'])
 def get_program_rules():
     program_id = request.args.get("program_id")
@@ -148,7 +148,7 @@ def get_program_rules():
         rule_data
     ), 200
 
-# returns [ ( stream_rule_id, name, type, min_uoc, definition ) ]
+# returns [ { stream_rule_id, name, type, min_uoc, definition } ]
 @app.route("/stream/rules", methods=['GET'])
 def get_stream_rules():
     stream_id = request.args.get("stream_id")
@@ -172,7 +172,7 @@ def get_stream_rules():
         rule_data
     ), 200
 
-# returns [ ( course_id, code, title, year, uoc, mark, grade, is_ge ) ]
+# returns [ { course_id, code, title, year, uoc, mark, grade, is_ge } ]
 @app.route("/user/enrolments", methods=['GET'])
 def get_enrolments():
     zid = request.args.get("zid")
@@ -208,7 +208,7 @@ def get_enrolments():
         courses
     ), 200
 
-# returns [ ( course_id, code, title, year, uoc, is_ge ) ]
+# returns [ { course_id, code, title, year, uoc, is_ge } ]
 @app.route("/courses", methods=['GET'])
 def get_courses():
     with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
@@ -233,7 +233,7 @@ def get_courses():
         course_data
     ), 200
 
-# returns ( course_id, code, title, year, uoc, is_ge )
+# returns { course_id, code, title, year, uoc, is_ge }
 @app.route("/course", methods=['GET'])
 def get_course():
     code = request.args.get("code")
@@ -257,7 +257,7 @@ def get_course():
         "is_ge": str(course_data[5])
     }), 200
 
-# returns [ ( zid, name ) ]
+# returns [ { zid, name } ]
 @app.route("/students", methods=['GET'])
 def get_students():
     with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
@@ -271,9 +271,9 @@ def get_students():
             "error": "Could not retrieve students"
         }), 400
 
-    return json.dumps({
+    return json.dumps(
         students
-    }), 200
+    ), 200
 
 if __name__ == "__main__":
     app.run(debug=True)
