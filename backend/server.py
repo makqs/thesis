@@ -88,6 +88,44 @@ def get_stream():
         "total_uoc": str(stream_data[3]),
     }), 200
 
+# returns { stream_id: stream_id, year: year, code: code, title: title, total_uoc: total_uoc }
+@app.route("/streams", methods=['GET'])
+def get_streams():
+    program_id = request.args.get("program_id")
+
+    with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
+        with conn.cursor() as curs:
+            curs.execute(f"""SELECT type, definition FROM program_rules WHERE program_id = '{program_id}'""")
+            rule_data = curs.fetchall()
+
+            if rule_data is None:
+                return json.dumps({
+                    "error": f"program ID ({program_id}): not found"
+                }), 400
+
+            streams = []
+            for rule in rule_data:
+                if rule[0] == "ST":
+                    for code in rule[1].split(","):
+                        curs.execute(f"""SELECT stream_id, year, code, title, total_uoc FROM streams WHERE code = '{code}'""")
+                        stream = curs.fetchone()
+                        if stream is None:
+                            continue
+                        stream = (stream[0], str(stream[1]), stream[2], stream[3], str(stream[4]))
+                        stream = {
+                            "stream_id": stream[0],
+                            "year": str(stream[1]),
+                            "code": stream[2],
+                            "title": stream[3],
+                            "total_uoc": str(stream[4])
+                        }
+                        print(stream)
+                        streams.append(stream)
+
+    return json.dumps(
+        streams
+    ), 200
+
 # returns [ ( program_rule_id, name, type, min_uoc, definition ) ]
 @app.route("/program/rules", methods=['GET'])
 def get_program_rules():
