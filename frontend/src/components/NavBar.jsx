@@ -2,8 +2,6 @@
 import { css } from "@emotion/react";
 import React, { useState, useContext, useEffect } from "react";
 
-// import PropTypes from "prop-types";
-
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -54,7 +52,6 @@ const NavBar = () => {
       enabled: !!studentId
     }
   );
-  // console.log(program, programIsLoading);
 
   const { data: stream, isLoading: streamIsLoading } = useQuery(
     ["streamData", studentId],
@@ -74,7 +71,6 @@ const NavBar = () => {
       enabled: !!studentId
     }
   );
-  // console.log(stream, streamIsLoading);
 
   const isStaff = userState?.isStaff;
   const { data: students, isLoading: studentsIsLoading } = useQuery(
@@ -95,7 +91,6 @@ const NavBar = () => {
       enabled: !!isStaff
     }
   );
-  // console.log(students, studentsIsLoading);
 
   useEffect(() => {
     setUserZId(userState.zId);
@@ -196,6 +191,7 @@ const NavBar = () => {
                 }}
                 // eslint-disable-next-line react/jsx-props-no-spreading
                 renderInput={(params) => <TextField {...params} label="Student" />}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
               />
             </Box>
           )}
@@ -236,27 +232,5 @@ const NavBar = () => {
     </Box>
   );
 };
-
-// NavBar.propTypes = {
-//   pLoading: PropTypes.bool.isRequired,
-//   pCode: PropTypes.string,
-//   pTitle: PropTypes.string,
-//   pYear: PropTypes.string,
-//   pError: PropTypes.bool.isRequired,
-//   sLoading: PropTypes.bool.isRequired,
-//   sCode: PropTypes.string,
-//   sTitle: PropTypes.string,
-//   sYear: PropTypes.string,
-//   sError: PropTypes.bool.isRequired
-// };
-
-// NavBar.defaultProps = {
-//   pCode: null,
-//   pTitle: null,
-//   pYear: null,
-//   sCode: null,
-//   sTitle: null,
-//   sYear: null
-// };
 
 export default NavBar;

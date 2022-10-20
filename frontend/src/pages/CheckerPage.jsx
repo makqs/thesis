@@ -1,16 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import React, { useContext, useState, useEffect } from "react";
-import {
-  Autocomplete,
-  Backdrop,
-  Box,
-  Button,
-  Fade,
-  Modal,
-  TextField,
-  Typography
-} from "@mui/material";
+import { Autocomplete, Backdrop, Box, Button, Fade, Modal, TextField } from "@mui/material";
 
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -46,6 +37,11 @@ const CheckerPage = () => {
   const handleOpenAdd = () => setOpenAdd(true);
   const handleCloseAdd = () => setOpenAdd(false);
   const [addValue, setAddValue] = useState(null);
+
+  const [openChangeStream, setOpenChangeStream] = useState(false);
+  const handleOpenChangeStream = () => setOpenChangeStream(true);
+  const handleCloseChangeStream = () => setOpenChangeStream(false);
+  const [changeStreamValue, setChangeStreamValue] = useState(null);
 
   const [openRemove, setOpenRemove] = useState(false);
   const handleOpenRemove = () => setOpenRemove(true);
@@ -130,6 +126,29 @@ const CheckerPage = () => {
     }
   );
 
+  const { data: programStreams, isLoading: programStreamsIsLoading } = useQuery(
+    ["programStreamsData", programId],
+    async () => {
+      const requestOptions = {
+        method: "GET"
+      };
+      try {
+        const res = await fetch(
+          `http://127.0.0.1:5000/streams?program_id=${programId}`,
+          requestOptions
+        );
+        return await res.json();
+      } catch (err) {
+        console.log("STREAMS FETCH ERROR:", err);
+        return enqueueSnackbar(err, { variant: "error" });
+      }
+    },
+    {
+      enabled: !!programId
+    }
+  );
+  console.log(programStreams, programStreamsIsLoading);
+
   const { data: stream, isLoading: streamIsLoading } = useQuery(
     ["streamData", studentId],
     async () => {
@@ -204,6 +223,15 @@ const CheckerPage = () => {
       (a, b) => (b.split(",")[2] !== type ? a : a + parseInt(b.split(",")[3], 10)),
       0
     );
+
+  const resetModifiers = () => {
+    setAddedCourses([]);
+  };
+
+  useEffect(() => {
+    console.log("reset time");
+    resetModifiers();
+  }, [studentState]);
 
   useEffect(() => {
     if (!enrolmentsIsLoading && !programIsLoading && !programRulesIsLoading && !streamIsLoading) {
@@ -584,7 +612,7 @@ const CheckerPage = () => {
             })
           )}
         </Box>
-        {!(programRulesIsLoading || streamIsLoading) && (
+        {!programRulesIsLoading && !streamIsLoading && (
           <Box
             css={css`
               background-color: #f7fafc;
@@ -616,7 +644,73 @@ const CheckerPage = () => {
               </ListItemButton>
               <Collapse in={modsOpen} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                  {/* <SidebarButton title="Change program" /> */}
+                  {/* change stream section */}
+                  {!programStreamsIsLoading && (
+                    <>
+                      <SidebarButton title="Change stream" onClick={handleOpenChangeStream} />
+                      <Modal
+                        open={openChangeStream}
+                        onClose={handleCloseChangeStream}
+                        closeAfterTransition
+                        BackdropComponent={Backdrop}
+                        BackdropProps={{
+                          timeout: 500
+                        }}>
+                        <Fade in={openChangeStream}>
+                          <Box
+                            sx={{
+                              position: "absolute",
+                              top: "50%",
+                              left: "50%",
+                              transform: "translate(-50%, -50%)",
+                              width: 500,
+                              bgcolor: "background.paper",
+                              border: "2px solid #000",
+                              boxShadow: 24,
+                              p: 4,
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "centre"
+                            }}>
+                            <Autocomplete
+                              value={changeStreamValue}
+                              onChange={(event, newValue) => {
+                                setChangeStreamValue(newValue);
+                              }}
+                              disablePortal
+                              options={
+                                programStreamsIsLoading
+                                  ? []
+                                  : programStreams
+                                      .filter((s) => !(!!streamId && s.stream_id === streamId))
+                                      .map((s) => {
+                                        return { label: `${s.code} - ${s.title}`, id: s.stream_id };
+                                      })
+                              }
+                              sx={{ width: 400 }}
+                              // eslint-disable-next-line react/jsx-props-no-spreading
+                              renderInput={(params) => <TextField {...params} label="Stream" />}
+                              isOptionEqualToValue={(option, value) => option.id === value.id}
+                            />
+                            <Button
+                              variant="contained"
+                              css={css`
+                                background-color: #4299e1;
+                                margin-left: 10px;
+                              `}
+                              onClick={() => {
+                                if (changeStreamValue === null) return;
+                                setChangeStreamValue(null);
+                                handleCloseChangeStream();
+                              }}>
+                              Change stream
+                            </Button>
+                          </Box>
+                        </Fade>
+                      </Modal>
+                    </>
+                  )}
+                  {/* add course section */}
                   <SidebarButton title="Add course" onClick={handleOpenAdd} />
                   <Modal
                     open={openAdd}
@@ -642,9 +736,6 @@ const CheckerPage = () => {
                           justifyContent: "space-between",
                           alignItems: "centre"
                         }}>
-                        <Typography id="transition-modal-title" variant="h6" component="h2">
-                          Add a course
-                        </Typography>
                         <Autocomplete
                           value={addValue}
                           onChange={(event, newValue) => {
@@ -672,6 +763,7 @@ const CheckerPage = () => {
                           sx={{ width: 300 }}
                           // eslint-disable-next-line react/jsx-props-no-spreading
                           renderInput={(params) => <TextField {...params} label="Course" />}
+                          isOptionEqualToValue={(option, value) => option.id === value.id}
                         />
                         <Button
                           variant="contained"
@@ -703,74 +795,71 @@ const CheckerPage = () => {
                       </Box>
                     </Fade>
                   </Modal>
+                  {/* remove course section */}
                   {addedCourses.length !== 0 && (
-                    <SidebarButton title="Remove course" onClick={handleOpenRemove} />
-                  )}
-                  <Modal
-                    open={openRemove}
-                    onClose={handleCloseRemove}
-                    closeAfterTransition
-                    BackdropComponent={Backdrop}
-                    BackdropProps={{
-                      timeout: 500
-                    }}>
-                    <Fade in={openRemove}>
-                      <Box
-                        sx={{
-                          position: "absolute",
-                          top: "50%",
-                          left: "50%",
-                          transform: "translate(-50%, -50%)",
-                          width: 400,
-                          bgcolor: "background.paper",
-                          border: "2px solid #000",
-                          boxShadow: 24,
-                          p: 4,
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "centre"
+                    <>
+                      <SidebarButton title="Remove course" onClick={handleOpenRemove} />
+                      <Modal
+                        open={openRemove}
+                        onClose={handleCloseRemove}
+                        closeAfterTransition
+                        BackdropComponent={Backdrop}
+                        BackdropProps={{
+                          timeout: 500
                         }}>
-                        <Typography id="transition-modal-title" variant="h6" component="h2">
-                          Remove a course
-                        </Typography>
-                        <Autocomplete
-                          value={removeValue}
-                          onChange={(event, newValue) => {
-                            setRemoveValue(newValue);
-                          }}
-                          disablePortal
-                          options={addedCourses.map((c) => {
-                            return { label: c[1], id: c[0] };
-                          })}
-                          sx={{ width: 300 }}
-                          // eslint-disable-next-line react/jsx-props-no-spreading
-                          renderInput={(params) => <TextField {...params} label="Course" />}
-                        />
-                        <Button
-                          variant="contained"
-                          css={css`
-                            background-color: #4299e1;
-                            margin-left: 10px;
-                          `}
-                          onClick={() => {
-                            if (removeValue === null) return;
-                            const newCourses = addedCourses.filter((c) => c[0] !== removeValue.id);
-                            setAddedCourses(newCourses);
-                            setRemoveValue(null);
-                            handleCloseRemove();
-                          }}>
-                          Remove course
-                        </Button>
-                      </Box>
-                    </Fade>
-                  </Modal>
-                  <SidebarButton
-                    title="Reset modifiers"
-                    isRed
-                    onClick={() => {
-                      setAddedCourses([]);
-                    }}
-                  />
+                        <Fade in={openRemove}>
+                          <Box
+                            sx={{
+                              position: "absolute",
+                              top: "50%",
+                              left: "50%",
+                              transform: "translate(-50%, -50%)",
+                              width: 400,
+                              bgcolor: "background.paper",
+                              border: "2px solid #000",
+                              boxShadow: 24,
+                              p: 4,
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "centre"
+                            }}>
+                            <Autocomplete
+                              value={removeValue}
+                              onChange={(event, newValue) => {
+                                setRemoveValue(newValue);
+                              }}
+                              disablePortal
+                              options={addedCourses.map((c) => {
+                                return { label: c[1], id: c[0] };
+                              })}
+                              sx={{ width: 300 }}
+                              // eslint-disable-next-line react/jsx-props-no-spreading
+                              renderInput={(params) => <TextField {...params} label="Course" />}
+                              isOptionEqualToValue={(option, value) => option.id === value.id}
+                            />
+                            <Button
+                              variant="contained"
+                              css={css`
+                                background-color: #4299e1;
+                                margin-left: 10px;
+                              `}
+                              onClick={() => {
+                                if (removeValue === null) return;
+                                const newCourses = addedCourses.filter(
+                                  (c) => c[0] !== removeValue.id
+                                );
+                                setAddedCourses(newCourses);
+                                setRemoveValue(null);
+                                handleCloseRemove();
+                              }}>
+                              Remove course
+                            </Button>
+                          </Box>
+                        </Fade>
+                      </Modal>
+                    </>
+                  )}
+                  <SidebarButton title="Reset modifiers" isRed onClick={resetModifiers} />
                 </List>
               </Collapse>
               <ListItemButton
