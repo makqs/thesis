@@ -47,43 +47,45 @@ const CourseCard = ({ code, completed, locked, exclusionCourses }) => {
         color: ${textColor};
         background-color: ${bgColor};
         box-shadow: 0px;
+        cursor: ${locked ? "not-allowed" : "pointer"};
       `}>
-      {isLoading ? (
+      {isLoading || new RegExp("^[A-Z]{4}[0-9]X{3}$").test(code) ? (
+        <Tooltip title={`Any level ${code[4]} ${code.slice(0, 4)} course`}>
+          <CardActionArea
+            css={css`
+              font-size: 13pt;
+              padding: 8px;
+              display: flex;
+              justify-content: center;
+              width: 100%;
+              height: 100%;
+              cursor: default;
+            `}>
+            {code}
+          </CardActionArea>
+        </Tooltip>
+      ) : (
         <CardActionArea
           css={css`
             font-size: 13pt;
             padding: 8px;
-            display: flex;
-            justify-content: center;
+            cursor: inherit;
           `}>
-          {code}
-        </CardActionArea>
-      ) : (
-        <a
-          // TODO: get working with postgraduate, hardcoded to undergraduate atm
-          href={
-            isLoading
-              ? "https://www.handbook.unsw.edu.au/"
-              : `https://www.handbook.unsw.edu.au/undergraduate/courses/${data.course_info[3]}/${code}`
-          }
-          target="blank_"
-          css={css`
-            color: inherit;
-            font-size: inherit;
-            text-decoration: inherit;
-          `}>
-          <Tooltip
-            title={
-              exclusionCourses.length !== 0
-                ? `Exclusion course of ${exclusionCourses.join(", ")}`
-                : ""
-            }>
-            <CardActionArea
-              css={css`
-                font-size: 13pt;
-                padding: 8px;
-                cursor: ${locked ? "not-allowed" : "pointer"};
-              `}>
+          <a
+            // TODO: get working with postgraduate, hardcoded to undergraduate atm
+            href={
+              isLoading
+                ? "https://www.handbook.unsw.edu.au/"
+                : `https://www.handbook.unsw.edu.au/undergraduate/courses/${data.course_info[3]}/${code}`
+            }
+            target="blank_"
+            css={css`
+              color: inherit;
+              font-size: inherit;
+              text-decoration: inherit;
+              cursor: inherit;
+            `}>
+            <div>
               <div
                 css={css`
                   display: flex;
@@ -107,16 +109,22 @@ const CourseCard = ({ code, completed, locked, exclusionCourses }) => {
                   {isLoading ? "..." : data.course_info[2]}
                 </div>
                 {exclusionCourses.length !== 0 && (
-                  <InfoIcon
+                  <Tooltip
+                    title={`Exclusion course of ${exclusionCourses.join(", ")}`}
                     css={css`
-                      width: 20px;
-                    `}
-                  />
+                      cursor: pointer;
+                    `}>
+                    <InfoIcon
+                      css={css`
+                        width: 18px;
+                      `}
+                    />
+                  </Tooltip>
                 )}
               </div>
-            </CardActionArea>
-          </Tooltip>
-        </a>
+            </div>
+          </a>
+        </CardActionArea>
       )}
     </Card>
   );
