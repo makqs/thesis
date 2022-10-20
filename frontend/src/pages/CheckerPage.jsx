@@ -400,7 +400,6 @@ const CheckerPage = () => {
                 const children = rule
                   .splice(4)
                   .map((s) => <CourseCard key={`${rawRule}-${s}`} code={s} completed={false} />);
-                console.log(children);
                 return (
                   <RequirementsBox
                     key={rawRule}
@@ -421,7 +420,6 @@ const CheckerPage = () => {
                   ).test(definition) &&
                   new RegExp("[A-Z]{4}[0-9]X{3}").test(definition)
                 ) {
-                  console.log("ranges (and maybe courses too) case");
                   const ranges = [];
                   const children = [];
                   definition.split(",").forEach((code) => {
@@ -505,9 +503,7 @@ const CheckerPage = () => {
             })
           )}
         </Box>
-        {programRulesIsLoading || streamIsLoading ? (
-          <></>
-        ) : (
+        {!(programRulesIsLoading || streamIsLoading) && (
           <Box
             css={css`
               background-color: #f7fafc;
@@ -579,7 +575,6 @@ const CheckerPage = () => {
                               ? []
                               : courses.courses
                                   .filter((c) => {
-                                    // console.log(enrolments.enrolments.concat(addedCourses));
                                     return enrolments.enrolments
                                       .concat(addedCourses)
                                       .every(
@@ -731,26 +726,22 @@ const CheckerPage = () => {
               </ListItemButton>
               <Collapse in={uocOpen} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                  <SidebarItem
-                    title="Cores"
-                    completedUoc={getCompletedUoc("CC")}
-                    totalUoc={getTotalUoc("CC")}
-                  />
-                  <SidebarItem
-                    title="Discipline Electives"
-                    completedUoc={getCompletedUoc("DE")}
-                    totalUoc={getTotalUoc("DE")}
-                  />
-                  <SidebarItem
-                    title="General Education"
-                    completedUoc={getCompletedUoc("GE")}
-                    totalUoc={getTotalUoc("GE")}
-                  />
-                  <SidebarItem
-                    title="Free Electives"
-                    completedUoc={getCompletedUoc("FE")}
-                    totalUoc={getTotalUoc("FE")}
-                  />
+                  {[
+                    ["Stream", "ST"],
+                    ["Cores", "CC"],
+                    ["Discipline Electives", "DE"],
+                    ["General Education", "GE"],
+                    ["Free Electives", "FE"]
+                  ].map(
+                    (type) =>
+                      Object.keys(totalRules).some((rule) => rule.split(",")[2] === type[1]) && (
+                        <SidebarItem
+                          title={type[0]}
+                          completedUoc={getCompletedUoc(type[1])}
+                          totalUoc={getTotalUoc(type[1])}
+                        />
+                      )
+                  )}
                 </List>
               </Collapse>
             </List>
