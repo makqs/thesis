@@ -2,11 +2,13 @@
 import { css } from "@emotion/react";
 import React from "react";
 
-import { Card, CardActionArea } from "@mui/material";
+import { Card, CardActionArea, Tooltip } from "@mui/material";
 import PropTypes from "prop-types";
 import { useQuery } from "@tanstack/react-query";
 
-const CourseCard = ({ code, completed }) => {
+import InfoIcon from "@mui/icons-material/Info";
+
+const CourseCard = ({ code, completed, locked, exclusionCourses }) => {
   const { data, isLoading } = useQuery(
     [code],
     () => {
@@ -20,8 +22,17 @@ const CourseCard = ({ code, completed }) => {
     { enabled: new RegExp("^[A-Z]{4}[0-9]{4}$").test(code) }
   );
 
-  const completionColor = completed ? "#52b96a" : "#f7fafc";
-  const textColor = completed ? "#ffffff" : "#646c7d";
+  let bgColor = "#f7fafc";
+  let textColor = "#646c7d";
+  if (completed) {
+    bgColor = "#52b96a";
+    textColor = "#ffffff";
+  }
+  if (locked) {
+    // bgColor = "#646c7d";
+    bgColor = "#b6b6b6";
+    textColor = "#ffffff";
+  }
 
   return (
     <Card
@@ -34,7 +45,7 @@ const CourseCard = ({ code, completed }) => {
         border-radius: 5px;
         border: 1px solid #b6b6b6;
         color: ${textColor};
-        background-color: ${completionColor};
+        background-color: ${bgColor};
         box-shadow: 0px;
       `}>
       {isLoading ? (
@@ -61,28 +72,50 @@ const CourseCard = ({ code, completed }) => {
             font-size: inherit;
             text-decoration: inherit;
           `}>
-          <CardActionArea
-            css={css`
-              font-size: 13pt;
-              padding: 8px;
-            `}>
-            <div
+          <Tooltip
+            title={
+              exclusionCourses.length !== 0
+                ? `Exclusion course of ${exclusionCourses.join(", ")}`
+                : ""
+            }>
+            <CardActionArea
               css={css`
-                display: flex;
-                justify-content: space-between;
+                font-size: 13pt;
+                padding: 8px;
+                cursor: ${locked ? "not-allowed" : "pointer"};
               `}>
-              <div>{code}</div>
-              <div>{isLoading ? "..." : data.course_info[4]} UOC</div>
-            </div>
-            <div
-              css={css`
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-              `}>
-              {isLoading ? "..." : data.course_info[2]}
-            </div>
-          </CardActionArea>
+              <div
+                css={css`
+                  display: flex;
+                  justify-content: space-between;
+                `}>
+                <div>{code}</div>
+                <div>{isLoading ? "..." : data.course_info[4]} UOC</div>
+              </div>
+              <div
+                css={css`
+                  display: flex;
+                  flex-direction: row;
+                  justify-content: space-between;
+                `}>
+                <div
+                  css={css`
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                  `}>
+                  {isLoading ? "..." : data.course_info[2]}
+                </div>
+                {exclusionCourses.length !== 0 && (
+                  <InfoIcon
+                    css={css`
+                      width: 20px;
+                    `}
+                  />
+                )}
+              </div>
+            </CardActionArea>
+          </Tooltip>
         </a>
       )}
     </Card>
@@ -91,11 +124,15 @@ const CourseCard = ({ code, completed }) => {
 
 CourseCard.propTypes = {
   code: PropTypes.string.isRequired,
-  completed: PropTypes.bool
+  completed: PropTypes.bool,
+  locked: PropTypes.bool,
+  exclusionCourses: PropTypes.arrayOf(PropTypes.string)
 };
 
 CourseCard.defaultProps = {
-  completed: false
+  completed: false,
+  locked: false,
+  exclusionCourses: []
 };
 
 export default CourseCard;

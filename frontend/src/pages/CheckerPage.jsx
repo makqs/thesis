@@ -40,6 +40,7 @@ const CheckerPage = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const [addedCourses, setAddedCourses] = useState([]);
+  const [lockedCourses, setLockedCourses] = useState([]);
 
   const [openAdd, setOpenAdd] = useState(false);
   const handleOpenAdd = () => setOpenAdd(true);
@@ -63,7 +64,6 @@ const CheckerPage = () => {
       return enqueueSnackbar(err, { variant: "error" });
     }
   });
-  // console.log(courses, coursesIsLoading);
 
   const studentId = studentState.zId;
   const { data: enrolments, isLoading: enrolmentsIsLoading } = useQuery(
@@ -87,7 +87,6 @@ const CheckerPage = () => {
       enabled: !!studentId
     }
   );
-  // console.log(enrolments, enrolmentsIsLoading);
 
   const { data: program, isLoading: programIsLoading } = useQuery(
     ["programData", studentId],
@@ -107,7 +106,6 @@ const CheckerPage = () => {
       enabled: !!studentId
     }
   );
-  // console.log(program, programIsLoading);
 
   const programId = program?.program_id;
   const { data: programRules, isLoading: programRulesIsLoading } = useQuery(
@@ -131,7 +129,6 @@ const CheckerPage = () => {
       enabled: !!programId
     }
   );
-  // console.log(programRules, programRulesIsLoading);
 
   const { data: stream, isLoading: streamIsLoading } = useQuery(
     ["streamData", studentId],
@@ -151,7 +148,6 @@ const CheckerPage = () => {
       enabled: !!studentId
     }
   );
-  // console.log(stream, streamIsLoading);
 
   const streamId = stream?.stream_id;
   const { data: streamRules, isLoading: streamRulesIsLoading } = useQuery(
@@ -173,7 +169,6 @@ const CheckerPage = () => {
     },
     { enabled: !!streamId }
   );
-  // console.log(streamRules, streamRulesIsLoading);
 
   const [modsOpen, setModsOpen] = useState(true);
   const handleModsClick = () => {
@@ -194,7 +189,6 @@ const CheckerPage = () => {
   }, []);
 
   const [totalRules, setTotalRules] = useState({});
-  console.log(totalRules, setTotalRules);
 
   const getCompletedUoc = (type) =>
     Object.keys(totalRules).reduce(
@@ -223,18 +217,14 @@ const CheckerPage = () => {
         .concat(addedCourses)
         .filter((course) => ["PS", "CR", "DN", "HD", "SY", "EC"].includes(course[6]));
 
-      console.log(rules, enrolmentsLeft);
+      const lockedCoursesToAdd = [];
 
       programRules.program_rules.forEach((programRule) => {
-        // console.log(programRule);
-
         // stream case
         if (programRule[2] === "ST") {
           // student has selected stream
           if (programRule[4].split(",").includes(stream.code) && !streamRulesIsLoading) {
-            // console.log(`yay student selected stream ${stream.code}`);
             streamRules.stream_rules.forEach((streamRule) => {
-              // console.log(streamRule);
               rules[streamRule] = [];
 
               // rule definition looks like COMP1511,MATH1131;MATH1231 or COMP3XXX,COMP4XXX
@@ -246,7 +236,28 @@ const CheckerPage = () => {
               ) {
                 enrolmentsLeft = enrolmentsLeft.filter((course) => {
                   streamRule[4].split(",").forEach((code) => {
-                    if (
+                    // either or course check (e.g. MATH1131;MATH1141)
+                    if (new RegExp("^[A-Z]{4}[0-9]{4}(;[A-Z]{4}[0-9]{4})+$").test(code)) {
+                      let exclusions = code.split(";");
+                      let done;
+                      exclusions = exclusions.filter((exclusion) => {
+                        if (
+                          exclusion === course[1] &&
+                          rules[streamRule].reduce((a, b) => a + parseInt(b[4], 10), 0) +
+                            parseInt(course[4], 10) <=
+                            parseInt(streamRule[3], 10)
+                        ) {
+                          done = exclusion;
+                          return false;
+                        }
+                        return true;
+                      });
+                      // if one of the courses has been completed
+                      if (done) {
+                        rules[streamRule].push(course);
+                        lockedCoursesToAdd.push(...exclusions);
+                      }
+                    } else if (
                       // COMP1511 = COMP1511
                       code === course[1] ||
                       // COMP6771 like COMP6XXX
@@ -301,7 +312,28 @@ const CheckerPage = () => {
           rules[programRule] = [];
           enrolmentsLeft = enrolmentsLeft.filter((course) => {
             programRule[4].split(",").forEach((code) => {
-              if (
+              // either or course check (e.g. MATH1131;MATH1141)
+              if (new RegExp("^[A-Z]{4}[0-9]{4}(;[A-Z]{4}[0-9]{4})+$").test(code)) {
+                let exclusions = code.split(";");
+                let done;
+                exclusions = exclusions.filter((exclusion) => {
+                  if (
+                    exclusion === course[1] &&
+                    rules[programRule].reduce((a, b) => a + parseInt(b[4], 10), 0) +
+                      parseInt(course[4], 10) <=
+                      parseInt(programRule[3], 10)
+                  ) {
+                    done = exclusion;
+                    return false;
+                  }
+                  return true;
+                });
+                // if one of the courses has been completed
+                if (done) {
+                  rules[programRule].push(course);
+                  lockedCoursesToAdd.push(...exclusions);
+                }
+              } else if (
                 // COMP1511 = COMP1511
                 code === course[1] ||
                 // COMP6771 like COMP6XXX
@@ -358,7 +390,8 @@ const CheckerPage = () => {
         });
       }
 
-      console.log(rules, enrolmentsLeft);
+      setLockedCourses(lockedCoursesToAdd);
+
       setTotalRules(rules);
     }
   }, [enrolments, programRules, streamRules, addedCourses]);
@@ -463,11 +496,61 @@ const CheckerPage = () => {
                 }
 
                 // [A-Z]{4}[0-9]{4}([,;][A-Z]{4}[0-9]{4})* (COMP1511,MATH1131;MATH1141) case
-                const children = definition.split(",").map((code) => {
-                  if (totalRules[rawRule].some((r) => r[1] === code)) {
-                    return <CourseCard key={`${rawRule}-${code}`} code={code} completed />;
+                const children = [];
+                definition.split(",").forEach((code) => {
+                  // exclusion code case (e.g. MATH1131;MATH1141)
+                  if (new RegExp("^[A-Z]{4}[0-9]{4}(;[A-Z]{4}[0-9]{4})+$").test(code)) {
+                    let exclusions = code.split(";");
+                    let done;
+                    exclusions = exclusions.filter((exclusion) => {
+                      if (totalRules[rawRule].some((r) => r[1] === exclusion)) {
+                        done = exclusion;
+                        return false;
+                      }
+                      return true;
+                    });
+                    // if one of the courses has been completed
+                    if (done) {
+                      children.push(
+                        <CourseCard
+                          key={`${rawRule}-${done}`}
+                          code={done}
+                          completed
+                          exclusionCourses={exclusions}
+                        />
+                      );
+                      exclusions.forEach((e1) =>
+                        children.push(
+                          <CourseCard
+                            key={`${rawRule}-${e1}`}
+                            code={e1}
+                            locked
+                            exclusionCourses={exclusions.concat(done).filter((e2) => e2 !== e1)}
+                          />
+                        )
+                      );
+                      return;
+                    }
+
+                    // if none of the exclusion courses have been completed yet
+                    exclusions.forEach((e1) =>
+                      children.push(
+                        <CourseCard
+                          key={`${rawRule}-${e1}`}
+                          code={e1}
+                          exclusionCourses={exclusions.filter((e2) => e2 !== e1)}
+                        />
+                      )
+                    );
+                    return;
                   }
-                  return <CourseCard key={`${rawRule}-${code}`} code={code} completed={false} />;
+
+                  // single code case (e.g. COMP1511)
+                  if (totalRules[rawRule].some((r) => r[1] === code)) {
+                    children.push(<CourseCard key={`${rawRule}-${code}`} code={code} completed />);
+                    return;
+                  }
+                  children.push(<CourseCard key={`${rawRule}-${code}`} code={code} />);
                 });
 
                 return (
@@ -496,8 +579,6 @@ const CheckerPage = () => {
                   </RequirementsBox>
                 );
               }
-
-              console.log(rule, totalRules[rule]);
 
               return <></>;
             })
@@ -579,8 +660,9 @@ const CheckerPage = () => {
                                       .concat(addedCourses)
                                       .every(
                                         (e) =>
-                                          c[0] !== e[0] ||
-                                          !["PS", "CR", "DN", "HD", "SY", "EC"].includes(e[6])
+                                          (c[0] !== e[0] ||
+                                            !["PS", "CR", "DN", "HD", "SY", "EC"].includes(e[6])) &&
+                                          !lockedCourses.includes(c[1])
                                       );
                                   })
                                   .map((c) => {
@@ -728,7 +810,7 @@ const CheckerPage = () => {
                 <List component="div" disablePadding>
                   {[
                     ["Stream", "ST"],
-                    ["Cores", "CC"],
+                    ["Core Courses", "CC"],
                     ["Discipline Electives", "DE"],
                     ["General Education", "GE"],
                     ["Free Electives", "FE"]
