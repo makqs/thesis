@@ -9,7 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import InfoIcon from "@mui/icons-material/Info";
 
 const CourseCard = ({ code, completed, locked, exclusionCourses }) => {
-  const { data, isLoading } = useQuery(
+  const { data: course, isLoading } = useQuery(
     [code],
     () => {
       const requestOptions = {
@@ -76,7 +76,7 @@ const CourseCard = ({ code, completed, locked, exclusionCourses }) => {
             href={
               isLoading
                 ? "https://www.handbook.unsw.edu.au/"
-                : `https://www.handbook.unsw.edu.au/undergraduate/courses/${data.course_info[3]}/${code}`
+                : `https://www.handbook.unsw.edu.au/undergraduate/courses/${course.year}/${code}`
             }
             target="blank_"
             css={css`
@@ -92,7 +92,7 @@ const CourseCard = ({ code, completed, locked, exclusionCourses }) => {
                   justify-content: space-between;
                 `}>
                 <div>{code}</div>
-                <div>{isLoading ? "..." : data.course_info[4]} UOC</div>
+                <div>{isLoading ? "..." : course.uoc} UOC</div>
               </div>
               <div
                 css={css`
@@ -106,7 +106,7 @@ const CourseCard = ({ code, completed, locked, exclusionCourses }) => {
                     overflow: hidden;
                     text-overflow: ellipsis;
                   `}>
-                  {isLoading ? "..." : data.course_info[2]}
+                  {isLoading ? "..." : course.title}
                 </div>
                 {exclusionCourses.length !== 0 && (
                   <Tooltip

@@ -147,7 +147,6 @@ const CheckerPage = () => {
       enabled: !!programId
     }
   );
-  console.log(programStreams, programStreamsIsLoading);
 
   const { data: stream, isLoading: streamIsLoading } = useQuery(
     ["streamData", studentId],
@@ -212,15 +211,15 @@ const CheckerPage = () => {
   const getCompletedUoc = (type) =>
     Object.keys(totalRules).reduce(
       (a, b) =>
-        b.split(",")[2] !== type
+        JSON.parse(b).type !== type
           ? a
-          : a + totalRules[b].reduce((x, y) => x + parseInt(y[4], 10), 0),
+          : a + totalRules[b].reduce((x, y) => x + parseInt(y.uoc, 10), 0),
       0
     );
 
   const getTotalUoc = (type) =>
     Object.keys(totalRules).reduce(
-      (a, b) => (b.split(",")[2] !== type ? a : a + parseInt(b.split(",")[3], 10)),
+      (a, b) => (JSON.parse(b).type !== type ? a : a + parseInt(JSON.parse(b).min_uoc, 10)),
       0
     );
 
@@ -241,39 +240,42 @@ const CheckerPage = () => {
       // { rule definition => list of courses that fulfil that definition }
       const rules = {};
       // list of enrolments that havent been sorted into rules yet
-      let enrolmentsLeft = enrolments.enrolments
+      let enrolmentsLeft = enrolments
         .concat(addedCourses)
-        .filter((course) => ["PS", "CR", "DN", "HD", "SY", "EC"].includes(course[6]));
+        .filter((course) => ["PS", "CR", "DN", "HD", "SY", "EC"].includes(course.grade));
 
       const lockedCoursesToAdd = [];
 
-      programRules.program_rules.forEach((programRule) => {
+      programRules.forEach((programRule) => {
         // stream case
-        if (programRule[2] === "ST") {
+        if (programRule.type === "ST") {
           // student has selected stream
-          if (programRule[4].split(",").includes(stream.code) && !streamRulesIsLoading) {
-            streamRules.stream_rules.forEach((streamRule) => {
-              rules[streamRule] = [];
+          if (programRule.definition.split(",").includes(stream.code) && !streamRulesIsLoading) {
+            streamRules.forEach((streamRule) => {
+              rules[JSON.stringify(streamRule)] = [];
 
               // rule definition looks like COMP1511,MATH1131;MATH1231 or COMP3XXX,COMP4XXX
               // should cover CC and DE cases
               if (
                 new RegExp(
                   "^[A-Z]{4}[0-9]([0-9]{3}|X{3})([,;][A-Z]{4}[0-9]([0-9]{3}|X{3}))*$"
-                ).test(streamRule[4])
+                ).test(streamRule.definition)
               ) {
                 enrolmentsLeft = enrolmentsLeft.filter((course) => {
-                  streamRule[4].split(",").forEach((code) => {
+                  streamRule.definition.split(",").forEach((code) => {
                     // either or course check (e.g. MATH1131;MATH1141)
                     if (new RegExp("^[A-Z]{4}[0-9]{4}(;[A-Z]{4}[0-9]{4})+$").test(code)) {
                       let exclusions = code.split(";");
                       let done;
                       exclusions = exclusions.filter((exclusion) => {
                         if (
-                          exclusion === course[1] &&
-                          rules[streamRule].reduce((a, b) => a + parseInt(b[4], 10), 0) +
-                            parseInt(course[4], 10) <=
-                            parseInt(streamRule[3], 10)
+                          exclusion === course.code &&
+                          rules[JSON.stringify(streamRule)].reduce(
+                            (a, b) => a + parseInt(b.uoc, 10),
+                            0
+                          ) +
+                            parseInt(course.uoc, 10) <=
+                            parseInt(streamRule.min_uoc, 10)
                         ) {
                           done = exclusion;
                           return false;
@@ -282,40 +284,43 @@ const CheckerPage = () => {
                       });
                       // if one of the courses has been completed
                       if (done) {
-                        rules[streamRule].push(course);
+                        rules[JSON.stringify(streamRule)].push(course);
                         lockedCoursesToAdd.push(...exclusions);
                       }
                     } else if (
                       // COMP1511 = COMP1511
-                      code === course[1] ||
+                      code === course.code ||
                       // COMP6771 like COMP6XXX
                       (new RegExp("^[A-Z]{4}[0-9]XXX$").test(code) &&
-                        new RegExp(`^${code.slice(0, 5)}...$`).test(course[1]))
+                        new RegExp(`^${code.slice(0, 5)}...$`).test(course.code))
                     ) {
                       if (
                         // havent exceeded UOC for this rule yet
-                        rules[streamRule].reduce((a, b) => a + parseInt(b[4], 10), 0) +
-                          parseInt(course[4], 10) <=
-                        parseInt(streamRule[3], 10)
+                        rules[JSON.stringify(streamRule)].reduce(
+                          (a, b) => a + parseInt(b.uoc, 10),
+                          0
+                        ) +
+                          parseInt(course.uoc, 10) <=
+                        parseInt(streamRule.min_uoc, 10)
                       )
-                        rules[streamRule].push(course);
+                        rules[JSON.stringify(streamRule)].push(course);
                     }
                   });
-                  if (rules[streamRule].includes(course)) return false;
+                  if (rules[JSON.stringify(streamRule)].includes(course)) return false;
                   return true;
                 });
               }
 
               // should cover every gen ed case
-              if (streamRule[2] === "GE") {
+              if (streamRule.type === "GE") {
                 enrolmentsLeft = enrolmentsLeft.filter((course) => {
                   if (
-                    course[7] === "True" &&
-                    rules[streamRule].reduce((a, b) => a + parseInt(b[4], 10), 0) +
-                      parseInt(course[4], 10) <=
-                      parseInt(streamRule[3], 10)
+                    course.is_ge === "True" &&
+                    rules[JSON.stringify(streamRule)].reduce((a, b) => a + parseInt(b.uoc, 10), 0) +
+                      parseInt(course.uoc, 10) <=
+                      parseInt(streamRule.min_uoc, 10)
                   ) {
-                    rules[streamRule].push(course);
+                    rules[JSON.stringify(streamRule)].push(course);
                     return false;
                   }
                   return true;
@@ -326,7 +331,7 @@ const CheckerPage = () => {
             });
           } else {
             // user hasn't selected stream
-            rules[programRule] = [];
+            rules[JSON.stringify(programRule)] = [];
           }
         }
 
@@ -334,22 +339,25 @@ const CheckerPage = () => {
         // should cover CC and DE cases
         if (
           new RegExp("^[A-Z]{4}[0-9]([0-9]{3}|X{3})([,;][A-Z]{4}[0-9]([0-9]{3}|X{3}))*$").test(
-            programRule[4]
+            programRule.definition
           )
         ) {
-          rules[programRule] = [];
+          rules[JSON.stringify(programRule)] = [];
           enrolmentsLeft = enrolmentsLeft.filter((course) => {
-            programRule[4].split(",").forEach((code) => {
+            programRule.definition.split(",").forEach((code) => {
               // either or course check (e.g. MATH1131;MATH1141)
               if (new RegExp("^[A-Z]{4}[0-9]{4}(;[A-Z]{4}[0-9]{4})+$").test(code)) {
                 let exclusions = code.split(";");
                 let done;
                 exclusions = exclusions.filter((exclusion) => {
                   if (
-                    exclusion === course[1] &&
-                    rules[programRule].reduce((a, b) => a + parseInt(b[4], 10), 0) +
-                      parseInt(course[4], 10) <=
-                      parseInt(programRule[3], 10)
+                    exclusion === course.code &&
+                    rules[JSON.stringify(programRule)].reduce(
+                      (a, b) => a + parseInt(b.uoc, 10),
+                      0
+                    ) +
+                      parseInt(course.uoc, 10) <=
+                      parseInt(programRule.min_uoc, 10)
                   ) {
                     done = exclusion;
                     return false;
@@ -358,41 +366,41 @@ const CheckerPage = () => {
                 });
                 // if one of the courses has been completed
                 if (done) {
-                  rules[programRule].push(course);
+                  rules[JSON.stringify(programRule)].push(course);
                   lockedCoursesToAdd.push(...exclusions);
                 }
               } else if (
                 // COMP1511 = COMP1511
-                code === course[1] ||
+                code === course.code ||
                 // COMP6771 like COMP6XXX
                 (new RegExp("^[A-Z]{4}[0-9]XXX$").test(code) &&
-                  new RegExp(`^${code.slice(0, 5)}...$`).test(course[1]))
+                  new RegExp(`^${code.slice(0, 5)}...$`).test(course.code))
               ) {
                 if (
                   // havent exceeded UOC for this rule yet
-                  rules[programRule].reduce((a, b) => a + parseInt(b[4], 10), 0) +
-                    parseInt(course[4], 10) <=
-                  parseInt(programRule[3], 10)
+                  rules[JSON.stringify(programRule)].reduce((a, b) => a + parseInt(b.uoc, 10), 0) +
+                    parseInt(course.uoc, 10) <=
+                  parseInt(programRule.min_uoc, 10)
                 )
-                  rules[programRule].push(course);
+                  rules[JSON.stringify(programRule)].push(course);
               }
             });
-            if (rules[programRule].includes(course)) return false;
+            if (rules[JSON.stringify(programRule)].includes(course)) return false;
             return true;
           });
         }
 
         // should cover every gen ed case
-        if (programRule[2] === "GE") {
-          rules[programRule] = [];
+        if (programRule.type === "GE") {
+          rules[JSON.stringify(programRule)] = [];
           enrolmentsLeft = enrolmentsLeft.filter((course) => {
             if (
-              course[7] === "True" &&
-              rules[programRule].reduce((a, b) => a + parseInt(b[4], 10), 0) +
-                parseInt(course[4], 10) <=
-                parseInt(programRule[3], 10)
+              course.is_ge === "True" &&
+              rules[JSON.stringify(programRule)].reduce((a, b) => a + parseInt(b.uoc, 10), 0) +
+                parseInt(course.uoc, 10) <=
+                parseInt(programRule.min_uoc, 10)
             ) {
-              rules[programRule].push(course);
+              rules[JSON.stringify(programRule)].push(course);
               return false;
             }
             return true;
@@ -400,17 +408,17 @@ const CheckerPage = () => {
         }
 
         // do all free electives at the end
-        if (programRule[2] === "FE") {
-          rules[programRule] = [];
+        if (programRule.type === "FE") {
+          rules[JSON.stringify(programRule)] = [];
           enrolmentsLeft = enrolmentsLeft.filter((course) => {
-            rules[programRule].push(course);
+            rules[JSON.stringify(programRule)].push(course);
             return false;
           });
         }
       });
 
       // do stream free electives last
-      const feRule = Object.keys(rules).find((rule) => rule.split(",")[2] === "FE");
+      const feRule = Object.keys(rules).find((rule) => JSON.parse(rule).type === "FE");
       if (feRule) {
         enrolmentsLeft = enrolmentsLeft.filter((course) => {
           rules[feRule].push(course);
@@ -454,59 +462,58 @@ const CheckerPage = () => {
             <></>
           ) : (
             Object.keys(totalRules).map((rawRule) => {
-              const rule = rawRule.split(",");
+              const rule = JSON.parse(rawRule);
 
               // stream will only be in the rules if a stream wasn't selected
-              if (rule[2] === "ST") {
-                const children = rule
-                  .splice(4)
-                  .map((s) => <CourseCard key={`${rawRule}-${s}`} code={s} completed={false} />);
+              if (rule.type === "ST") {
+                const children = rule.definition
+                  .split(",")
+                  .map((s) => <CourseCard key={`${rawRule}-${s}`} code={s} />);
                 return (
                   <RequirementsBox
                     key={rawRule}
-                    title={`Program - ${rule[1]}`}
+                    title={`Program - ${rule.name}`}
                     uocCompleted={0}
-                    minUoc={rule[3]}>
+                    minUoc={rule.min_uoc}>
                     {children}
                   </RequirementsBox>
                 );
               }
 
               // core courses and discipline electives
-              if (rule[2] === "CC" || rule[2] === "DE") {
-                const definition = rule.splice(4).join(",");
+              if (rule.type === "CC" || rule.type === "DE") {
                 if (
                   new RegExp(
                     "^[A-Z]{4}[0-9]([0-9]{3}|X{3})([,;][A-Z]{4}[0-9]([0-9]{3}|X{3}))*$"
-                  ).test(definition) &&
-                  new RegExp("[A-Z]{4}[0-9]X{3}").test(definition)
+                  ).test(rule.definition) &&
+                  new RegExp("[A-Z]{4}[0-9]X{3}").test(rule.definition)
                 ) {
                   const ranges = [];
                   const children = [];
-                  definition.split(",").forEach((code) => {
+                  rule.definition.split(",").forEach((code) => {
                     if (new RegExp("^[A-Z]{4}[0-9]XXX$").test(code)) {
-                      ranges.push(
-                        <CourseCard key={`${rawRule}-${code}`} code={code} completed={false} />
-                      );
+                      ranges.push(<CourseCard key={`${rawRule}-${code}`} code={code} />);
                       return;
                     }
 
                     // [A-Z]{4}[0-9]{4} (e.g. COMP1511) case
-                    if (totalRules[rawRule].some((r) => r[1] === code)) {
+                    if (totalRules[rawRule].some((c) => c.code === code)) {
                       children.push(
                         <CourseCard key={`${rawRule}-${code}`} code={code} completed />
                       );
                       return;
                     }
-                    children.push(
-                      <CourseCard key={`${rawRule}-${code}`} code={code} completed={false} />
-                    );
+                    children.push(<CourseCard key={`${rawRule}-${code}`} code={code} />);
                   });
 
-                  if (rule[2] === "DE")
+                  if (rule.type === "DE")
                     children.push(
-                      ...totalRules[rawRule].map((code) => (
-                        <CourseCard key={`${rawRule}-${code}`} code={code[1]} completed />
+                      ...totalRules[rawRule].map((course) => (
+                        <CourseCard
+                          key={`${rawRule}-${JSON.stringify(course)}`}
+                          code={course.code}
+                          completed
+                        />
                       ))
                     );
 
@@ -514,9 +521,12 @@ const CheckerPage = () => {
 
                   return (
                     <RequirementsBox
-                      title={`Stream - ${rule[1]}`}
-                      uocCompleted={totalRules[rawRule].reduce((a, b) => a + parseInt(b[4], 10), 0)}
-                      minUoc={rule[3]}
+                      title={`Stream - ${rule.name}`}
+                      uocCompleted={totalRules[rawRule].reduce(
+                        (a, b) => a + parseInt(b.uoc, 10),
+                        0
+                      )}
+                      minUoc={rule.min_uoc}
                       key={rawRule}>
                       {children}
                     </RequirementsBox>
@@ -525,13 +535,14 @@ const CheckerPage = () => {
 
                 // [A-Z]{4}[0-9]{4}([,;][A-Z]{4}[0-9]{4})* (COMP1511,MATH1131;MATH1141) case
                 const children = [];
-                definition.split(",").forEach((code) => {
+                rule.definition.split(",").forEach((code) => {
                   // exclusion code case (e.g. MATH1131;MATH1141)
                   if (new RegExp("^[A-Z]{4}[0-9]{4}(;[A-Z]{4}[0-9]{4})+$").test(code)) {
                     let exclusions = code.split(";");
                     let done;
+                    // TODO: change this to find and fiddle with stuff below to maintain order
                     exclusions = exclusions.filter((exclusion) => {
-                      if (totalRules[rawRule].some((r) => r[1] === exclusion)) {
+                      if (totalRules[rawRule].some((c) => c.code === exclusion)) {
                         done = exclusion;
                         return false;
                       }
@@ -574,7 +585,7 @@ const CheckerPage = () => {
                   }
 
                   // single code case (e.g. COMP1511)
-                  if (totalRules[rawRule].some((r) => r[1] === code)) {
+                  if (totalRules[rawRule].some((c) => c.code === code)) {
                     children.push(<CourseCard key={`${rawRule}-${code}`} code={code} completed />);
                     return;
                   }
@@ -583,9 +594,9 @@ const CheckerPage = () => {
 
                 return (
                   <RequirementsBox
-                    title={`Stream - ${rule[1]}`}
-                    uocCompleted={totalRules[rawRule].reduce((a, b) => a + parseInt(b[4], 10), 0)}
-                    minUoc={rule[3]}
+                    title={`Stream - ${rule.name}`}
+                    uocCompleted={totalRules[rawRule].reduce((a, b) => a + parseInt(b.uoc, 10), 0)}
+                    minUoc={rule.min_uoc}
                     key={rawRule}>
                     {children}
                   </RequirementsBox>
@@ -593,15 +604,19 @@ const CheckerPage = () => {
               }
 
               // general educations and free electives
-              if (rule[2] === "GE" || rule[2] === "FE") {
-                const children = totalRules[rawRule].map((code) => (
-                  <CourseCard key={`${rawRule}-${code}`} code={code[1]} completed />
+              if (rule.type === "GE" || rule.type === "FE") {
+                const children = totalRules[rawRule].map((course) => (
+                  <CourseCard
+                    key={`${rawRule}-${JSON.stringify(course)}`}
+                    code={course.code}
+                    completed
+                  />
                 ));
                 return (
                   <RequirementsBox
-                    title={`Stream - ${rule[1]}`}
-                    uocCompleted={totalRules[rawRule].reduce((a, b) => a + parseInt(b[4], 10), 0)}
-                    minUoc={rule[3]}
+                    title={`Stream - ${rule.name}`}
+                    uocCompleted={totalRules[rawRule].reduce((a, b) => a + parseInt(b.uoc, 10), 0)}
+                    minUoc={rule.min_uoc}
                     key={rawRule}>
                     {children}
                   </RequirementsBox>
@@ -745,19 +760,21 @@ const CheckerPage = () => {
                           options={
                             coursesIsLoading || !enrolments || "error" in enrolments
                               ? []
-                              : courses.courses
-                                  .filter((c) => {
-                                    return enrolments.enrolments
+                              : courses
+                                  .filter((c) =>
+                                    enrolments
                                       .concat(addedCourses)
                                       .every(
                                         (e) =>
-                                          (c[0] !== e[0] ||
-                                            !["PS", "CR", "DN", "HD", "SY", "EC"].includes(e[6])) &&
-                                          !lockedCourses.includes(c[1])
-                                      );
-                                  })
+                                          (c.course_id !== e.course_id ||
+                                            !["PS", "CR", "DN", "HD", "SY", "EC"].includes(
+                                              e.grade
+                                            )) &&
+                                          !lockedCourses.includes(c.code)
+                                      )
+                                  )
                                   .map((c) => {
-                                    return { label: c[1], id: c[0] };
+                                    return { label: c.code, id: c.course_id };
                                   })
                           }
                           sx={{ width: 300 }}
@@ -773,18 +790,20 @@ const CheckerPage = () => {
                           `}
                           onClick={() => {
                             if (addValue === null) return;
-                            const course = courses.courses.find((c) => c[0] === addValue.id);
+                            const course = courses.find((c) => c.course_id === addValue.id);
                             setAddedCourses([
                               ...addedCourses,
-                              [
-                                course[0],
-                                course[1],
-                                course[2],
-                                course[3],
-                                course[4],
-                                50,
-                                "SY",
-                                course[5]
+                              ...[
+                                {
+                                  course_id: course.course_id,
+                                  code: course.code,
+                                  title: course.title,
+                                  year: course.year,
+                                  uoc: course.uoc,
+                                  mark: "50",
+                                  grade: "SY",
+                                  is_ge: course.is_ge
+                                }
                               ]
                             ]);
                             setAddValue(null);
@@ -830,7 +849,7 @@ const CheckerPage = () => {
                               }}
                               disablePortal
                               options={addedCourses.map((c) => {
-                                return { label: c[1], id: c[0] };
+                                return { label: c.code, id: c.course_id };
                               })}
                               sx={{ width: 300 }}
                               // eslint-disable-next-line react/jsx-props-no-spreading
@@ -846,7 +865,7 @@ const CheckerPage = () => {
                               onClick={() => {
                                 if (removeValue === null) return;
                                 const newCourses = addedCourses.filter(
-                                  (c) => c[0] !== removeValue.id
+                                  (c) => c.course_id !== removeValue.id
                                 );
                                 setAddedCourses(newCourses);
                                 setRemoveValue(null);
@@ -898,18 +917,18 @@ const CheckerPage = () => {
               <Collapse in={uocOpen} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
                   {[
-                    ["Stream", "ST"],
-                    ["Core Courses", "CC"],
-                    ["Discipline Electives", "DE"],
-                    ["General Education", "GE"],
-                    ["Free Electives", "FE"]
+                    { name: "Stream", type: "ST" },
+                    { name: "Core Courses", type: "CC" },
+                    { name: "Discipline Electives", type: "DE" },
+                    { name: "General Education", type: "GE" },
+                    { name: "Free Electives", type: "FE" }
                   ].map(
-                    (type) =>
-                      Object.keys(totalRules).some((rule) => rule.split(",")[2] === type[1]) && (
+                    ({ name, type }) =>
+                      Object.keys(totalRules).some((rule) => JSON.parse(rule).type === type) && (
                         <SidebarItem
-                          title={type[0]}
-                          completedUoc={getCompletedUoc(type[1])}
-                          totalUoc={getTotalUoc(type[1])}
+                          title={name}
+                          completedUoc={getCompletedUoc(type)}
+                          totalUoc={getTotalUoc(type)}
                         />
                       )
                   )}

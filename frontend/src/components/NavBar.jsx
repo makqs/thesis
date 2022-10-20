@@ -175,13 +175,12 @@ const NavBar = () => {
                 options={
                   studentsIsLoading
                     ? []
-                    : students.students.map((s) => {
-                        return { label: `${s[0]} ${s[1]}`, id: s[0] };
+                    : students.map((s) => {
+                        return { label: `${s.zid} ${s.name}`, id: s.zid };
                       })
                 }
                 sx={{ width: 300 }}
                 onChange={(e, value) => {
-                  // console.log(e, value);
                   if (value) {
                     studentDispatch({
                       type: "setStudent",

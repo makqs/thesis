@@ -111,7 +111,6 @@ def get_streams():
                         stream = curs.fetchone()
                         if stream is None:
                             continue
-                        stream = (stream[0], str(stream[1]), stream[2], stream[3], str(stream[4]))
                         stream = {
                             "stream_id": stream[0],
                             "year": str(stream[1]),
@@ -119,7 +118,6 @@ def get_streams():
                             "title": stream[3],
                             "total_uoc": str(stream[4])
                         }
-                        print(stream)
                         streams.append(stream)
 
     return json.dumps(
@@ -141,14 +139,14 @@ def get_program_rules():
             "error": f"program ID ({program_id}): not found"
         }), 400
 
-    rule_data = [(row[0], row[1], row[2], str(row[3]), row[4]) for row in rule_data]
+    rule_data = [{ "program_rule_id": row[0], "name": row[1], "type": row[2], "min_uoc": str(row[3]), "definition": row[4] } for row in rule_data]
 
     sort_order = { "CC": 0, "ST": 1, "DE": 2, "GE": 3, "FE": 4 }
-    rule_data.sort(key=lambda val: sort_order[val[2]])
+    rule_data.sort(key=lambda val: sort_order[val["type"]])
 
-    return json.dumps({
-        "program_rules": rule_data
-    }), 200
+    return json.dumps(
+        rule_data
+    ), 200
 
 # returns [ ( stream_rule_id, name, type, min_uoc, definition ) ]
 @app.route("/stream/rules", methods=['GET'])
@@ -165,14 +163,14 @@ def get_stream_rules():
             "error": f"stream ID ({stream_id}): not found"
         }), 400
 
-    rule_data = [(row[0], row[1], row[2], str(row[3]), row[4]) for row in rule_data]
+    rule_data = [{ "stream_rule_id": row[0], "name": row[1], "type": row[2], "min_uoc": str(row[3]), "definition": row[4] } for row in rule_data]
 
     sort_order = { "CC": 0, "DE": 1, "GE": 2, "FE": 3 }
-    rule_data.sort(key=lambda val: sort_order[val[2]])
+    rule_data.sort(key=lambda val: sort_order[val["type"]])
 
-    return json.dumps({
-        "stream_rules": rule_data
-    }), 200
+    return json.dumps(
+        rule_data
+    ), 200
 
 # returns [ ( course_id, code, title, year, uoc, mark, grade, is_ge ) ]
 @app.route("/user/enrolments", methods=['GET'])
@@ -191,15 +189,24 @@ def get_enrolments():
 
             courses = []
 
+            enrolment_data = [(row[0], str(row[1]), row[2]) for row in enrolment_data]
             for enrolment in enrolment_data:
                 curs.execute(f"""SELECT code, title, year, uoc, is_ge FROM courses WHERE course_id = '{enrolment[0]}'""")
                 course_data = curs.fetchone()
-                enrolment_data = [(row[0], str(row[1]), row[2]) for row in enrolment_data]
-                courses.append((enrolment[0], course_data[0], course_data[1], str(course_data[2]), str(course_data[3]), str(enrolment[1]), enrolment[2], str(course_data[4])))
+                courses.append({
+                    "course_id": enrolment[0],
+                    "code": course_data[0],
+                    "title": course_data[1],
+                    "year": str(course_data[2]),
+                    "uoc": str(course_data[3]),
+                    "mark": str(enrolment[1]),
+                    "grade": enrolment[2],
+                    "is_ge": str(course_data[4])
+                })
 
-    return json.dumps({
-        "enrolments": courses
-    }), 200
+    return json.dumps(
+        courses
+    ), 200
 
 # returns [ ( course_id, code, title, year, uoc, is_ge ) ]
 @app.route("/courses", methods=['GET'])
@@ -208,16 +215,23 @@ def get_courses():
         with conn.cursor() as curs:
             curs.execute(f"""SELECT course_id, code, title, year, uoc, is_ge FROM courses ORDER BY code ASC, year DESC""")
             course_data = curs.fetchall()
-            course_data = [(row[0], row[1], row[2], str(row[3]), str(row[4]), str(row[5])) for row in course_data]
+            course_data = [{
+                "course_id": row[0],
+                "code": row[1],
+                "title": row[2],
+                "year": str(row[3]),
+                "uoc": str(row[4]),
+                "is_ge": str(row[5])
+            } for row in course_data]
 
     if course_data is None:
         return json.dumps({
             "error": f"Could not retrieve courses"
         }), 400
 
-    return json.dumps({
-        "courses": course_data
-    }), 200
+    return json.dumps(
+        course_data
+    ), 200
 
 # returns ( course_id, code, title, year, uoc, is_ge )
 @app.route("/course", methods=['GET'])
@@ -235,7 +249,12 @@ def get_course():
         }), 400
 
     return json.dumps({
-        "course_info": (str(course_data[0]), course_data[1], course_data[2], str(course_data[3]), str(course_data[4]), str(course_data[5]))
+        "course_id": str(course_data[0]),
+        "code": course_data[1],
+        "title": course_data[2],
+        "year": str(course_data[3]),
+        "uoc": str(course_data[4]),
+        "is_ge": str(course_data[5])
     }), 200
 
 # returns [ ( zid, name ) ]
@@ -245,7 +264,7 @@ def get_students():
         with conn.cursor() as curs:
             curs.execute(f"""SELECT zid, name FROM users WHERE is_staff = 'f' ORDER BY zid ASC, name ASC""")
             students = curs.fetchall()
-            students = [(str(row[0]), str(row[1])) for row in students]
+            students = [{ "zid": str(row[0]), "name": str(row[1]) } for row in students]
 
     if students is None:
         return json.dumps({
@@ -253,7 +272,7 @@ def get_students():
         }), 400
 
     return json.dumps({
-        "students": students
+        students
     }), 200
 
 if __name__ == "__main__":
