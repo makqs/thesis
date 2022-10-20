@@ -414,34 +414,63 @@ const CheckerPage = () => {
 
               // core courses and discipline electives
               if (rule[2] === "CC" || rule[2] === "DE") {
-                const ranges = [];
-                const children = [];
-                rule.splice(4).forEach((code) => {
-                  if (new RegExp("^[A-Z]{4}[0-9]XXX$").test(code)) {
-                    ranges.push(
+                const definition = rule.splice(4).join(",");
+                if (
+                  new RegExp(
+                    "^[A-Z]{4}[0-9]([0-9]{3}|X{3})([,;][A-Z]{4}[0-9]([0-9]{3}|X{3}))*$"
+                  ).test(definition) &&
+                  new RegExp("[A-Z]{4}[0-9]X{3}").test(definition)
+                ) {
+                  console.log("ranges (and maybe courses too) case");
+                  const ranges = [];
+                  const children = [];
+                  definition.split(",").forEach((code) => {
+                    if (new RegExp("^[A-Z]{4}[0-9]XXX$").test(code)) {
+                      ranges.push(
+                        <CourseCard key={`${rawRule}-${code}`} code={code} completed={false} />
+                      );
+                      return;
+                    }
+
+                    // [A-Z]{4}[0-9]{4} (e.g. COMP1511) case
+                    if (totalRules[rawRule].some((r) => r[1] === code)) {
+                      children.push(
+                        <CourseCard key={`${rawRule}-${code}`} code={code} completed />
+                      );
+                      return;
+                    }
+                    children.push(
                       <CourseCard key={`${rawRule}-${code}`} code={code} completed={false} />
                     );
-                    return;
-                  }
+                  });
 
-                  // [A-Z]{4}[0-9]{4} (e.g. COMP1511) case
+                  if (rule[2] === "DE")
+                    children.push(
+                      ...totalRules[rawRule].map((code) => (
+                        <CourseCard key={`${rawRule}-${code}`} code={code[1]} completed />
+                      ))
+                    );
+
+                  children.push(...ranges);
+
+                  return (
+                    <RequirementsBox
+                      title={`Stream - ${rule[1]}`}
+                      uocCompleted={totalRules[rawRule].reduce((a, b) => a + parseInt(b[4], 10), 0)}
+                      minUoc={rule[3]}
+                      key={rawRule}>
+                      {children}
+                    </RequirementsBox>
+                  );
+                }
+
+                // [A-Z]{4}[0-9]{4}([,;][A-Z]{4}[0-9]{4})* (COMP1511,MATH1131;MATH1141) case
+                const children = definition.split(",").map((code) => {
                   if (totalRules[rawRule].some((r) => r[1] === code)) {
-                    children.push(<CourseCard key={`${rawRule}-${code}`} code={code} completed />);
-                    return;
+                    return <CourseCard key={`${rawRule}-${code}`} code={code} completed />;
                   }
-                  children.push(
-                    <CourseCard key={`${rawRule}-${code}`} code={code} completed={false} />
-                  );
+                  return <CourseCard key={`${rawRule}-${code}`} code={code} completed={false} />;
                 });
-
-                if (rule[2] === "DE")
-                  children.push(
-                    ...totalRules[rawRule].map((code) => (
-                      <CourseCard key={`${rawRule}-${code}`} code={code[1]} completed />
-                    ))
-                  );
-
-                children.push(...ranges);
 
                 return (
                   <RequirementsBox
@@ -597,7 +626,9 @@ const CheckerPage = () => {
                       </Box>
                     </Fade>
                   </Modal>
-                  <SidebarButton title="Remove course" onClick={handleOpenRemove} />
+                  {addedCourses.length !== 0 && (
+                    <SidebarButton title="Remove course" onClick={handleOpenRemove} />
+                  )}
                   <Modal
                     open={openRemove}
                     onClose={handleCloseRemove}
