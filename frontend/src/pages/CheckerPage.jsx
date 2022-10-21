@@ -492,7 +492,7 @@ const CheckerPage = () => {
                 return (
                   <RequirementsBox
                     key={rawRule}
-                    title={`Program - ${rule.name}`}
+                    title={`${"program_rule_id" in rule ? "Program" : "Stream"} - ${rule.name}`}
                     uocCompleted={0}
                     minUoc={rule.min_uoc}>
                     {children}
@@ -541,7 +541,7 @@ const CheckerPage = () => {
 
                   return (
                     <RequirementsBox
-                      title={`Stream - ${rule.name}`}
+                      title={`${"program_rule_id" in rule ? "Program" : "Stream"} - ${rule.name}`}
                       uocCompleted={totalRules[rawRule].reduce(
                         (a, b) => a + parseInt(b.uoc, 10),
                         0
@@ -614,7 +614,7 @@ const CheckerPage = () => {
 
                 return (
                   <RequirementsBox
-                    title={`Stream - ${rule.name}`}
+                    title={`${"program_rule_id" in rule ? "Program" : "Stream"} - ${rule.name}`}
                     uocCompleted={totalRules[rawRule].reduce((a, b) => a + parseInt(b.uoc, 10), 0)}
                     minUoc={rule.min_uoc}
                     key={rawRule}>
@@ -634,7 +634,7 @@ const CheckerPage = () => {
                 ));
                 return (
                   <RequirementsBox
-                    title={`Stream - ${rule.name}`}
+                    title={`${"program_rule_id" in rule ? "Program" : "Stream"} - ${rule.name}`}
                     uocCompleted={totalRules[rawRule].reduce((a, b) => a + parseInt(b.uoc, 10), 0)}
                     minUoc={rule.min_uoc}
                     key={rawRule}>
@@ -652,7 +652,7 @@ const CheckerPage = () => {
                 />
               ));
               return (
-                <RequirementsBox title={`Stream - ${rule.name}`} key={rawRule} notCounted>
+                <RequirementsBox title={`${rule.name}`} key={rawRule} notCounted>
                   {children}
                 </RequirementsBox>
               );
