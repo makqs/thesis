@@ -37,6 +37,47 @@ const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses }) =
     textColor = "#ffffff";
   }
 
+  const children = (
+    <>
+      <div
+        css={css`
+          display: flex;
+          justify-content: space-between;
+        `}>
+        <div>{code}</div>
+        <div>{isLoading ? "..." : course.uoc} UOC</div>
+      </div>
+      <div
+        css={css`
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+        `}>
+        <div
+          css={css`
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          `}>
+          {isLoading ? "..." : course.title}
+        </div>
+        {exclusionCourses.length !== 0 && (
+          <Tooltip
+            title={`Exclusion course of ${exclusionCourses.join(", ")}`}
+            css={css`
+              cursor: pointer;
+            `}>
+            <InfoIcon
+              css={css`
+                width: 18px;
+              `}
+            />
+          </Tooltip>
+        )}
+      </div>
+    </>
+  );
+
   return (
     <Card
       css={css`
@@ -77,59 +118,26 @@ const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses }) =
             padding: 8px;
             cursor: inherit;
           `}>
-          <a
-            // TODO: get working with postgraduate, hardcoded to undergraduate atm
-            href={
-              isLoading
-                ? "https://www.handbook.unsw.edu.au/"
-                : `https://www.handbook.unsw.edu.au/undergraduate/courses/${course.year}/${code}`
-            }
-            target="blank_"
-            css={css`
-              color: inherit;
-              font-size: inherit;
-              text-decoration: inherit;
-              cursor: inherit;
-            `}>
-            <div>
-              <div
-                css={css`
-                  display: flex;
-                  justify-content: space-between;
-                `}>
-                <div>{code}</div>
-                <div>{isLoading ? "..." : course.uoc} UOC</div>
-              </div>
-              <div
-                css={css`
-                  display: flex;
-                  flex-direction: row;
-                  justify-content: space-between;
-                `}>
-                <div
-                  css={css`
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                  `}>
-                  {isLoading ? "..." : course.title}
-                </div>
-                {exclusionCourses.length !== 0 && (
-                  <Tooltip
-                    title={`Exclusion course of ${exclusionCourses.join(", ")}`}
-                    css={css`
-                      cursor: pointer;
-                    `}>
-                    <InfoIcon
-                      css={css`
-                        width: 18px;
-                      `}
-                    />
-                  </Tooltip>
-                )}
-              </div>
-            </div>
-          </a>
+          {locked ? (
+            children
+          ) : (
+            <a
+              // TODO: get working with postgraduate, hardcoded to undergraduate atm
+              href={
+                isLoading
+                  ? "https://www.handbook.unsw.edu.au/"
+                  : `https://www.handbook.unsw.edu.au/undergraduate/courses/${course.year}/${code}`
+              }
+              target="blank_"
+              css={css`
+                color: inherit;
+                font-size: inherit;
+                text-decoration: inherit;
+                cursor: inherit;
+              `}>
+              {children}
+            </a>
+          )}
         </CardActionArea>
       )}
     </Card>

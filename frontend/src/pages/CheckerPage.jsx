@@ -33,6 +33,7 @@ import SidebarButton from "../components/SidebarButton";
 // DONE
 //  - order gen eds by decrerasing UOC
 //  - add bucket of courses that don't fit a rule
+//  - fix course card spacing and arrangement
 
 const CheckerPage = () => {
   const navigate = useNavigate();
