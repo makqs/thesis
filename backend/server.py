@@ -36,7 +36,7 @@ def logout():
     # TODO
     pass
 
-# returns { program_id, year, code, title, total_uoc }
+# returns { program_id, year, code, title, total_uoc, faculty, school }
 @app.route("/program", methods=['GET'])
 def get_program():
     zid = request.args.get("zid")
@@ -51,7 +51,7 @@ def get_program():
                     "error": f"zID ({zid}): not enrolled in a program"
                 }), 400
 
-            curs.execute(f"""SELECT year, code, title, total_uoc FROM programs WHERE program_id = '{program_id[0]}'""")
+            curs.execute(f"""SELECT year, code, title, total_uoc, faculty, school FROM programs WHERE program_id = '{program_id[0]}'""")
             program_data = curs.fetchone()
 
     return json.dumps({
@@ -60,6 +60,8 @@ def get_program():
         "code": str(program_data[1]),
         "title": str(program_data[2]),
         "total_uoc": str(program_data[3]),
+        "faculty": str(program_data[4]),
+        "school": str(program_data[5])
     }), 200
 
 # returns { stream_id, year, code, title, total_uoc }
@@ -191,7 +193,7 @@ def get_enrolments():
 
             enrolment_data = [(row[0], str(row[1]), row[2]) for row in enrolment_data]
             for enrolment in enrolment_data:
-                curs.execute(f"""SELECT code, title, year, uoc, is_ge FROM courses WHERE course_id = '{enrolment[0]}'""")
+                curs.execute(f"""SELECT code, title, year, uoc, is_ge, faculty, school FROM courses WHERE course_id = '{enrolment[0]}'""")
                 course_data = curs.fetchone()
                 courses.append({
                     "course_id": enrolment[0],
@@ -201,7 +203,9 @@ def get_enrolments():
                     "uoc": str(course_data[3]),
                     "mark": str(enrolment[1]),
                     "grade": enrolment[2],
-                    "is_ge": str(course_data[4])
+                    "is_ge": str(course_data[4]),
+                    "faculty": str(course_data[5]),
+                    "school": str(course_data[6])
                 })
 
     return json.dumps(
@@ -213,7 +217,7 @@ def get_enrolments():
 def get_courses():
     with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
         with conn.cursor() as curs:
-            curs.execute(f"""SELECT course_id, code, title, year, uoc, is_ge FROM courses ORDER BY code ASC, year DESC""")
+            curs.execute(f"""SELECT course_id, code, title, year, uoc, is_ge, faculty, school FROM courses ORDER BY code ASC, year DESC""")
             course_data = curs.fetchall()
             course_data = [{
                 "course_id": row[0],
@@ -221,7 +225,9 @@ def get_courses():
                 "title": row[2],
                 "year": str(row[3]),
                 "uoc": str(row[4]),
-                "is_ge": str(row[5])
+                "is_ge": str(row[5]),
+                "faculty": str(row[6]),
+                "school": str(row[7])
             } for row in course_data]
 
     if course_data is None:
@@ -240,7 +246,7 @@ def get_course():
 
     with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
         with conn.cursor() as curs:
-            curs.execute(f"""SELECT course_id, code, title, year, uoc, is_ge FROM courses WHERE code = '{code}' ORDER BY year DESC""")
+            curs.execute(f"""SELECT course_id, code, title, year, uoc, is_ge, faculty, school FROM courses WHERE code = '{code}' ORDER BY year DESC""")
             course_data = curs.fetchone()
 
     if course_data is None:
@@ -254,7 +260,9 @@ def get_course():
         "title": course_data[2],
         "year": str(course_data[3]),
         "uoc": str(course_data[4]),
-        "is_ge": str(course_data[5])
+        "is_ge": str(course_data[5]),
+        "faculty": str(course_data[6]),
+        "school": str(course_data[7])
     }), 200
 
 # returns [ { zid, name } ]

@@ -25,7 +25,6 @@ import SidebarButton from "../components/SidebarButton";
 
 // TODOs:
 //  - add stream and program changing
-//  - add faculty and school checks to gen eds
 //  - add eng program discipline elective same as stream thing
 //  - add tokens and cookies
 //  - automate program and stream rules with api
@@ -34,6 +33,7 @@ import SidebarButton from "../components/SidebarButton";
 //  - order gen eds by decrerasing UOC
 //  - add bucket of courses that don't fit a rule
 //  - fix course card spacing and arrangement
+//  - add faculty and school checks to gen eds
 
 const CheckerPage = () => {
   const navigate = useNavigate();
@@ -328,6 +328,7 @@ const CheckerPage = () => {
                 enrolmentsLeft = enrolmentsLeft.filter((course) => {
                   if (
                     course.is_ge === "True" &&
+                    course.faculty !== program.faculty &&
                     rules[JSON.stringify(streamRule)].reduce((a, b) => a + parseInt(b.uoc, 10), 0) +
                       parseInt(course.uoc, 10) <=
                       parseInt(streamRule.min_uoc, 10)
@@ -409,6 +410,7 @@ const CheckerPage = () => {
           enrolmentsLeft = enrolmentsLeft.filter((course) => {
             if (
               course.is_ge === "True" &&
+              course.faculty !== program.faculty &&
               rules[JSON.stringify(programRule)].reduce((a, b) => a + parseInt(b.uoc, 10), 0) +
                 parseInt(course.uoc, 10) <=
                 parseInt(programRule.min_uoc, 10)
@@ -424,23 +426,36 @@ const CheckerPage = () => {
         if (programRule.type === "FE") {
           rules[JSON.stringify(programRule)] = [];
           enrolmentsLeft = enrolmentsLeft.filter((course) => {
-            rules[JSON.stringify(programRule)].push(course);
-            return false;
+            if (
+              rules[JSON.stringify(programRule)].reduce((a, b) => a + parseInt(b.uoc, 10), 0) +
+                parseInt(course.uoc, 10) <=
+              parseInt(programRule.min_uoc, 10)
+            ) {
+              rules[JSON.stringify(programRule)].push(course);
+              return false;
+            }
+            return true;
           });
         }
       });
 
       // do stream free electives last
-      const feRule = Object.keys(rules).find((rule) => JSON.parse(rule).type === "FE");
-      if (feRule) {
-        enrolmentsLeft = enrolmentsLeft.filter((course) => {
-          rules[feRule].push(course);
-          return false;
-        });
-      }
+      Object.keys(rules).forEach((rule) => {
+        if (JSON.parse(rule).type === "FE") {
+          enrolmentsLeft = enrolmentsLeft.filter((course) => {
+            if (
+              rules[rule].reduce((a, b) => a + parseInt(b.uoc, 10), 0) + parseInt(course.uoc, 10) <=
+              parseInt(JSON.parse(rule).min_uoc, 10)
+            ) {
+              rules[rule].push(course);
+              return false;
+            }
+            return true;
+          });
+        }
+      });
 
-      setLockedCourses(lockedCoursesToAdd);
-
+      // any courses that didn't fit into a rule
       if (enrolmentsLeft.length !== 0) {
         rules[
           JSON.stringify({
@@ -453,6 +468,7 @@ const CheckerPage = () => {
         ] = enrolmentsLeft;
       }
 
+      setLockedCourses(lockedCoursesToAdd);
       setTotalRules(rules);
     }
   }, [enrolments, programRules, streamRules, addedCourses]);
