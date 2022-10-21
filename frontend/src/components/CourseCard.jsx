@@ -25,7 +25,7 @@ const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses }) =
   let bgColor = "#f7fafc";
   let textColor = "#646c7d";
   if (completed) {
-    bgColor = "#52b96a";
+    bgColor = "#71ad7b";
     textColor = "#ffffff";
   }
   if (locked) {
@@ -33,7 +33,7 @@ const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses }) =
     textColor = "#ffffff";
   }
   if (notCounted) {
-    bgColor = "#ffa41bd8";
+    bgColor = "#f6c43c";
     textColor = "#ffffff";
   }
 
@@ -52,6 +52,7 @@ const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses }) =
           display: flex;
           flex-direction: row;
           justify-content: space-between;
+          align-items: center;
         `}>
         <div
           css={css`
@@ -69,7 +70,7 @@ const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses }) =
             `}>
             <InfoIcon
               css={css`
-                width: 18px;
+                height: max-content;
               `}
             />
           </Tooltip>
@@ -89,7 +90,7 @@ const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses }) =
         @media (min-width: 1000px) and (max-width: 1500px) {
           flex: 0 0 calc((100% / 3) - 2px - (10px * 2 / 3));
         }
-        border-radius: 5px;
+        border-radius: 10px;
         border: 1px solid #b6b6b6;
         color: ${textColor};
         background-color: ${bgColor};

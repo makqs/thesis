@@ -26,13 +26,14 @@ const RequirementsBox = ({ title, uocCompleted, minUoc, notCounted, children }) 
               display: flex;
               flex-direction: row;
               justify-content: space-between;
+              align-items: center;
             `}>
             <div>{title}</div>
             {notCounted ? (
               <Tooltip title="These courses do not towards your progression">
                 <InfoIcon
                   css={css`
-                    width: 20px;
+                    height: fit-content;
                   `}
                 />
               </Tooltip>
