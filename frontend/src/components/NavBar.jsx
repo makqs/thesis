@@ -93,8 +93,10 @@ const NavBar = () => {
   );
 
   useEffect(() => {
-    setUserZId(userState.zId);
-    setUserName(userState.name);
+    if (userState) {
+      setUserZId(userState.zId);
+      setUserName(userState.name);
+    }
   }, [userState]);
 
   useEffect(() => {
@@ -134,7 +136,8 @@ const NavBar = () => {
               css={css`
                 color: #646c7d;
               `}>
-              {(userState.isStaff && programIsLoading && Object.keys(studentState).length !== 0) ||
+              {!userState ||
+              (userState.isStaff && programIsLoading && Object.keys(studentState).length !== 0) ||
               (!userState.isStaff && programIsLoading) ? (
                 "..."
               ) : (
@@ -151,7 +154,8 @@ const NavBar = () => {
               css={css`
                 color: #818ca1;
               `}>
-              {(userState.isStaff && streamIsLoading && Object.keys(studentState).length !== 0) ||
+              {!userState ||
+              (userState.isStaff && streamIsLoading && Object.keys(studentState).length !== 0) ||
               (!userState.isStaff && streamIsLoading) ? (
                 "..."
               ) : (

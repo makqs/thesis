@@ -60,6 +60,14 @@ const CheckerPage = () => {
   const handleCloseRemove = () => setOpenRemove(false);
   const [removeValue, setRemoveValue] = useState(null);
 
+  useEffect(() => {
+    if (!userState) {
+      userDispatch({ type: "logout" });
+      studentDispatch({ type: "resetStudent" });
+      navigate("/login");
+    }
+  });
+
   const { data: courses, isLoading: coursesIsLoading } = useQuery(["coursesData"], async () => {
     const requestOptions = {
       method: "GET"
@@ -73,7 +81,7 @@ const CheckerPage = () => {
     }
   });
 
-  const studentId = studentState.zId;
+  const studentId = studentState?.zId;
   const { data: enrolments, isLoading: enrolmentsIsLoading } = useQuery(
     ["enrolmentsData", studentId],
     async () => {
@@ -209,14 +217,6 @@ const CheckerPage = () => {
   const handleUocClick = () => {
     setUocOpen(!uocOpen);
   };
-
-  useEffect(() => {
-    if (!userState) {
-      userDispatch({ type: "logout" });
-      studentDispatch({ type: "resetStudent" });
-      navigate("/login");
-    }
-  }, []);
 
   const [totalRules, setTotalRules] = useState({});
 
