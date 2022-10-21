@@ -17,7 +17,7 @@ const App = () => {
   const [userState, userDispatch] = useReducer(userReducer, null);
   const [studentState, studentDispatch] = useReducer(studentReducer, null);
   return (
-    <SnackbarProvider maxSnack={3}>
+    <SnackbarProvider maxSnack={20}>
       <QueryClientProvider client={new QueryClient()}>
         <UserContext.Provider value={{ userState, userDispatch }}>
           <StudentContext.Provider value={{ studentState, studentDispatch }}>

@@ -23,6 +23,13 @@ import { StudentContext } from "../helpers/StudentContext";
 import SidebarItem from "../components/SidebarItem";
 import SidebarButton from "../components/SidebarButton";
 
+// TODOs:
+//  - add stream and program changing
+
+// DONE
+//  - order gen eds by decrerasing UOC
+//  - add bucket of courses that don't fit a rule
+
 const CheckerPage = () => {
   const navigate = useNavigate();
   const { userState, userDispatch } = useContext(UserContext);
@@ -393,6 +400,7 @@ const CheckerPage = () => {
         // should cover every gen ed case
         if (programRule.type === "GE") {
           rules[JSON.stringify(programRule)] = [];
+          enrolmentsLeft.sort((a, b) => parseInt(b.uoc, 10) - parseInt(a.uoc, 10));
           enrolmentsLeft = enrolmentsLeft.filter((course) => {
             if (
               course.is_ge === "True" &&
@@ -427,6 +435,18 @@ const CheckerPage = () => {
       }
 
       setLockedCourses(lockedCoursesToAdd);
+
+      if (enrolmentsLeft.length !== 0) {
+        rules[
+          JSON.stringify({
+            rule_id: -1,
+            name: "Not Counted",
+            type: "NC",
+            min_uoc: "0",
+            definition: null
+          })
+        ] = enrolmentsLeft;
+      }
 
       setTotalRules(rules);
     }
@@ -623,7 +643,19 @@ const CheckerPage = () => {
                 );
               }
 
-              return <></>;
+              // courses not counted
+              const children = totalRules[rawRule].map((course) => (
+                <CourseCard
+                  key={`${rawRule}-${JSON.stringify(course)}`}
+                  code={course.code}
+                  notCounted
+                />
+              ));
+              return (
+                <RequirementsBox title={`Stream - ${rule.name}`} key={rawRule} notCounted>
+                  {children}
+                </RequirementsBox>
+              );
             })
           )}
         </Box>

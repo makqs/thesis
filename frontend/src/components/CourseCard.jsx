@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import InfoIcon from "@mui/icons-material/Info";
 
-const CourseCard = ({ code, completed, locked, exclusionCourses }) => {
+const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses }) => {
   const { data: course, isLoading } = useQuery(
     [code],
     () => {
@@ -31,6 +31,10 @@ const CourseCard = ({ code, completed, locked, exclusionCourses }) => {
   if (locked) {
     // bgColor = "#646c7d";
     bgColor = "#b6b6b6";
+    textColor = "#ffffff";
+  }
+  if (notCounted) {
+    bgColor = "#ffa41bd8";
     textColor = "#ffffff";
   }
 
@@ -133,12 +137,14 @@ const CourseCard = ({ code, completed, locked, exclusionCourses }) => {
 CourseCard.propTypes = {
   code: PropTypes.string.isRequired,
   completed: PropTypes.bool,
+  notCounted: PropTypes.bool,
   locked: PropTypes.bool,
   exclusionCourses: PropTypes.arrayOf(PropTypes.string)
 };
 
 CourseCard.defaultProps = {
   completed: false,
+  notCounted: false,
   locked: false,
   exclusionCourses: []
 };

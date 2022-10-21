@@ -6,9 +6,12 @@ import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 
+import { Tooltip } from "@mui/material";
+import InfoIcon from "@mui/icons-material/Info";
+
 import PropTypes from "prop-types";
 
-const RequirementsBox = ({ title, uocCompleted, minUoc, children }) => {
+const RequirementsBox = ({ title, uocCompleted, minUoc, notCounted, children }) => {
   return (
     <Card
       css={css`
@@ -25,9 +28,19 @@ const RequirementsBox = ({ title, uocCompleted, minUoc, children }) => {
               justify-content: space-between;
             `}>
             <div>{title}</div>
-            <div>
-              {uocCompleted} / {minUoc}
-            </div>
+            {notCounted ? (
+              <Tooltip title="These courses do not towards your progression">
+                <InfoIcon
+                  css={css`
+                    width: 20px;
+                  `}
+                />
+              </Tooltip>
+            ) : (
+              <div>
+                {uocCompleted} / {minUoc}
+              </div>
+            )}
           </div>
         }
         css={css`
@@ -59,12 +72,16 @@ const RequirementsBox = ({ title, uocCompleted, minUoc, children }) => {
 
 RequirementsBox.propTypes = {
   title: PropTypes.string.isRequired,
-  uocCompleted: PropTypes.number.isRequired,
-  minUoc: PropTypes.string.isRequired,
+  uocCompleted: PropTypes.number,
+  minUoc: PropTypes.string,
+  notCounted: PropTypes.bool,
   children: PropTypes.node
 };
 
 RequirementsBox.defaultProps = {
+  uocCompleted: null,
+  minUoc: null,
+  notCounted: false,
   children: null
 };
 
