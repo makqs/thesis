@@ -29,7 +29,6 @@ const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses }) =
     textColor = "#ffffff";
   }
   if (locked) {
-    // bgColor = "#646c7d";
     bgColor = "#b6b6b6";
     textColor = "#ffffff";
   }
@@ -42,9 +41,12 @@ const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses }) =
     <Card
       css={css`
         border: 1px solid grey;
-        width: 32%;
+        flex: 0 0 calc(25% - 2px - (10px * 3 / 4));
         @media (max-width: 1000px) {
-          width: 49%;
+          flex: 0 0 calc(50% - 2px - (10px * 1 / 2));
+        }
+        @media (min-width: 1000px) and (max-width: 1500px) {
+          flex: 0 0 calc((100% / 3) - 2px - (10px * 2 / 3));
         }
         border-radius: 5px;
         border: 1px solid #b6b6b6;

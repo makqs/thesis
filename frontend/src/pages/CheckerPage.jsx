@@ -25,6 +25,10 @@ import SidebarButton from "../components/SidebarButton";
 
 // TODOs:
 //  - add stream and program changing
+//  - add faculty and school checks to gen eds
+//  - add eng program discipline elective same as stream thing
+//  - add tokens and cookies
+//  - automate program and stream rules with api
 
 // DONE
 //  - order gen eds by decrerasing UOC

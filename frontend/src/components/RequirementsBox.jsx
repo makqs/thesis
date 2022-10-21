@@ -57,8 +57,8 @@ const RequirementsBox = ({ title, uocCompleted, minUoc, notCounted, children }) 
           display: flex;
           flex-direction: row;
           flex-wrap: wrap;
-          justify-content: space-between;
-          gap: 10px 0;
+          justify-content: flex-start;
+          gap: 10px 10px;
           padding: 10px;
           &:last-child {
             padding-bottom: 10px;
