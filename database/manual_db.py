@@ -27,8 +27,8 @@ with open("../backend/courses.txt", "r") as f:
         print(index, code, title, uoc, gened, faculty, school)
         if uoc == "":
             uoc = "0"
-        cursor.execute(f"""INSERT INTO courses(course_id, code, title, year, uoc, is_ge)
-                        VALUES ('{index}', '{code}', '{title}', 2021, {int(uoc)}, {gened})""")
+        cursor.execute(f"""INSERT INTO courses(course_id, code, title, year, uoc, is_ge, faculty, school)
+                        VALUES ('{index}', '{code}', '{title}', 2021, {int(uoc)}, {gened}, '{faculty}', '{school}')""")
 
 # gen eds is by the faculty
 # need to store school and faculty from the API in the courses
@@ -44,8 +44,8 @@ with open("../backend/programs.txt", "r") as f:
         line = re.sub(r"'", r"''", line)
         (code, title, year, total_uoc, faculty, school) = line.strip().split('_', 5)
         print(index, code, title, year, total_uoc, faculty, school)
-        cursor.execute(f"""INSERT INTO programs(program_id, year, code, title, total_uoc)
-                        VALUES ('{index}', {int(year)}, '{code}', '{title}', {int(total_uoc)})""")
+        cursor.execute(f"""INSERT INTO programs(program_id, year, code, title, total_uoc, faculty, school)
+                        VALUES ('{index}', {int(year)}, '{code}', '{title}', {int(total_uoc)}, '{faculty}', '{school}')""")
 
 cursor.execute(f"""INSERT INTO streams(stream_id, year, code, title, total_uoc)
                    VALUES ('1', 2021, 'SENGAH', 'Software Engineering', 168)""")
@@ -141,8 +141,8 @@ cursor.execute(f"""INSERT INTO course_enrolments(zid, course_id, mark, grade)
                    VALUES ('z5555555', '1453', 76, 'DN')""")
 cursor.execute(f"""INSERT INTO course_enrolments(zid, course_id, mark, grade)
                    VALUES ('z5555555', '1988', 76, 'DN')""")
-# cursor.execute(f"""INSERT INTO course_enrolments(zid, course_id, mark, grade)
-#                    VALUES ('z5555555', '1991', 76, 'DN')""")
+cursor.execute(f"""INSERT INTO course_enrolments(zid, course_id, mark, grade)
+                   VALUES ('z5555555', '1991', 76, 'DN')""")
 cursor.execute(f"""INSERT INTO course_enrolments(zid, course_id, mark, grade)
                    VALUES ('z5555555', '1986', 76, 'FL')""")
 
