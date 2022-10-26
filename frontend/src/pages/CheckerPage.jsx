@@ -22,6 +22,8 @@ import { UserContext } from "../helpers/UserContext";
 import { StudentContext } from "../helpers/StudentContext";
 import SidebarItem from "../components/SidebarItem";
 import SidebarButton from "../components/SidebarButton";
+import AddModal from "../components/AddModal";
+import RemoveModal from "../components/RemoveModal";
 
 // TODOs:
 //  - add stream and program changing
@@ -34,6 +36,7 @@ import SidebarButton from "../components/SidebarButton";
 //  - add bucket of courses that don't fit a rule
 //  - fix course card spacing and arrangement
 //  - add faculty and school checks to gen eds
+//  - move modals to separate components
 
 const CheckerPage = () => {
   const navigate = useNavigate();
@@ -780,155 +783,73 @@ const CheckerPage = () => {
                   )}
                   {/* add course section */}
                   <SidebarButton title="Add course" onClick={handleOpenAdd} />
-                  <Modal
+                  <AddModal
                     open={openAdd}
-                    onClose={handleCloseAdd}
-                    closeAfterTransition
-                    BackdropComponent={Backdrop}
-                    BackdropProps={{
-                      timeout: 500
-                    }}>
-                    <Fade in={openAdd}>
-                      <Box
-                        sx={{
-                          position: "absolute",
-                          top: "50%",
-                          left: "50%",
-                          transform: "translate(-50%, -50%)",
-                          width: 400,
-                          bgcolor: "background.paper",
-                          border: "2px solid #000",
-                          boxShadow: 24,
-                          p: 4,
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "centre"
-                        }}>
-                        <Autocomplete
-                          value={addValue}
-                          onChange={(event, newValue) => {
-                            setAddValue(newValue);
-                          }}
-                          disablePortal
-                          options={
-                            coursesIsLoading || !enrolments || "error" in enrolments
-                              ? []
-                              : courses
-                                  .filter((c) =>
-                                    enrolments
-                                      .concat(addedCourses)
-                                      .every(
-                                        (e) =>
-                                          (c.course_id !== e.course_id ||
-                                            !["PS", "CR", "DN", "HD", "SY", "EC"].includes(
-                                              e.grade
-                                            )) &&
-                                          !lockedCourses.includes(c.code)
-                                      )
-                                  )
-                                  .map((c) => {
-                                    return { label: c.code, id: c.course_id };
-                                  })
+                    handleClose={handleCloseAdd}
+                    selectedCourse={addValue}
+                    setSelectedCourse={setAddValue}
+                    options={
+                      coursesIsLoading || !enrolments || "error" in enrolments
+                        ? []
+                        : courses
+                            .filter((c) =>
+                              enrolments
+                                .concat(addedCourses)
+                                .every(
+                                  (e) =>
+                                    (c.course_id !== e.course_id ||
+                                      !["PS", "CR", "DN", "HD", "SY", "EC"].includes(e.grade)) &&
+                                    !lockedCourses.includes(c.code)
+                                )
+                            )
+                            .map((c) => {
+                              return { label: c.code, id: c.course_id };
+                            })
+                    }
+                    doneFunc={() => {
+                      if (addValue === null) return;
+                      const course = courses.find((c) => c.course_id === addValue.id);
+                      setAddedCourses([
+                        ...addedCourses,
+                        ...[
+                          {
+                            course_id: course.course_id,
+                            code: course.code,
+                            title: course.title,
+                            year: course.year,
+                            uoc: course.uoc,
+                            mark: "50",
+                            grade: "SY",
+                            is_ge: course.is_ge
                           }
-                          sx={{ width: 300 }}
-                          // eslint-disable-next-line react/jsx-props-no-spreading
-                          renderInput={(params) => <TextField {...params} label="Course" />}
-                          isOptionEqualToValue={(option, value) => option.id === value.id}
-                        />
-                        <Button
-                          variant="contained"
-                          css={css`
-                            background-color: #4299e1;
-                            margin-left: 10px;
-                          `}
-                          onClick={() => {
-                            if (addValue === null) return;
-                            const course = courses.find((c) => c.course_id === addValue.id);
-                            setAddedCourses([
-                              ...addedCourses,
-                              ...[
-                                {
-                                  course_id: course.course_id,
-                                  code: course.code,
-                                  title: course.title,
-                                  year: course.year,
-                                  uoc: course.uoc,
-                                  mark: "50",
-                                  grade: "SY",
-                                  is_ge: course.is_ge
-                                }
-                              ]
-                            ]);
-                            setAddValue(null);
-                            handleCloseAdd();
-                          }}>
-                          Add course
-                        </Button>
-                      </Box>
-                    </Fade>
-                  </Modal>
+                        ]
+                      ]);
+                      setAddValue(null);
+                      handleCloseAdd();
+                    }}
+                  />
                   {/* remove course section */}
                   {addedCourses.length !== 0 && (
                     <>
                       <SidebarButton title="Remove course" onClick={handleOpenRemove} />
-                      <Modal
+                      <RemoveModal
                         open={openRemove}
-                        onClose={handleCloseRemove}
-                        closeAfterTransition
-                        BackdropComponent={Backdrop}
-                        BackdropProps={{
-                          timeout: 500
-                        }}>
-                        <Fade in={openRemove}>
-                          <Box
-                            sx={{
-                              position: "absolute",
-                              top: "50%",
-                              left: "50%",
-                              transform: "translate(-50%, -50%)",
-                              width: 400,
-                              bgcolor: "background.paper",
-                              border: "2px solid #000",
-                              boxShadow: 24,
-                              p: 4,
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "centre"
-                            }}>
-                            <Autocomplete
-                              value={removeValue}
-                              onChange={(event, newValue) => {
-                                setRemoveValue(newValue);
-                              }}
-                              disablePortal
-                              options={addedCourses.map((c) => {
-                                return { label: c.code, id: c.course_id };
-                              })}
-                              sx={{ width: 300 }}
-                              // eslint-disable-next-line react/jsx-props-no-spreading
-                              renderInput={(params) => <TextField {...params} label="Course" />}
-                              isOptionEqualToValue={(option, value) => option.id === value.id}
-                            />
-                            <Button
-                              variant="contained"
-                              css={css`
-                                background-color: #4299e1;
-                                margin-left: 10px;
-                              `}
-                              onClick={() => {
-                                if (removeValue === null) return;
-                                const newCourses = addedCourses.filter(
-                                  (c) => c.course_id !== removeValue.id
-                                );
-                                setAddedCourses(newCourses);
-                                setRemoveValue(null);
-                                handleCloseRemove();
-                              }}>
-                              Remove course
-                            </Button>
-                          </Box>
-                        </Fade>
-                      </Modal>
+                        handleClose={handleCloseRemove}
+                        selectedCourse={removeValue}
+                        setSelectedCourse={setRemoveValue}
+                        options={addedCourses.map((c) => {
+                          return { label: c.code, id: c.course_id };
+                        })}
+                        doneFunc={() => {
+                          if (removeValue === null) return;
+                          const newCourses = addedCourses.filter(
+                            (c) => c.course_id !== removeValue.id
+                          );
+                          setAddedCourses(newCourses);
+                          setRemoveValue(null);
+                          handleCloseRemove();
+                        }}
+                      />
                     </>
                   )}
                   <SidebarButton title="Reset modifiers" isRed onClick={resetModifiers} />
