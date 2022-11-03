@@ -1,7 +1,9 @@
 import { createContext } from "react";
 
 // export const StudentContext = createContext({
-//   zId: 'z1234567'
+//   zId: 'z1234567',
+//   tempProgramId: '3',
+//   tempStreamId: '4'
 // });
 
 export const StudentContext = createContext({});
@@ -11,16 +13,25 @@ export const studentReducer = (state, action) => {
     case "setStudent":
       return {
         zId: action.zId,
+        tempProgramId: null,
+        tempStreamId: null
+      };
+    case "updateProgram":
+      return {
+        zId: state.zId,
+        tempProgramId: action.tempProgramId,
         tempStreamId: null
       };
     case "updateStream":
       return {
         zId: state.zId,
+        tempProgramId: state.tempProgramId,
         tempStreamId: action.tempStreamId
       };
     case "resetStudentModifiers":
       return {
         zId: state.zId,
+        tempProgramId: null,
         tempStreamId: null
       };
     case "resetStudent":

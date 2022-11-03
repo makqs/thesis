@@ -22,12 +22,12 @@ import SidebarButton from "../components/SidebarButton";
 import AddCourseModal from "../components/AddCourseModal";
 import RemoveCourseModal from "../components/RemoveCourseModal";
 import ChangeStreamModal from "../components/ChangeStreamModal";
+import ChangeProgramModal from "../components/ChangeProgramModal";
 
 import { UserContext } from "../helpers/UserContext";
 import { StudentContext } from "../helpers/StudentContext";
 
 // TODOs:
-//  - add program changing
 //  - add multiple stream support
 //  - add eng program discipline elective same as stream thing
 //  - add school exceptions to gen eds (eng and maths)
@@ -40,8 +40,11 @@ import { StudentContext } from "../helpers/StudentContext";
 //  - add exclusion courses for done courses (e.g. COMP1511 and COMP1911)
 //    - it's only listed in the description section so would be v hard to generalise
 //    - curl -sL https://www.handbook.unsw.edu.au/api/content/render/false/query/+contentType:unsw_psubject%20+unsw_psubject.studyLevelURL:undergraduate%20+unsw_psubject.implementationYear:2021%20+deleted:false%20+unsw_psubject.code:COMP1511/orderBy/urlMap/limit/1 | jq -r '.["contentlets"][]' | grep 1911
+//  - add mobile support
+//    - might be more effort than it's worth at the moment
 
 // DONE
+//  - add program changing
 //  - add stream changing
 //  - order gen eds by decreasing UOC
 //  - add bucket of courses that don't fit a rule
@@ -68,6 +71,11 @@ const CheckerPage = () => {
   const handleOpenChangeStream = () => setOpenChangeStream(true);
   const handleCloseChangeStream = () => setOpenChangeStream(false);
   const [changeStreamValue, setChangeStreamValue] = useState(null);
+
+  const [openChangeProgram, setOpenChangeProgram] = useState(false);
+  const handleOpenChangeProgram = () => setOpenChangeProgram(true);
+  const handleCloseChangeProgram = () => setOpenChangeProgram(false);
+  const [changeProgramValue, setChangeProgramValue] = useState(null);
 
   const [openRemove, setOpenRemove] = useState(false);
   const handleOpenRemove = () => setOpenRemove(true);
@@ -110,14 +118,20 @@ const CheckerPage = () => {
     }
   );
 
+  const tempProgramId = studentState?.tempProgramId;
   const { data: program, isLoading: programIsLoading } = useQuery(
-    ["programData", studentId],
+    ["programData", studentId, tempProgramId],
     async () => {
       const requestOptions = {
         method: "GET"
       };
       try {
-        const res = await fetch(`http://127.0.0.1:5000/program?zid=${studentId}`, requestOptions);
+        const res = await fetch(
+          tempProgramId === null
+            ? `http://127.0.0.1:5000/user/program?zid=${studentId}`
+            : `http://127.0.0.1:5000/program?program_id=${tempProgramId}`,
+          requestOptions
+        );
         return await res.json();
       } catch (err) {
         console.log("PROGRAM FETCH ERROR: ", err);
@@ -173,6 +187,19 @@ const CheckerPage = () => {
       enabled: !!programId
     }
   );
+
+  const { data: programs, isLoading: programsIsLoading } = useQuery(["programsData"], async () => {
+    const requestOptions = {
+      method: "GET"
+    };
+    try {
+      const res = await fetch(`http://127.0.0.1:5000/programs`, requestOptions);
+      return await res.json();
+    } catch (err) {
+      console.log("PROGRAMS FETCH ERROR:", err);
+      return enqueueSnackbar(err, { variant: "error" });
+    }
+  });
 
   const tempStreamId = studentState?.tempStreamId;
   const { data: stream, isLoading: streamIsLoading } = useQuery(
@@ -251,6 +278,19 @@ const CheckerPage = () => {
     setAddedCourses([]);
     studentDispatch({ type: "resetStudentModifiers" });
   };
+
+  const [modifiersActive, setModifiersActive] = useState(false);
+  useEffect(() => {
+    if (
+      addedCourses.length !== 0 ||
+      studentState?.tempProgramId !== null ||
+      studentState?.tempStreamId !== null
+    ) {
+      setModifiersActive(true);
+    } else {
+      setModifiersActive(false);
+    }
+  }, [addedCourses, studentState]);
 
   useEffect(() => {
     if (!userState) {
@@ -514,6 +554,7 @@ const CheckerPage = () => {
             flex-direction: column;
             gap: 10px;
             overflow: auto;
+            width: calc(100vw - 300px);
           `}>
           {programRulesIsLoading || streamIsLoading ? (
             <></>
@@ -696,191 +737,220 @@ const CheckerPage = () => {
             })
           )}
         </Box>
-        {!programRulesIsLoading && !streamIsLoading && (
-          <Box
+        <Box
+          css={css`
+            background-color: #f7fafc;
+            min-width: 300px;
+            flex-grow: 1;
+            height: 100%;
+          `}>
+          <List
             css={css`
-              background-color: #f7fafc;
-              min-width: 300px;
-              flex-grow: 1;
-              height: 100%;
-            `}>
-            <List
+              width: 100%;
+              padding-top: 0;
+              padding-bottom: 0;
+              border-style: solid;
+              border-color: #bfbfbf;
+              border-width: 0px 0px 1px 1px;
+            `}
+            component="nav"
+            aria-labelledby="nested-list-subheader">
+            <ListItemButton
+              onClick={handleModsClick}
               css={css`
-                width: 100%;
-                padding-top: 0;
-                padding-bottom: 0;
+                background-color: #f3f3f3;
                 border-style: solid;
                 border-color: #bfbfbf;
-                border-width: 0px 0px 1px 1px;
-              `}
-              component="nav"
-              aria-labelledby="nested-list-subheader">
-              <ListItemButton
-                onClick={handleModsClick}
-                css={css`
-                  background-color: #f3f3f3;
-                  border-style: solid;
-                  border-color: #bfbfbf;
-                  border-width: 1px 0px 0px 0px;
-                `}>
-                <ListItemText primary="Modifiers" />
-                {modsOpen ? <ExpandLess /> : <ExpandMore />}
-              </ListItemButton>
-              <Collapse in={modsOpen} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  {/* change stream section */}
-                  {!programStreamsIsLoading && programStreams.length !== 0 && (
-                    <>
-                      <SidebarButton title="Change stream" onClick={handleOpenChangeStream} />
-                      <ChangeStreamModal
-                        open={openChangeStream}
-                        handleClose={handleCloseChangeStream}
-                        selectedStream={changeStreamValue}
-                        setSelectedStream={setChangeStreamValue}
-                        options={
-                          programStreamsIsLoading
-                            ? []
-                            : programStreams
-                                .filter((s) => !(!!streamId && s.stream_id === streamId))
-                                .map((s) => {
-                                  return { label: `${s.code} - ${s.title}`, id: s.stream_id };
-                                })
-                        }
-                      />
-                    </>
-                  )}
-                  {/* add course section */}
-                  <SidebarButton title="Add course" onClick={handleOpenAdd} />
-                  <AddCourseModal
-                    open={openAdd}
-                    handleClose={handleCloseAdd}
-                    selectedCourse={addValue}
-                    setSelectedCourse={setAddValue}
-                    options={
-                      coursesIsLoading || !enrolments || "error" in enrolments
-                        ? []
-                        : courses
-                            .filter((c) =>
-                              enrolments
-                                .concat(addedCourses)
-                                .every(
-                                  (e) =>
-                                    (c.course_id !== e.course_id ||
-                                      !["PS", "CR", "DN", "HD", "SY", "EC"].includes(e.grade)) &&
-                                    !lockedCourses.includes(c.code)
-                                )
-                            )
-                            .map((c) => {
-                              return { label: c.code, id: c.course_id };
-                            })
-                    }
-                    doneFunc={() => {
-                      if (addValue === null) return;
-                      const course = courses.find((c) => c.course_id === addValue.id);
-                      setAddedCourses([
-                        ...addedCourses,
-                        ...[
-                          {
-                            course_id: course.course_id,
-                            code: course.code,
-                            title: course.title,
-                            year: course.year,
-                            uoc: course.uoc,
-                            mark: "50",
-                            grade: "SY",
-                            is_ge: course.is_ge,
-                            faculty: course.faculty,
-                            school: course.school
-                          }
-                        ]
-                      ]);
-                      setAddValue(null);
-                      handleCloseAdd();
-                    }}
-                  />
-                  {/* remove course section */}
-                  {addedCourses.length !== 0 && (
-                    <>
-                      <SidebarButton title="Remove course" onClick={handleOpenRemove} />
-                      <RemoveCourseModal
-                        open={openRemove}
-                        handleClose={handleCloseRemove}
-                        selectedCourse={removeValue}
-                        setSelectedCourse={setRemoveValue}
-                        options={addedCourses.map((c) => {
-                          return { label: c.code, id: c.course_id };
-                        })}
-                        doneFunc={() => {
-                          if (removeValue === null) return;
-                          const newCourses = addedCourses.filter(
-                            (c) => c.course_id !== removeValue.id
-                          );
-                          setAddedCourses(newCourses);
-                          setRemoveValue(null);
-                          handleCloseRemove();
-                        }}
-                      />
-                    </>
-                  )}
+                border-width: 1px 0px 0px 0px;
+              `}>
+              <ListItemText primary="Modifiers" />
+              {modsOpen ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+            <Collapse in={modsOpen} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                {/* change program section */}
+                {!programsIsLoading && (
+                  <>
+                    <SidebarButton title="Change program" onClick={handleOpenChangeProgram} />
+                    <ChangeProgramModal
+                      open={openChangeProgram}
+                      handleClose={handleCloseChangeProgram}
+                      selectedProgram={changeProgramValue}
+                      setSelectedProgram={setChangeProgramValue}
+                      options={
+                        programsIsLoading
+                          ? []
+                          : programs
+                              .filter((p) => !(!!programId && p.program_id === programId))
+                              .map((p) => {
+                                return { label: `${p.code} - ${p.title}`, id: p.program_id };
+                              })
+                      }
+                    />
+                  </>
+                )}
+                {/* change stream section */}
+                {!programStreamsIsLoading && programStreams.length !== 0 && (
+                  <>
+                    <SidebarButton title="Change stream" onClick={handleOpenChangeStream} />
+                    <ChangeStreamModal
+                      open={openChangeStream}
+                      handleClose={handleCloseChangeStream}
+                      selectedStream={changeStreamValue}
+                      setSelectedStream={setChangeStreamValue}
+                      options={
+                        programStreamsIsLoading
+                          ? []
+                          : programStreams
+                              .filter((s) => !(!!streamId && s.stream_id === streamId))
+                              .map((s) => {
+                                return { label: `${s.code} - ${s.title}`, id: s.stream_id };
+                              })
+                      }
+                    />
+                  </>
+                )}
+                {/* add course section */}
+                {!programIsLoading && !("error" in program) && (
+                  <>
+                    <SidebarButton title="Add course" onClick={handleOpenAdd} />
+                    <AddCourseModal
+                      open={openAdd}
+                      handleClose={handleCloseAdd}
+                      selectedCourse={addValue}
+                      setSelectedCourse={setAddValue}
+                      options={
+                        coursesIsLoading || !enrolments || "error" in enrolments
+                          ? []
+                          : courses
+                              .filter((c) =>
+                                enrolments
+                                  .concat(addedCourses)
+                                  .every(
+                                    (e) =>
+                                      (c.course_id !== e.course_id ||
+                                        !["PS", "CR", "DN", "HD", "SY", "EC"].includes(e.grade)) &&
+                                      !lockedCourses.includes(c.code)
+                                  )
+                              )
+                              .map((c) => {
+                                return { label: c.code, id: c.course_id };
+                              })
+                      }
+                      doneFunc={() => {
+                        if (addValue === null) return;
+                        const course = courses.find((c) => c.course_id === addValue.id);
+                        setAddedCourses([
+                          ...addedCourses,
+                          ...[
+                            {
+                              course_id: course.course_id,
+                              code: course.code,
+                              title: course.title,
+                              year: course.year,
+                              uoc: course.uoc,
+                              mark: "50",
+                              grade: "SY",
+                              is_ge: course.is_ge,
+                              faculty: course.faculty,
+                              school: course.school
+                            }
+                          ]
+                        ]);
+                        setAddValue(null);
+                        handleCloseAdd();
+                      }}
+                    />
+                  </>
+                )}
+                {/* remove course section */}
+                {addedCourses.length !== 0 && (
+                  <>
+                    <SidebarButton title="Remove course" onClick={handleOpenRemove} />
+                    <RemoveCourseModal
+                      open={openRemove}
+                      handleClose={handleCloseRemove}
+                      selectedCourse={removeValue}
+                      setSelectedCourse={setRemoveValue}
+                      options={addedCourses.map((c) => {
+                        return { label: c.code, id: c.course_id };
+                      })}
+                      doneFunc={() => {
+                        if (removeValue === null) return;
+                        const newCourses = addedCourses.filter(
+                          (c) => c.course_id !== removeValue.id
+                        );
+                        setAddedCourses(newCourses);
+                        setRemoveValue(null);
+                        handleCloseRemove();
+                      }}
+                    />
+                  </>
+                )}
+                {!!modifiersActive && (
                   <SidebarButton title="Reset modifiers" isRed onClick={resetModifiers} />
-                </List>
-              </Collapse>
-              <ListItemButton
-                onClick={handleUocClick}
-                css={css`
-                  background-color: #f3f3f3;
-                  border-style: solid;
-                  border-color: #bfbfbf;
-                  border-width: 1px 0px 0px 0px;
-                  padding: 8px 16px;
-                `}>
-                <ListItemText primary="UOC" />
-                <div
+                )}
+              </List>
+            </Collapse>
+            {!programIsLoading && !("error" in program) && (
+              <>
+                <ListItemButton
+                  onClick={handleUocClick}
                   css={css`
-                    display: flex;
-                    flex-direction: row;
+                    background-color: #f3f3f3;
+                    border-style: solid;
+                    border-color: #bfbfbf;
+                    border-width: 1px 0px 0px 0px;
+                    padding: 8px 16px;
                   `}>
-                  <ListItemText
-                    primary={`${
-                      getCompletedUoc("CC") +
-                      getCompletedUoc("DE") +
-                      getCompletedUoc("GE") +
-                      getCompletedUoc("FE") +
-                      getCompletedUoc("ST")
-                    } / ${
-                      getTotalUoc("CC") +
-                      getTotalUoc("DE") +
-                      getTotalUoc("GE") +
-                      getTotalUoc("FE") +
-                      getTotalUoc("ST")
-                    }`}
-                  />
-                  {uocOpen ? <ExpandLess /> : <ExpandMore />}
-                </div>
-              </ListItemButton>
-              <Collapse in={uocOpen} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  {[
-                    { name: "Stream", type: "ST" },
-                    { name: "Core Courses", type: "CC" },
-                    { name: "Discipline Electives", type: "DE" },
-                    { name: "General Education", type: "GE" },
-                    { name: "Free Electives", type: "FE" }
-                  ].map(
-                    ({ name, type }) =>
-                      Object.keys(totalRules).some((rule) => JSON.parse(rule).type === type) && (
-                        <SidebarItem
-                          title={name}
-                          completedUoc={getCompletedUoc(type)}
-                          totalUoc={getTotalUoc(type)}
-                        />
-                      )
-                  )}
-                </List>
-              </Collapse>
-            </List>
-          </Box>
-        )}
+                  <ListItemText primary="UOC" />
+                  <div
+                    css={css`
+                      display: flex;
+                      flex-direction: row;
+                    `}>
+                    <ListItemText
+                      primary={`${
+                        getCompletedUoc("CC") +
+                        getCompletedUoc("DE") +
+                        getCompletedUoc("GE") +
+                        getCompletedUoc("FE") +
+                        getCompletedUoc("ST")
+                      } / ${
+                        getTotalUoc("CC") +
+                        getTotalUoc("DE") +
+                        getTotalUoc("GE") +
+                        getTotalUoc("FE") +
+                        getTotalUoc("ST")
+                      }`}
+                    />
+                    {uocOpen ? <ExpandLess /> : <ExpandMore />}
+                  </div>
+                </ListItemButton>
+                <Collapse in={uocOpen} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding>
+                    {[
+                      { name: "Stream", type: "ST" },
+                      { name: "Core Courses", type: "CC" },
+                      { name: "Discipline Electives", type: "DE" },
+                      { name: "General Education", type: "GE" },
+                      { name: "Free Electives", type: "FE" }
+                    ].map(
+                      ({ name, type }) =>
+                        Object.keys(totalRules).some((rule) => JSON.parse(rule).type === type) && (
+                          <SidebarItem
+                            title={name}
+                            completedUoc={getCompletedUoc(type)}
+                            totalUoc={getTotalUoc(type)}
+                          />
+                        )
+                    )}
+                  </List>
+                </Collapse>
+              </>
+            )}
+          </List>
+        </Box>
       </Box>
     </div>
   );

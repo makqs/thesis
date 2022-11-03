@@ -37,8 +37,8 @@ def logout():
     pass
 
 # returns { program_id, year, code, title, total_uoc, faculty, school }
-@app.route("/program", methods=['GET'])
-def get_program():
+@app.route("/user/program", methods=['GET'])
+def get_user_program():
     zid = request.args.get("zid")
 
     with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
@@ -64,9 +64,53 @@ def get_program():
         "school": str(program_data[5])
     }), 200
 
+# returns { program_id, year, code, title, total_uoc, faculty, school }
+@app.route("/program", methods=['GET'])
+def get_program():
+    program_id = request.args.get("program_id")
+
+    with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
+        with conn.cursor() as curs:
+            curs.execute(f"""SELECT program_id, year, code, title, total_uoc, faculty, school FROM programs WHERE program_id = '{program_id}'""")
+            program_data = curs.fetchone()
+
+    if program_id is None:
+        return json.dumps({
+            "error": f"program ID ({program_id}): does not exist"
+        }), 400
+
+    return json.dumps({
+        "program_id": str(program_data[0]),
+        "year": str(program_data[1]),
+        "code": str(program_data[2]),
+        "title": str(program_data[3]),
+        "total_uoc": str(program_data[4]),
+        "faculty": str(program_data[5]),
+        "school": str(program_data[6])
+    }), 200
+
+# returns [ { program_id, year, code, title, total_uoc, faculty, school } ]
+@app.route("/programs", methods=['GET'])
+def get_programs():
+    with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
+        with conn.cursor() as curs:
+            curs.execute(f"""SELECT program_id, year, code, title, total_uoc, faculty, school FROM programs ORDER BY code""")
+            programs = curs.fetchall()
+
+    if programs is None:
+        return json.dumps({
+            "error": f"could not retrieve programs"
+        }), 400
+
+    programs = [{ "program_id": row[0], "year": str(row[1]), "code": row[2], "title": row[3], "total_uoc": str(row[4]), "faculty": row[5], "school": row[6] } for row in programs]
+
+    return json.dumps(
+        programs
+    ), 200
+
 # returns { stream_id, year, code, title, total_uoc }
-@app.route("/stream", methods=['GET'])
-def get_stream():
+@app.route("/user/stream", methods=['GET'])
+def get_user_stream():
     zid = request.args.get("zid")
 
     with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
@@ -77,7 +121,7 @@ def get_stream():
             if stream_id is None:
                 return json.dumps({
                     "error": f"zID ({zid}): not enrolled in a stream"
-                }), 200
+                }), 400
 
             curs.execute(f"""SELECT year, code, title, total_uoc FROM streams WHERE stream_id = '{stream_id[0]}'""")
             stream_data = curs.fetchone()
@@ -88,6 +132,29 @@ def get_stream():
         "code": str(stream_data[1]),
         "title": str(stream_data[2]),
         "total_uoc": str(stream_data[3]),
+    }), 200
+
+# returns { stream_id, year, code, title, total_uoc }
+@app.route("/stream", methods=['GET'])
+def get_stream():
+    stream_id = request.args.get("stream_id")
+
+    with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
+        with conn.cursor() as curs:
+            curs.execute(f"""SELECT stream_id, year, code, title, total_uoc FROM streams WHERE stream_id = '{stream_id}'""")
+            stream_data = curs.fetchone()
+
+            if stream_data is None:
+                return json.dumps({
+                    "error": f"Stream ID ({stream_id}): not valid stream"
+                }), 400
+
+    return json.dumps({
+        "stream_id": str(stream_data[0]),
+        "year": str(stream_data[1]),
+        "code": str(stream_data[2]),
+        "title": str(stream_data[3]),
+        "total_uoc": str(stream_data[4]),
     }), 200
 
 # returns [ { stream_id, year, code, title, total_uoc } ]

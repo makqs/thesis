@@ -36,14 +36,20 @@ const NavBar = ({ resetModifiers }) => {
   };
 
   const studentId = studentState?.zId;
+  const tempProgramId = studentState?.tempProgramId;
   const { data: program, isLoading: programIsLoading } = useQuery(
-    ["programData", studentId],
+    ["programData", studentId, tempProgramId],
     async () => {
       const requestOptions = {
         method: "GET"
       };
       try {
-        const res = await fetch(`http://127.0.0.1:5000/program?zid=${studentId}`, requestOptions);
+        const res = await fetch(
+          tempProgramId === null
+            ? `http://127.0.0.1:5000/user/program?zid=${studentId}`
+            : `http://127.0.0.1:5000/program?program_id=${tempProgramId}`,
+          requestOptions
+        );
         return await res.json();
       } catch (err) {
         console.log("PROGRAM FETCH ERROR: ", err);
