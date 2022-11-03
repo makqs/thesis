@@ -6,7 +6,14 @@ import { Modal, TextField, Autocomplete, Button, Fade, Box, Backdrop } from "@mu
 
 import PropTypes from "prop-types";
 
-const AddModal = ({ open, handleClose, selectedCourse, setSelectedCourse, options, doneFunc }) => {
+const ChangeStreamModal = ({
+  open,
+  handleClose,
+  selectedStream,
+  setSelectedStream,
+  options,
+  doneFunc
+}) => {
   return (
     <Modal
       open={open}
@@ -23,7 +30,7 @@ const AddModal = ({ open, handleClose, selectedCourse, setSelectedCourse, option
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 400,
+            width: 500,
             bgcolor: "background.paper",
             border: "2px solid #000",
             boxShadow: 24,
@@ -33,13 +40,13 @@ const AddModal = ({ open, handleClose, selectedCourse, setSelectedCourse, option
             alignItems: "centre"
           }}>
           <Autocomplete
-            value={selectedCourse}
+            value={selectedStream}
             onChange={(event, newValue) => {
-              setSelectedCourse(newValue);
+              setSelectedStream(newValue);
             }}
             disablePortal
             options={options}
-            sx={{ width: 300 }}
+            sx={{ width: 400 }}
             // eslint-disable-next-line react/jsx-props-no-spreading
             renderInput={(params) => <TextField {...params} label="Course" />}
             isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -51,7 +58,7 @@ const AddModal = ({ open, handleClose, selectedCourse, setSelectedCourse, option
               margin-left: 10px;
             `}
             onClick={doneFunc}>
-            Add course
+            Change stream
           </Button>
         </Box>
       </Fade>
@@ -59,17 +66,17 @@ const AddModal = ({ open, handleClose, selectedCourse, setSelectedCourse, option
   );
 };
 
-AddModal.propTypes = {
+ChangeStreamModal.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
-  selectedCourse: PropTypes.objectOf(PropTypes.string),
-  setSelectedCourse: PropTypes.func.isRequired,
+  selectedStream: PropTypes.objectOf(PropTypes.string),
+  setSelectedStream: PropTypes.func.isRequired,
   options: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)).isRequired,
   doneFunc: PropTypes.func.isRequired
 };
 
-AddModal.defaultProps = {
-  selectedCourse: null
+ChangeStreamModal.defaultProps = {
+  selectedStream: null
 };
 
-export default AddModal;
+export default ChangeStreamModal;

@@ -6,7 +6,7 @@ import { Modal, TextField, Autocomplete, Button, Fade, Box, Backdrop } from "@mu
 
 import PropTypes from "prop-types";
 
-const RemoveModal = ({
+const RemoveCourseModal = ({
   open,
   handleClose,
   selectedCourse,
@@ -66,7 +66,7 @@ const RemoveModal = ({
   );
 };
 
-RemoveModal.propTypes = {
+RemoveCourseModal.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   selectedCourse: PropTypes.objectOf(PropTypes.string),
@@ -75,8 +75,8 @@ RemoveModal.propTypes = {
   doneFunc: PropTypes.func.isRequired
 };
 
-RemoveModal.defaultProps = {
+RemoveCourseModal.defaultProps = {
   selectedCourse: null
 };
 
-export default RemoveModal;
+export default RemoveCourseModal;
