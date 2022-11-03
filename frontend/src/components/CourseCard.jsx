@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import InfoIcon from "@mui/icons-material/Info";
 
-const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses }) => {
+const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses, isStream }) => {
   const { data: course, isLoading } = useQuery(
     [code],
     () => {
@@ -79,6 +79,80 @@ const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses }) =
     </>
   );
 
+  let cardVariety;
+  if (isStream) {
+    cardVariety = (
+      <a
+        href={`https://www.handbook.unsw.edu.au/undergraduate/specialisations/2021/${code}`}
+        target="blank_"
+        css={css`
+          color: inherit;
+          font-size: inherit;
+          text-decoration: inherit;
+          cursor: inherit;
+        `}>
+        <CardActionArea
+          css={css`
+            font-size: 13pt;
+            padding: 8px;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            cursor: inherit;
+          `}>
+          {code}
+        </CardActionArea>
+      </a>
+    );
+  } else if (isLoading || new RegExp("^[A-Z]{4}[0-9]X{3}$").test(code)) {
+    cardVariety = (
+      <Tooltip title={isStream ? `` : `Any level ${code[4]} ${code.slice(0, 4)} course`}>
+        <CardActionArea
+          css={css`
+            font-size: 13pt;
+            padding: 8px;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            cursor: default;
+          `}>
+          {code}
+        </CardActionArea>
+      </Tooltip>
+    );
+  } else {
+    cardVariety = (
+      <CardActionArea
+        css={css`
+          font-size: 13pt;
+          padding: 8px;
+          cursor: inherit;
+        `}>
+        {locked ? (
+          children
+        ) : (
+          <a
+            // TODO: get working with postgraduate, hardcoded to undergraduate atm
+            href={
+              isLoading
+                ? "https://www.handbook.unsw.edu.au/"
+                : `https://www.handbook.unsw.edu.au/undergraduate/courses/${course.year}/${code}`
+            }
+            target="blank_"
+            css={css`
+              color: inherit;
+              font-size: inherit;
+              text-decoration: inherit;
+              cursor: inherit;
+            `}>
+            {children}
+          </a>
+        )}
+      </CardActionArea>
+    );
+  }
   return (
     <Card
       css={css`
@@ -97,50 +171,7 @@ const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses }) =
         box-shadow: 0px;
         cursor: ${locked ? "not-allowed" : "pointer"};
       `}>
-      {isLoading || new RegExp("^[A-Z]{4}[0-9]X{3}$").test(code) ? (
-        <Tooltip title={`Any level ${code[4]} ${code.slice(0, 4)} course`}>
-          <CardActionArea
-            css={css`
-              font-size: 13pt;
-              padding: 8px;
-              display: flex;
-              justify-content: center;
-              width: 100%;
-              height: 100%;
-              cursor: default;
-            `}>
-            {code}
-          </CardActionArea>
-        </Tooltip>
-      ) : (
-        <CardActionArea
-          css={css`
-            font-size: 13pt;
-            padding: 8px;
-            cursor: inherit;
-          `}>
-          {locked ? (
-            children
-          ) : (
-            <a
-              // TODO: get working with postgraduate, hardcoded to undergraduate atm
-              href={
-                isLoading
-                  ? "https://www.handbook.unsw.edu.au/"
-                  : `https://www.handbook.unsw.edu.au/undergraduate/courses/${course.year}/${code}`
-              }
-              target="blank_"
-              css={css`
-                color: inherit;
-                font-size: inherit;
-                text-decoration: inherit;
-                cursor: inherit;
-              `}>
-              {children}
-            </a>
-          )}
-        </CardActionArea>
-      )}
+      {cardVariety}
     </Card>
   );
 };
@@ -150,14 +181,16 @@ CourseCard.propTypes = {
   completed: PropTypes.bool,
   notCounted: PropTypes.bool,
   locked: PropTypes.bool,
-  exclusionCourses: PropTypes.arrayOf(PropTypes.string)
+  exclusionCourses: PropTypes.arrayOf(PropTypes.string),
+  isStream: PropTypes.bool
 };
 
 CourseCard.defaultProps = {
   completed: false,
   notCounted: false,
   locked: false,
-  exclusionCourses: []
+  exclusionCourses: [],
+  isStream: false
 };
 
 export default CourseCard;

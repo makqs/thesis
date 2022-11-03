@@ -30,7 +30,10 @@ const RequirementsBox = ({ title, uocCompleted, minUoc, notCounted, children }) 
             `}>
             <div>{title}</div>
             {notCounted ? (
-              <Tooltip title="These courses do not towards your progression">
+              <Tooltip
+                title={`${
+                  children.length > 1 ? "These courses do" : "This course does"
+                } not count towards your progression`}>
                 <InfoIcon
                   css={css`
                     height: fit-content;

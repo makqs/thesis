@@ -43,7 +43,6 @@ const LoginPage = () => {
       return;
     }
 
-    // TODO: check if user is staff or not
     userDispatch({
       type: "login",
       zId: data.zid,
