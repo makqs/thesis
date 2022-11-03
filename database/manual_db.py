@@ -80,6 +80,9 @@ cursor.execute(
 cursor.execute(
     f"""INSERT INTO streams(stream_id, year, code, title, total_uoc) VALUES ('4', 2021, 'BINFAH', 'Bioinformatics Engineering', 168)"""
 )
+cursor.execute(
+    f"""INSERT INTO streams(stream_id, year, code, title, total_uoc) VALUES ('5', 2021, 'MECHAH', 'Mechanical Engineering', 168)"""
+)
 
 # SENGAH stream rules
 cursor.execute(
@@ -163,6 +166,33 @@ cursor.execute(
     f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('4', 'Discipline Electives', 'DE', 12, 12, 'ENGG2600,ENGG3060,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX,BABS3XXX,MICR3XXX,BIOC3XXX')"""
 )
 
+# MECHAH stream
+cursor.execute(
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('5', 'Level 1 Core Courses', 'CC', 48, 48, 'ELEC1111,ENGG1000,ENGG1300,MMAN1130,MATH1131;MATH1141,MATH1231;MATH1241,PHYS1121;PHYS1131,COMP1511;COMP1911;ENGG1811')"""
+)
+cursor.execute(
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('5', 'Level 2 Core Courses', 'CC', 42, 42, 'DESN2000,ENGG2400,ENGG2500,MATH2089,MMAN2300,MMAN2700,MATH2018;MATH2019')"""
+)
+cursor.execute(
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('5', 'Level 3 Core Courses', 'CC', 30, 30, 'MECH3110,MECH3610,MMAN3000,MMAN3200,MMAN3400')"""
+)
+cursor.execute(
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('5', 'Level 4 Core Courses', 'CC', 6, 6, 'MECH4100')"""
+)
+cursor.execute(
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('5', 'Thesis Courses', 'CC', 12, 12, 'MMAN4010,MMAN4020,MMAN4951,MMAN4952,MMAN4953')"""
+)
+cursor.execute(
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('5', 'Recommended Discipline Electives', 'DE', 18, 18, 'MECH4305,MECH4320,MECH4620,MECH4880,MECH4900,MECH9325,MECH9420,MECH9650,MECH9660,MECH9720,MECH9761,MMAN4400,MMAN4410')"""
+)
+cursor.execute(
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('5', 'Discipline Electives', 'DE', 12, 12, 'AERO9500,AERO9610,AERO9660,COMP3141,COMP3331,ELEC4633,ENGG2600,ENGG3001,ENGG3060,ENGG3600,ENGG4600,ENGG4841,MANF4100,MANF4430,MANF4611,MANF6860,MECH4100,MTRN4030,MTRN9400,SOLA5052,SOLA5053,SOLA5056,SOLA5057')"""
+)
+# add after adding postgrad courses
+# cursor.execute(
+#     f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('5', 'Discipline Electives', 'DE', 12, 12, 'AERO9500,AERO9610,AERO9660,COMP3141,COMP3331,ELEC4633,ENGG2600,ENGG3001,ENGG3060,ENGG3600,ENGG4600,ENGG4841,MANF4100,MANF4430,MANF4611,MANF6860,MANF9400,MANF9420,MANF9472,MECH4100,MTRN4030,MTRN9400,SOLA5052,SOLA5053,SOLA5056,SOLA5057')"""
+# )
+
 # commerce program rules
 cursor.execute(
     f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, min_uoc, max_uoc, definition) VALUES ('5', '61', 'Integrated First Year Courses', 'CC', 48, 48, 'COMM1100,COMM1110,COMM1120,COMM1140,COMM1150,COMM1170,COMM1180,COMM1190')"""
@@ -199,50 +229,39 @@ cursor.execute(
 
 # comp sci streams
 cursor.execute(
-    f"""INSERT INTO streams(stream_id, year, code, title, total_uoc) VALUES ('5', 2021, 'COMPA1', 'Computer Science', 96)"""
+    f"""INSERT INTO streams(stream_id, year, code, title, total_uoc) VALUES ('6', 2021, 'COMPA1', 'Computer Science', 96)"""
 )
 cursor.execute(
-    f"""INSERT INTO streams(stream_id, year, code, title, total_uoc) VALUES ('6', 2021, 'COMPD1', 'Database Systems', 96)"""
+    f"""INSERT INTO streams(stream_id, year, code, title, total_uoc) VALUES ('7', 2021, 'COMPD1', 'Database Systems', 96)"""
 )
 cursor.execute(
-    f"""INSERT INTO streams(stream_id, year, code, title, total_uoc) VALUES ('7', 2021, 'COMPE1', 'eCommerce Systems', 96)"""
+    f"""INSERT INTO streams(stream_id, year, code, title, total_uoc) VALUES ('8', 2021, 'COMPE1', 'eCommerce Systems', 96)"""
 )
 cursor.execute(
-    f"""INSERT INTO streams(stream_id, year, code, title, total_uoc) VALUES ('8', 2021, 'COMPI1', 'Artificial Intelligence', 96)"""
+    f"""INSERT INTO streams(stream_id, year, code, title, total_uoc) VALUES ('9', 2021, 'COMPI1', 'Artificial Intelligence', 96)"""
 )
 cursor.execute(
-    f"""INSERT INTO streams(stream_id, year, code, title, total_uoc) VALUES ('9', 2021, 'COMPJ1', 'Programming Languages', 96)"""
+    f"""INSERT INTO streams(stream_id, year, code, title, total_uoc) VALUES ('10', 2021, 'COMPJ1', 'Programming Languages', 96)"""
 )
 cursor.execute(
-    f"""INSERT INTO streams(stream_id, year, code, title, total_uoc) VALUES ('10', 2021, 'COMPN1', 'Computer Networks', 96)"""
+    f"""INSERT INTO streams(stream_id, year, code, title, total_uoc) VALUES ('11', 2021, 'COMPN1', 'Computer Networks', 96)"""
 )
 cursor.execute(
-    f"""INSERT INTO streams(stream_id, year, code, title, total_uoc) VALUES ('11', 2021, 'COMPS1', 'Embedded Systems', 96)"""
+    f"""INSERT INTO streams(stream_id, year, code, title, total_uoc) VALUES ('12', 2021, 'COMPS1', 'Embedded Systems', 96)"""
 )
 cursor.execute(
-    f"""INSERT INTO streams(stream_id, year, code, title, total_uoc) VALUES ('12', 2021, 'COMPY1', 'Security Engineering', 96)"""
+    f"""INSERT INTO streams(stream_id, year, code, title, total_uoc) VALUES ('13', 2021, 'COMPY1', 'Security Engineering', 96)"""
 )
 
 # comp sci (stream) rules
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('5', 'Core Courses', 'CC', 66, 66, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('6', 'Core Courses', 'CC', 66, 66, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('5', 'Computing Electives', 'DE', 30, 30, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('6', 'Computing Electives', 'DE', 30, 30, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
 )
 
 # database systems rules
-cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('6', 'Core Courses', 'CC', 72, 72, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3311,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
-)
-cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('6', 'Computing Elective', 'DE', 6, 6, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
-)
-cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('6', 'Database Systems Prescribed Electives', 'DE', 18, 18, 'COMP6714,COMP9313,COMP9315,COMP9318,COMP9319')"""
-)
-
-# ecommerce systems rules
 cursor.execute(
     f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('7', 'Core Courses', 'CC', 72, 72, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3311,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
 )
@@ -250,59 +269,70 @@ cursor.execute(
     f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('7', 'Computing Elective', 'DE', 6, 6, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('7', 'Discipline Electives', 'DE', 18, 18, 'COMP3511,COMP9321,COMP9322,COMP9323')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('7', 'Database Systems Prescribed Electives', 'DE', 18, 18, 'COMP6714,COMP9313,COMP9315,COMP9318,COMP9319')"""
 )
 
-# artificial intelligence rules
+# ecommerce systems rules
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('8', 'Core Courses', 'CC', 72, 72, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3411,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
-)
-cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('8', 'Artificial Intelligence Prescribed Electives', 'DE', 18, 18, 'COMP3431,COMP4418,COMP9318,COMP9417,COMP9418,COMP9444,COMP9517')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('8', 'Core Courses', 'CC', 72, 72, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3311,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
 )
 cursor.execute(
     f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('8', 'Computing Elective', 'DE', 6, 6, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
 )
-
-# programming languages rules
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('9', 'Core Courses', 'CC', 72, 72, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3121,COMP3161,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('8', 'Discipline Electives', 'DE', 18, 18, 'COMP3511,COMP9321,COMP9322,COMP9323')"""
+)
+
+# artificial intelligence rules
+cursor.execute(
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('9', 'Core Courses', 'CC', 72, 72, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3411,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
+)
+cursor.execute(
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('9', 'Artificial Intelligence Prescribed Electives', 'DE', 18, 18, 'COMP3431,COMP4418,COMP9318,COMP9417,COMP9418,COMP9444,COMP9517')"""
 )
 cursor.execute(
     f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('9', 'Computing Elective', 'DE', 6, 6, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
 )
-cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('9', 'Discipline Electives', 'DE', 18, 18, 'COMP3131,COMP3141,COMP3151,COMP6771')"""
-)
 
-# computer networks rules
+# programming languages rules
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('10', 'Core Courses', 'CC', 72, 72, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3331,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('10', 'Core Courses', 'CC', 72, 72, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3121,COMP3161,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241')"""
 )
 cursor.execute(
     f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('10', 'Computing Elective', 'DE', 6, 6, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('10', 'Discipline Electives', 'DE', 18, 18, 'COMP4336,COMP4337,COMP6733,COMP9332,COMP9334')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('10', 'Discipline Electives', 'DE', 18, 18, 'COMP3131,COMP3141,COMP3151,COMP6771')"""
 )
 
 # computer networks rules
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('11', 'Core Courses', 'CC', 78, 78, 'COMP1511,COMP1521,COMP1531,COMP2121,COMP2511,COMP2521,COMP3222,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('11', 'Core Courses', 'CC', 72, 72, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3331,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('11', 'Prescribed Electives', 'DE', 18, 18, 'COMP3211,COMP3231,COMP3601,COMP4601,COMP9242,COMP9517')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('11', 'Computing Elective', 'DE', 6, 6, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
+)
+cursor.execute(
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('11', 'Discipline Electives', 'DE', 18, 18, 'COMP4336,COMP4337,COMP6733,COMP9332,COMP9334')"""
 )
 
 # computer networks rules
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('12', 'Core Courses', 'CC', 72, 72, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3121,COMP3331,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP6441;COMP6841')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('12', 'Core Courses', 'CC', 78, 78, 'COMP1511,COMP1521,COMP1531,COMP2121,COMP2511,COMP2521,COMP3222,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('12', 'Computing Elective', 'DE', 6, 6, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('12', 'Prescribed Electives', 'DE', 18, 18, 'COMP3211,COMP3231,COMP3601,COMP4601,COMP9242,COMP9517')"""
+)
+
+# computer networks rules
+cursor.execute(
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('13', 'Core Courses', 'CC', 72, 72, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3121,COMP3331,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP6441;COMP6841')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('12', 'Security Engineering Prescribed Electives', 'DE', 18, 18, 'COMP4337,COMP6443,COMP6445,COMP6447,COMP6448,COMP6449,COMP6843,COMP6845,COMP9447,MATH3411,TELE3119')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('13', 'Computing Elective', 'DE', 6, 6, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
+)
+cursor.execute(
+    f"""INSERT INTO stream_rules(stream_id, name, type, min_uoc, max_uoc, definition) VALUES ('13', 'Security Engineering Prescribed Electives', 'DE', 18, 18, 'COMP4337,COMP6443,COMP6445,COMP6447,COMP6448,COMP6449,COMP6843,COMP6845,COMP9447,MATH3411,TELE3119')"""
 )
 
 # medicine program rules
