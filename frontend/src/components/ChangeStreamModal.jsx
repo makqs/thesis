@@ -1,19 +1,15 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import React from "react";
+import React, { useContext } from "react";
 
 import { Modal, TextField, Autocomplete, Button, Fade, Box, Backdrop } from "@mui/material";
 
 import PropTypes from "prop-types";
 
-const ChangeStreamModal = ({
-  open,
-  handleClose,
-  selectedStream,
-  setSelectedStream,
-  options,
-  doneFunc
-}) => {
+import { StudentContext } from "../helpers/StudentContext";
+
+const ChangeStreamModal = ({ open, handleClose, selectedStream, setSelectedStream, options }) => {
+  const { studentDispatch } = useContext(StudentContext);
   return (
     <Modal
       open={open}
@@ -57,7 +53,12 @@ const ChangeStreamModal = ({
               background-color: #4299e1;
               margin-left: 10px;
             `}
-            onClick={doneFunc}>
+            onClick={() => {
+              if (selectedStream === null) return;
+              studentDispatch({ type: "updateStream", tempStreamId: selectedStream.id });
+              setSelectedStream(null);
+              handleClose();
+            }}>
             Change stream
           </Button>
         </Box>
@@ -71,8 +72,7 @@ ChangeStreamModal.propTypes = {
   handleClose: PropTypes.func.isRequired,
   selectedStream: PropTypes.objectOf(PropTypes.string),
   setSelectedStream: PropTypes.func.isRequired,
-  options: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)).isRequired,
-  doneFunc: PropTypes.func.isRequired
+  options: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)).isRequired
 };
 
 ChangeStreamModal.defaultProps = {

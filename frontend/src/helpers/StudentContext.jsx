@@ -10,7 +10,18 @@ export const studentReducer = (state, action) => {
   switch (action.type) {
     case "setStudent":
       return {
-        zId: action.zId
+        zId: action.zId,
+        tempStreamId: null
+      };
+    case "updateStream":
+      return {
+        zId: state.zId,
+        tempStreamId: action.tempStreamId
+      };
+    case "resetStudentModifiers":
+      return {
+        zId: state.zId,
+        tempStreamId: null
       };
     case "resetStudent":
       return {};

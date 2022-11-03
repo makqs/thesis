@@ -2,6 +2,8 @@
 import { css } from "@emotion/react";
 import React, { useState, useContext, useEffect } from "react";
 
+import PropTypes from "prop-types";
+
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -16,7 +18,7 @@ import { useQuery } from "@tanstack/react-query";
 import { UserContext } from "../helpers/UserContext";
 import { StudentContext } from "../helpers/StudentContext";
 
-const NavBar = () => {
+const NavBar = ({ resetModifiers }) => {
   const { userState, userDispatch } = useContext(UserContext);
   const { studentState, studentDispatch } = useContext(StudentContext);
 
@@ -53,14 +55,20 @@ const NavBar = () => {
     }
   );
 
+  const tempStreamId = studentState?.tempStreamId;
   const { data: stream, isLoading: streamIsLoading } = useQuery(
-    ["streamData", studentId],
+    ["streamData", studentId, tempStreamId],
     async () => {
       const requestOptions = {
         method: "GET"
       };
       try {
-        const res = await fetch(`http://127.0.0.1:5000/stream?zid=${studentId}`, requestOptions);
+        const res = await fetch(
+          tempStreamId === null
+            ? `http://127.0.0.1:5000/user/stream?zid=${studentId}`
+            : `http://127.0.0.1:5000/stream?stream_id=${tempStreamId}`,
+          requestOptions
+        );
         return await res.json();
       } catch (err) {
         console.log("STREAM FETCH ERROR: ", err);
@@ -190,6 +198,7 @@ const NavBar = () => {
                       type: "setStudent",
                       zId: value.id
                     });
+                    resetModifiers();
                   }
                 }}
                 // eslint-disable-next-line react/jsx-props-no-spreading
@@ -235,5 +244,11 @@ const NavBar = () => {
     </Box>
   );
 };
+
+NavBar.propTypes = {
+  resetModifiers: PropTypes.func.isRequired
+};
+
+NavBar.defaultProps = {};
 
 export default NavBar;

@@ -1,8 +1,12 @@
+import React, { useContext, useState, useEffect } from "react";
+
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import React, { useContext, useState, useEffect } from "react";
-import { Box } from "@mui/material";
+import { useSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
+import { Box } from "@mui/material";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
@@ -10,35 +14,35 @@ import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 
-import { useSnackbar } from "notistack";
-
-import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-
 import NavBar from "../components/NavBar";
 import RequirementsBox from "../components/RequirementsBox";
 import CourseCard from "../components/CourseCard";
-import { UserContext } from "../helpers/UserContext";
-import { StudentContext } from "../helpers/StudentContext";
 import SidebarItem from "../components/SidebarItem";
 import SidebarButton from "../components/SidebarButton";
 import AddCourseModal from "../components/AddCourseModal";
 import RemoveCourseModal from "../components/RemoveCourseModal";
 import ChangeStreamModal from "../components/ChangeStreamModal";
 
+import { UserContext } from "../helpers/UserContext";
+import { StudentContext } from "../helpers/StudentContext";
+
 // TODOs:
-//  - add stream and program changing
+//  - add program changing
+//  - add multiple stream support
 //  - add eng program discipline elective same as stream thing
 //  - add school exceptions to gen eds (eng and maths)
 //  - add tokens and cookies
 
 // BACKBURNERs:
 //  - automate program and stream rules with api
+//    - might be too much of a time sink
+//    - more research needed
 //  - add exclusion courses for done courses (e.g. COMP1511 and COMP1911)
 //    - it's only listed in the description section so would be v hard to generalise
 //    - curl -sL https://www.handbook.unsw.edu.au/api/content/render/false/query/+contentType:unsw_psubject%20+unsw_psubject.studyLevelURL:undergraduate%20+unsw_psubject.implementationYear:2021%20+deleted:false%20+unsw_psubject.code:COMP1511/orderBy/urlMap/limit/1 | jq -r '.["contentlets"][]' | grep 1911
 
 // DONE
+//  - add stream changing
 //  - order gen eds by decreasing UOC
 //  - add bucket of courses that don't fit a rule
 //  - fix course card spacing and arrangement
@@ -69,14 +73,6 @@ const CheckerPage = () => {
   const handleOpenRemove = () => setOpenRemove(true);
   const handleCloseRemove = () => setOpenRemove(false);
   const [removeValue, setRemoveValue] = useState(null);
-
-  useEffect(() => {
-    if (!userState) {
-      userDispatch({ type: "logout" });
-      studentDispatch({ type: "resetStudent" });
-      navigate("/login");
-    }
-  });
 
   const { data: courses, isLoading: coursesIsLoading } = useQuery(["coursesData"], async () => {
     const requestOptions = {
@@ -178,14 +174,20 @@ const CheckerPage = () => {
     }
   );
 
+  const tempStreamId = studentState?.tempStreamId;
   const { data: stream, isLoading: streamIsLoading } = useQuery(
-    ["streamData", studentId],
+    ["streamData", studentId, tempStreamId],
     async () => {
       const requestOptions = {
         method: "GET"
       };
       try {
-        const res = await fetch(`http://127.0.0.1:5000/stream?zid=${studentId}`, requestOptions);
+        const res = await fetch(
+          tempStreamId === null
+            ? `http://127.0.0.1:5000/user/stream?zid=${studentId}`
+            : `http://127.0.0.1:5000/stream?stream_id=${tempStreamId}`,
+          requestOptions
+        );
         return await res.json();
       } catch (err) {
         console.log("STREAM FETCH ERROR: ", err);
@@ -247,12 +249,16 @@ const CheckerPage = () => {
 
   const resetModifiers = () => {
     setAddedCourses([]);
+    studentDispatch({ type: "resetStudentModifiers" });
   };
 
   useEffect(() => {
-    console.log("reset time");
-    resetModifiers();
-  }, [studentState]);
+    if (!userState) {
+      userDispatch({ type: "logout" });
+      studentDispatch({ type: "resetStudent" });
+      navigate("/login");
+    }
+  });
 
   useEffect(() => {
     if (!enrolmentsIsLoading && !programIsLoading && !programRulesIsLoading && !streamIsLoading) {
@@ -493,7 +499,7 @@ const CheckerPage = () => {
         display: flex;
         flex-direction: column;
       `}>
-      <NavBar />
+      <NavBar resetModifiers={resetModifiers} />
       <Box
         css={css`
           display: flex;
@@ -519,7 +525,7 @@ const CheckerPage = () => {
               if (rule.type === "ST") {
                 const children = rule.definition
                   .split(",")
-                  .map((s) => <CourseCard key={`${rawRule}-${s}`} code={s} />);
+                  .map((s) => <CourseCard key={`${rawRule}-${s}`} code={s} isStream />);
                 return (
                   <RequirementsBox
                     key={rawRule}
@@ -723,7 +729,7 @@ const CheckerPage = () => {
               <Collapse in={modsOpen} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
                   {/* change stream section */}
-                  {!programStreamsIsLoading && (
+                  {!programStreamsIsLoading && programStreams.length !== 0 && (
                     <>
                       <SidebarButton title="Change stream" onClick={handleOpenChangeStream} />
                       <ChangeStreamModal
@@ -740,11 +746,6 @@ const CheckerPage = () => {
                                   return { label: `${s.code} - ${s.title}`, id: s.stream_id };
                                 })
                         }
-                        doneFunc={() => {
-                          if (changeStreamValue === null) return;
-                          setChangeStreamValue(null);
-                          handleCloseChangeStream();
-                        }}
                       />
                     </>
                   )}
