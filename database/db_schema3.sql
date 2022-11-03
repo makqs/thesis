@@ -24,6 +24,8 @@ CREATE TABLE courses (
     year int,
     uoc numeric,
     is_ge boolean,
+    faculty VARCHAR,
+    school VARCHAR,
     PRIMARY KEY (course_id)
 );
 
@@ -33,6 +35,8 @@ CREATE TABLE programs (
     code VARCHAR,
     title VARCHAR,
     total_uoc numeric,
+    faculty VARCHAR,
+    school VARCHAR,
     PRIMARY KEY (program_id)
 );
 
