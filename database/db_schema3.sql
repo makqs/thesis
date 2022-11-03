@@ -18,7 +18,7 @@ CREATE TABLE users (
 );
 
 CREATE TABLE courses (
-    course_id VARCHAR,
+    course_id SERIAL,
     code VARCHAR,
     title VARCHAR,
     year int,
@@ -30,7 +30,7 @@ CREATE TABLE courses (
 );
 
 CREATE TABLE programs (
-    program_id VARCHAR,
+    program_id SERIAL,
     year int,
     code VARCHAR,
     title VARCHAR,
@@ -51,7 +51,7 @@ CREATE TABLE streams (
 
 CREATE TABLE program_enrolments (
     zid VARCHAR,
-    program_id VARCHAR,
+    program_id INTEGER,
     FOREIGN KEY (zid) REFERENCES users(zid),
     FOREIGN KEY (program_id) REFERENCES programs(program_id)
 );
@@ -65,7 +65,7 @@ CREATE TABLE stream_enrolments (
 
 CREATE TABLE course_enrolments (
     zid VARCHAR,
-    course_id VARCHAR,
+    course_id INTEGER,
     mark int,
     grade VARCHAR,
     FOREIGN KEY (zid) REFERENCES users(zid),
@@ -74,7 +74,7 @@ CREATE TABLE course_enrolments (
 
 CREATE TABLE program_rules (
     program_rule_id VARCHAR,
-    program_id VARCHAR,
+    program_id SERIAL,
     name VARCHAR,
     type VARCHAR,
     min_uoc numeric,
@@ -85,7 +85,7 @@ CREATE TABLE program_rules (
 );
 
 CREATE TABLE stream_rules (
-    stream_rule_id VARCHAR,
+    stream_rule_id SERIAL,
     stream_id VARCHAR,
     name VARCHAR,
     type VARCHAR,
