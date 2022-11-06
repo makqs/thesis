@@ -31,7 +31,9 @@ import { StudentContext } from "../helpers/StudentContext";
 //  - add multiple stream support
 //  - add eng program discipline elective same as stream thing
 //  - add school exceptions to gen eds (eng and maths)
+//  - add staff equivalent courses thing
 //  - add tokens and cookies
+//  - double counting aaaaaaaaaaaaaa
 
 // BACKBURNERs:
 //  - automate program and stream rules with api
