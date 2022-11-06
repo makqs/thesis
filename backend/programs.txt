@@ -15,7 +15,6 @@
 3321_Social Science_2021_144_Faculty of Arts, Design and Architecture_School of Social Sciences
 3322_Social Work (Honours) / Social Science_2021_264_Faculty of Arts, Design and Architecture_Faculty of Arts, Design and Architecture
 3323_Advanced Science (Honours) / Social Science_2021_264_Faculty of Science_Faculty of Science
-3323_Advanced Science (Honours) / Social Science_2021_264_Faculty of Science_Faculty of Science
 3324_Science / Social Science_2021_216_Faculty of Science_Faculty of Science
 3332_Construction Management and Property_2021_144_Faculty of Arts, Design and Architecture_School of Built Environment
 3362_City Planning (Honours)_2021_192_Faculty of Arts, Design and Architecture_School of Built Environment
@@ -85,7 +84,6 @@
 3588_Actuarial Studies / Economics_2021_192_UNSW Business School_School of Risk and Actuarial Studies
 3589_Actuarial Studies / Advanced Mathematics (Honours)_2021_240_UNSW Business School_School of Risk and Actuarial Studies
 3593_Commerce / Advanced Science (Honours)_2021_240_UNSW Business School_UNSW Business School
-3593_Commerce / Advanced Science (Honours)_2021_240_UNSW Business School_UNSW Business School
 3594_Music (Honours) / Media (Communication and Journalism)_2021_240_Faculty of Arts, Design and Architecture_School of the Arts and Media
 3596_Commerce / Media (Public Relations and Advertising)_2021_192_UNSW Business School_UNSW Business School
 3632_Psychology (Honours)_2021_192_Faculty of Science_School of Psychology
@@ -99,10 +97,8 @@
 3761_Advanced Mathematics (Honours) / Engineering (Honours)_2021_288_Faculty of Science_Faculty of Science
 3762_Advanced Science (Honours) / Engineering (Honours)_2021_288_Faculty of Science_Faculty of Science
 3764_Engineering (Honours) / Commerce_2021_264_Faculty of Engineering_Faculty of Engineering
-3764_Engineering (Honours) / Commerce_2021_264_Faculty of Engineering_Faculty of Engineering
 3765_Engineering (Honours) / Law_2021_312_Faculty of Law and Justice_Faculty of Law and Justice
 3766_Music / Engineering (Honours)_2021_312_Faculty of Arts and Social Sciences_School of the Arts and Media
-3766_Music / Engineering (Honours)_2021_312_Faculty of Arts, Design and Architecture_School of the Arts and Media
 3767_Engineering (Honours) / Science_2021_240_Faculty of Engineering_Faculty of Engineering
 3768_Engineering (Honours) / Biomedical Engineering_2021_240_Faculty of Engineering_Faculty of Engineering
 3769_Music (Honours) / Engineering (Honours)_2021_312_Faculty of Arts, Design and Architecture_School of the Arts and Media
@@ -130,7 +126,6 @@
 3949_Advanced Mathematics (Honours) / Arts_2021_240_Faculty of Science_Faculty of Science
 3955_Environmental Management / Arts_2021_216_Faculty of Science_Faculty of Science
 3956_Advanced Mathematics (Honours)_2021_192_Faculty of Science_Faculty of Science
-3957_Advanced Science (Honours) / Fine Arts_2021_240_Faculty of Science_Faculty of Science
 3957_Advanced Science (Honours) / Fine Arts_2021_240_Faculty of Science_Faculty of Science
 3958_Science / Fine Arts_2021_192_Faculty of Science_Faculty of Science
 3959_Data Science and Decisions_2021_144_Faculty of Science_Faculty of Science
