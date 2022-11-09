@@ -6,13 +6,13 @@ import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
-import { Box } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
+import { ExpandMore } from "@mui/icons-material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import NavBar from "../components/NavBar";
 import RequirementsBox from "../components/RequirementsBox";
@@ -785,7 +785,18 @@ const CheckerPage = () => {
                 border-width: 1px 0px 0px 0px;
               `}>
               <ListItemText primary="Modifiers" />
-              {modsOpen ? <ExpandLess /> : <ExpandMore />}
+              <IconButton>
+                <ExpandMore
+                  expand={modsOpen.toString()}
+                  onClick={handleModsClick}
+                  css={css`
+                    transform: ${modsOpen && modsOpen ? "rotate(180deg)" : "rotate(0deg)"};
+                    margin-left: "auto";
+                    transition: 0.2s;
+                  `}>
+                  <ExpandMoreIcon />
+                </ExpandMore>
+              </IconButton>
             </ListItemButton>
             <Collapse in={modsOpen} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
@@ -929,8 +940,12 @@ const CheckerPage = () => {
                     css={css`
                       display: flex;
                       flex-direction: row;
+                      gap: 5px;
                     `}>
                     <ListItemText
+                      css={css`
+                        margin: auto;
+                      `}
                       primary={`${
                         getCompletedUoc("CC") +
                         getCompletedUoc("DE") +
@@ -945,7 +960,18 @@ const CheckerPage = () => {
                         getTotalUoc("ST")
                       }`}
                     />
-                    {uocOpen ? <ExpandLess /> : <ExpandMore />}
+                    <IconButton>
+                      <ExpandMore
+                        expand={uocOpen.toString()}
+                        onClick={handleUocClick}
+                        css={css`
+                          transform: ${uocOpen && uocOpen ? "rotate(180deg)" : "rotate(0deg)"};
+                          margin-left: "auto";
+                          transition: 0.2s;
+                        `}>
+                        <ExpandMoreIcon />
+                      </ExpandMore>
+                    </IconButton>
                   </div>
                 </ListItemButton>
                 <Collapse in={uocOpen} timeout="auto" unmountOnExit>

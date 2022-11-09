@@ -164,7 +164,7 @@ const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses, isS
         @media (min-width: 1000px) and (max-width: 1500px) {
           flex: 0 0 calc((100% / 3) - 2px - (10px * 2 / 3));
         }
-        border-radius: 10px;
+        border-radius: 3px;
         border: 1px solid #b6b6b6;
         color: ${textColor};
         background-color: ${bgColor};

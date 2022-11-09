@@ -1,22 +1,29 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import React from "react";
+import React, { useState } from "react";
 
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 
-import { Tooltip } from "@mui/material";
+import { Collapse, IconButton, Tooltip } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 
 import PropTypes from "prop-types";
+import { ExpandMore } from "@mui/icons-material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const RequirementsBox = ({ title, uocCompleted, minUoc, notCounted, children }) => {
+  const [expanded, setExpanded] = useState(false);
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
   return (
     <Card
+      sx={{ boxShadow: 3 }}
       css={css`
         border: 1px solid #b6b6b6;
-        border-radius: 10px;
+        border-radius: 3px;
         flex: none;
       `}>
       <CardHeader
@@ -29,22 +36,50 @@ const RequirementsBox = ({ title, uocCompleted, minUoc, notCounted, children }) 
               align-items: center;
             `}>
             <div>{title}</div>
-            {notCounted ? (
-              <Tooltip
-                title={`${
-                  children.length > 1 ? "These courses do" : "This course does"
-                } not count towards your progression`}>
-                <InfoIcon
+            <div
+              css={css`
+                display: flex;
+                flex-direction: row;
+                gap: 5px;
+              `}>
+              {notCounted ? (
+                <Tooltip
+                  title={`${
+                    children.length > 1 ? "These courses do" : "This course does"
+                  } not count towards your progression`}
                   css={css`
-                    height: fit-content;
-                  `}
-                />
-              </Tooltip>
-            ) : (
-              <div>
-                {uocCompleted} / {minUoc}
-              </div>
-            )}
+                    cursor: pointer;
+                    margin: auto;
+                  `}>
+                  <InfoIcon
+                    css={css`
+                      height: fit-content;
+                    `}
+                  />
+                </Tooltip>
+              ) : (
+                <div
+                  css={css`
+                    margin: auto;
+                  `}>
+                  {uocCompleted} / {minUoc}
+                </div>
+              )}
+              <IconButton>
+                <ExpandMore
+                  expand={expanded.toString()}
+                  onClick={handleExpandClick}
+                  aria-expanded={expanded}
+                  aria-label="show more"
+                  css={css`
+                    transform: ${expanded && expanded ? "rotate(180deg)" : "rotate(0deg)"};
+                    margin-left: "auto";
+                    transition: 0.2s;
+                  `}>
+                  <ExpandMoreIcon />
+                </ExpandMore>
+              </IconButton>
+            </div>
           </div>
         }
         css={css`
@@ -53,23 +88,25 @@ const RequirementsBox = ({ title, uocCompleted, minUoc, notCounted, children }) 
           border-style: solid;
           border-color: #b6b6b6;
           border-width: 0px 0px 1px 0px;
-          padding: 8px 16px;
+          padding: 8px 5px 8px 16px;
         `}
       />
-      <CardContent
-        css={css`
-          display: flex;
-          flex-direction: row;
-          flex-wrap: wrap;
-          justify-content: flex-start;
-          gap: 10px 10px;
-          padding: 10px;
-          &:last-child {
-            padding-bottom: 10px;
-          }
-        `}>
-        {children}
-      </CardContent>
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <CardContent
+          css={css`
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            gap: 10px 10px;
+            padding: 10px;
+            &:last-child {
+              padding-bottom: 10px;
+            }
+          `}>
+          {children}
+        </CardContent>
+      </Collapse>
     </Card>
   );
 };
