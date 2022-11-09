@@ -27,13 +27,21 @@ import ChangeProgramModal from "../components/ChangeProgramModal";
 import { UserContext } from "../helpers/UserContext";
 import { StudentContext } from "../helpers/StudentContext";
 
+// FEEDBACK:
+//  - more padding everywhere
+//  - more heirarchy - where do we start - overwhelming
+//  - reset button to the bottom
+//  - box shadow - softer shadows
+//  - collapsable requirements boxes
+//  - add clickable-ness to add course
+
 // TODOs:
 //  - add multiple stream support
+//    - double counting aaaaaaaaaaaaaa
 //  - add eng program discipline elective same as stream thing
 //  - add school exceptions to gen eds (eng and maths)
-//  - add staff equivalent courses thing
-//  - add tokens and cookies
-//  - double counting aaaaaaaaaaaaaa
+//  - add course substitutions
+//  - add wam calculation
 
 // BACKBURNERs:
 //  - automate program and stream rules with api
@@ -44,6 +52,7 @@ import { StudentContext } from "../helpers/StudentContext";
 //    - curl -sL https://www.handbook.unsw.edu.au/api/content/render/false/query/+contentType:unsw_psubject%20+unsw_psubject.studyLevelURL:undergraduate%20+unsw_psubject.implementationYear:2021%20+deleted:false%20+unsw_psubject.code:COMP1511/orderBy/urlMap/limit/1 | jq -r '.["contentlets"][]' | grep 1911
 //  - add mobile support
 //    - might be more effort than it's worth at the moment
+//  - add tokens and cookies
 
 // DONE
 //  - add program changing
@@ -53,6 +62,11 @@ import { StudentContext } from "../helpers/StudentContext";
 //  - fix course card spacing and arrangement
 //  - add faculty and school checks to gen eds
 //  - move modals to separate components
+
+// double counting:
+//  if you see a core course and it's part of another req
+//    remove that course (AND exclusion courses - math1131 and math1141) from other reqs and lower those reqs uoc but the original courses uoc
+// chose to ignore - look at aaaaaaaaaall the edge cases in https://www.handbook.unsw.edu.au/undergraduate/programs/2021/3785
 
 const CheckerPage = () => {
   const navigate = useNavigate();
@@ -204,7 +218,7 @@ const CheckerPage = () => {
   });
 
   const tempStreamId = studentState?.tempStreamId;
-  const { data: stream, isLoading: streamIsLoading } = useQuery(
+  const { data: streams, isLoading: streamsIsLoading } = useQuery(
     ["streamData", studentId, tempStreamId],
     async () => {
       const requestOptions = {
@@ -213,7 +227,7 @@ const CheckerPage = () => {
       try {
         const res = await fetch(
           tempStreamId === null
-            ? `http://127.0.0.1:5000/user/stream?zid=${studentId}`
+            ? `http://127.0.0.1:5000/user/streams?zid=${studentId}`
             : `http://127.0.0.1:5000/stream?stream_id=${tempStreamId}`,
           requestOptions
         );
@@ -228,16 +242,18 @@ const CheckerPage = () => {
     }
   );
 
-  const streamId = stream?.stream_id;
-  const { data: streamRules, isLoading: streamRulesIsLoading } = useQuery(
-    ["streamRulesData", streamId],
+  const streamIds = streams?.map((s) => ({ id: s.stream_id, code: s.code }));
+  const { data: streamsRules, isLoading: streamsRulesIsLoading } = useQuery(
+    ["streamsRulesData", streamIds],
     async () => {
       const requestOptions = {
         method: "GET"
       };
       try {
         const res = await fetch(
-          `http://127.0.0.1:5000/stream/rules?stream_id=${streamId}`,
+          `http://127.0.0.1:5000/streams/rules?${streamIds
+            .map(({ id, code }) => `values=${id},${code}`)
+            .join("&")}`,
           requestOptions
         );
         return await res.json();
@@ -246,7 +262,7 @@ const CheckerPage = () => {
         return enqueueSnackbar(err, { variant: "error" });
       }
     },
-    { enabled: !!streamId }
+    { enabled: !!streamIds }
   );
 
   const [modsOpen, setModsOpen] = useState(true);
@@ -303,7 +319,7 @@ const CheckerPage = () => {
   });
 
   useEffect(() => {
-    if (!enrolmentsIsLoading && !programIsLoading && !programRulesIsLoading && !streamIsLoading) {
+    if (!enrolmentsIsLoading && !programIsLoading && !programRulesIsLoading && !streamsIsLoading) {
       // MANTRA: tie the rule to the courses that fulfil that rule, i.e. do all the calculations here and just pass off to components
       // TODO: add looping through specific rules and split courses based on that rather than all rules altogether
 
@@ -319,9 +335,12 @@ const CheckerPage = () => {
       programRules.forEach((programRule) => {
         // stream case
         if (programRule.type === "ST") {
-          // student has selected stream
-          if (programRule.definition.split(",").includes(stream.code) && !streamRulesIsLoading) {
-            streamRules.forEach((streamRule) => {
+          // student has selected a valid stream for this definition
+          const matchingStream = streamsRulesIsLoading
+            ? undefined
+            : programRule.definition.split(",").find((ruleCode) => ruleCode in streamsRules);
+          if (matchingStream !== undefined && !streamsRulesIsLoading) {
+            streamsRules[[matchingStream]].forEach((streamRule) => {
               rules[JSON.stringify(streamRule)] = [];
 
               // rule definition looks like COMP1511,MATH1131;MATH1231 or COMP3XXX,COMP4XXX
@@ -529,7 +548,7 @@ const CheckerPage = () => {
       setLockedCourses(lockedCoursesToAdd);
       setTotalRules(rules);
     }
-  }, [enrolments, programRules, streamRules, addedCourses]);
+  }, [enrolments, programRules, streamsRules, addedCourses]);
 
   return (
     <div
@@ -558,7 +577,7 @@ const CheckerPage = () => {
             overflow: auto;
             width: calc(100vw - 300px);
           `}>
-          {programRulesIsLoading || streamIsLoading ? (
+          {programRulesIsLoading || streamsIsLoading ? (
             <></>
           ) : (
             Object.keys(totalRules).map((rawRule) => {
@@ -572,7 +591,7 @@ const CheckerPage = () => {
                 return (
                   <RequirementsBox
                     key={rawRule}
-                    title={`${"program_rule_id" in rule ? "Program" : "Stream"} - ${rule.name}`}
+                    title={rule.name}
                     uocCompleted={0}
                     minUoc={rule.min_uoc}>
                     {children}
@@ -621,7 +640,7 @@ const CheckerPage = () => {
 
                   return (
                     <RequirementsBox
-                      title={`${"program_rule_id" in rule ? "Program" : "Stream"} - ${rule.name}`}
+                      title={`${rule.stream === undefined ? "" : `${rule.stream} - `}${rule.name}`}
                       uocCompleted={totalRules[rawRule].reduce(
                         (a, b) => a + parseInt(b.uoc, 10),
                         0
@@ -694,7 +713,7 @@ const CheckerPage = () => {
 
                 return (
                   <RequirementsBox
-                    title={`${"program_rule_id" in rule ? "Program" : "Stream"} - ${rule.name}`}
+                    title={`${rule.stream === undefined ? "" : `${rule.stream} - `}${rule.name}`}
                     uocCompleted={totalRules[rawRule].reduce((a, b) => a + parseInt(b.uoc, 10), 0)}
                     minUoc={rule.min_uoc}
                     key={rawRule}>
@@ -714,7 +733,7 @@ const CheckerPage = () => {
                 ));
                 return (
                   <RequirementsBox
-                    title={`${"program_rule_id" in rule ? "Program" : "Stream"} - ${rule.name}`}
+                    title={`${rule.stream === undefined ? "" : `${rule.stream} - `}${rule.name}`}
                     uocCompleted={totalRules[rawRule].reduce((a, b) => a + parseInt(b.uoc, 10), 0)}
                     minUoc={rule.min_uoc}
                     key={rawRule}>
@@ -732,7 +751,7 @@ const CheckerPage = () => {
                 />
               ));
               return (
-                <RequirementsBox title={`${rule.name}`} key={rawRule} notCounted>
+                <RequirementsBox title={rule.name} key={rawRule} notCounted>
                   {children}
                 </RequirementsBox>
               );
@@ -804,7 +823,7 @@ const CheckerPage = () => {
                         programStreamsIsLoading
                           ? []
                           : programStreams
-                              .filter((s) => !(!!streamId && s.stream_id === streamId))
+                              .filter((s) => !(!!streamIds && s.stream_id === streamIds))
                               .map((s) => {
                                 return { label: `${s.code} - ${s.title}`, id: s.stream_id };
                               })
@@ -941,6 +960,7 @@ const CheckerPage = () => {
                       ({ name, type }) =>
                         Object.keys(totalRules).some((rule) => JSON.parse(rule).type === type) && (
                           <SidebarItem
+                            key={name}
                             title={name}
                             completedUoc={getCompletedUoc(type)}
                             totalUoc={getTotalUoc(type)}

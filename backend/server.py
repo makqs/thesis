@@ -140,8 +140,8 @@ def get_programs():
     return json.dumps(programs), 200
 
 
-# returns { stream_id, year, code, title, total_uoc }
-@app.route("/user/stream", methods=["GET"])
+# returns [ { stream_id, year, code, title, total_uoc } ]
+@app.route("/user/streams", methods=["GET"])
 def get_user_stream():
     zid = request.args.get("zid")
 
@@ -150,29 +150,33 @@ def get_user_stream():
             curs.execute(
                 f"""SELECT stream_id FROM stream_enrolments WHERE zid = '{zid}'"""
             )
-            stream_id = curs.fetchone()
+            stream_ids = curs.fetchall()
 
-            if stream_id is None:
-                return (
-                    json.dumps({"error": f"zID ({zid}): not enrolled in a stream"}),
-                    400,
+            # if stream_ids == []:
+            #     return (
+            #         json.dumps({"error": f"zID ({zid}): not enrolled in any streams"}),
+            #         400,
+            #     )
+
+            streams = []
+            for stream_id in stream_ids:
+                curs.execute(
+                    f"""SELECT year, code, title, total_uoc FROM streams WHERE stream_id = '{stream_id[0]}'"""
                 )
-
-            curs.execute(
-                f"""SELECT year, code, title, total_uoc FROM streams WHERE stream_id = '{stream_id[0]}'"""
-            )
-            stream_data = curs.fetchone()
+                stream = curs.fetchone()
+                if stream is None:
+                    continue
+                stream = {
+                    "stream_id": str(stream_id[0]),
+                    "year": str(stream[0]),
+                    "code": stream[1],
+                    "title": stream[2],
+                    "total_uoc": str(stream[3]),
+                }
+                streams.append(stream)
 
     return (
-        json.dumps(
-            {
-                "stream_id": str(stream_id[0]),
-                "year": str(stream_data[0]),
-                "code": str(stream_data[1]),
-                "title": str(stream_data[2]),
-                "total_uoc": str(stream_data[3]),
-            }
-        ),
+        json.dumps(streams),
         200,
     )
 
@@ -197,13 +201,15 @@ def get_stream():
 
     return (
         json.dumps(
-            {
-                "stream_id": str(stream_data[0]),
-                "year": str(stream_data[1]),
-                "code": str(stream_data[2]),
-                "title": str(stream_data[3]),
-                "total_uoc": str(stream_data[4]),
-            }
+            [
+                {
+                    "stream_id": str(stream_data[0]),
+                    "year": str(stream_data[1]),
+                    "code": str(stream_data[2]),
+                    "title": str(stream_data[3]),
+                    "total_uoc": str(stream_data[4]),
+                }
+            ]
         ),
         200,
     )
@@ -261,6 +267,11 @@ def get_program_rules():
             )
             rule_data = curs.fetchall()
 
+            curs.execute(
+                f"""SELECT program_rule_id, name, type, min_uoc, definition FROM program_rules WHERE program_id = '{program_id}'"""
+            )
+            rule_data = curs.fetchall()
+
     if rule_data is None:
         return json.dumps({"error": f"program ID ({program_id}): not found"}), 400
 
@@ -281,36 +292,47 @@ def get_program_rules():
     return json.dumps(rule_data), 200
 
 
-# returns [ { stream_rule_id, name, type, min_uoc, definition } ]
-@app.route("/stream/rules", methods=["GET"])
+# returns { [code]: [ { stream_rule_id, name, type, min_uoc, definition } ] }
+@app.route("/streams/rules", methods=["GET"])
 def get_stream_rules():
-    stream_id = request.args.get("stream_id")
+    values_list = request.args.getlist("values")
 
+    rules = {}
     with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
         with conn.cursor() as curs:
-            curs.execute(
-                f"""SELECT stream_rule_id, name, type, min_uoc, definition FROM stream_rules WHERE stream_id = '{stream_id}'"""
-            )
-            rule_data = curs.fetchall()
+            for values in values_list:
+                id, code = values.split(",")
+                curs.execute(
+                    f"""SELECT stream_rule_id, name, type, min_uoc, definition FROM stream_rules WHERE stream_id = '{id}'"""
+                )
+                rule_data = curs.fetchall()
 
-    if rule_data is None:
-        return json.dumps({"error": f"stream ID ({stream_id}): not found"}), 400
+                if rule_data is None:
+                    return (
+                        json.dumps(
+                            {"error": f"stream ID - CODE ({id} - {code}): not found"}
+                        ),
+                        400,
+                    )
 
-    rule_data = [
-        {
-            "stream_rule_id": str(row[0]),
-            "name": row[1],
-            "type": row[2],
-            "min_uoc": str(row[3]),
-            "definition": row[4],
-        }
-        for row in rule_data
-    ]
+                rule_data = [
+                    {
+                        "stream_rule_id": str(rule[0]),
+                        "stream": code,
+                        "name": rule[1],
+                        "type": rule[2],
+                        "min_uoc": str(rule[3]),
+                        "definition": rule[4],
+                    }
+                    for rule in rule_data
+                ]
+                sort_order = {"ST": 0, "CC": 1, "DE": 2, "GE": 3, "FE": 4}
 
-    sort_order = {"CC": 0, "DE": 1, "GE": 2, "FE": 3}
-    rule_data.sort(key=lambda val: sort_order[val["type"]])
+                rule_data.sort(key=lambda val: sort_order[val["type"]])
 
-    return json.dumps(rule_data), 200
+                rules[code] = rule_data
+
+    return json.dumps(rules), 200
 
 
 # returns [ { course_id, code, title, year, uoc, mark, grade, is_ge } ]

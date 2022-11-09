@@ -62,7 +62,7 @@ const NavBar = ({ resetModifiers }) => {
   );
 
   const tempStreamId = studentState?.tempStreamId;
-  const { data: stream, isLoading: streamIsLoading } = useQuery(
+  const { data: streams, isLoading: streamsIsLoading } = useQuery(
     ["streamData", studentId, tempStreamId],
     async () => {
       const requestOptions = {
@@ -71,7 +71,7 @@ const NavBar = ({ resetModifiers }) => {
       try {
         const res = await fetch(
           tempStreamId === null
-            ? `http://127.0.0.1:5000/user/stream?zid=${studentId}`
+            ? `http://127.0.0.1:5000/user/streams?zid=${studentId}`
             : `http://127.0.0.1:5000/stream?stream_id=${tempStreamId}`,
           requestOptions
         );
@@ -120,10 +120,10 @@ const NavBar = ({ resetModifiers }) => {
   }, [program]);
 
   useEffect(() => {
-    if (stream && "error" in stream) {
-      enqueueSnackbar(stream.error, { variant: "warning" });
+    if (streams && streams.length === 0) {
+      enqueueSnackbar(streams.error, { variant: "warning" });
     }
-  }, [stream]);
+  }, [streams]);
 
   return (
     <Box
@@ -169,14 +169,14 @@ const NavBar = ({ resetModifiers }) => {
                 color: #818ca1;
               `}>
               {!userState ||
-              (userState.isStaff && streamIsLoading && Object.keys(studentState).length !== 0) ||
-              (!userState.isStaff && streamIsLoading) ? (
+              (userState.isStaff && streamsIsLoading && Object.keys(studentState).length !== 0) ||
+              (!userState.isStaff && streamsIsLoading) ? (
                 "..."
               ) : (
                 <>
-                  {!stream || "error" in stream
+                  {!streams || streams.length === 0
                     ? "No stream enrolment"
-                    : `${stream.code} ${stream.title} ${stream.year}`}
+                    : streams.map(({ code, title }) => `${code} ${title}`).join(" / ")}
                 </>
               )}
             </Typography>

@@ -54,7 +54,7 @@ with open("../backend/programs.txt", "r") as f:
 
 # engineering program rules
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, min_uoc, max_uoc, definition) VALUES ('1', '95', 'Stream', 'ST', 168, 168, 'AEROAH,BINFAH,CEICAH,CEICDH,COMPBH,CVENAH,CVENBH,ELECAH,MECHAH,SENGAH')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, min_uoc, max_uoc, definition) VALUES ('1', '95', 'Stream', 'ST', 168, 168, 'AEROAH,BINFAH,CEICAH,CEICDH,COMPBH,CVENAH,CVENBH,ELECAH,ELECCH,GMATDH,MANFBH,MECHAH,MINEAH,MTRNAH,PETRAH,SENGAH,SOLAAH,SOLABH,TELEAH')"""
 )
 cursor.execute(
     f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, min_uoc, max_uoc, definition) VALUES ('2', '95', 'Industrial Experience Requirement', 'CC', 0, 0, 'ENGG4999')"""
@@ -363,14 +363,28 @@ cursor.execute(
     f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, min_uoc, max_uoc, definition) VALUES ('22', '139', 'General Education', 'GE', 12, 12, NULL)"""
 )
 
+# engineering / computer science program rules
+cursor.execute(
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, min_uoc, max_uoc, definition) VALUES ('23', '113', 'Engineering (Honours) - Stream', 'ST', 168, 168, 'AEROAH,CEICAH,CEICDH,CVENAH,CVENBH,ELECAH,ELECCH,GMATDH,MANFBH,MECHAH,MINEAH,MTRNAH,PETRAH,SOLAAH,SOLABH,TELEAH')"""
+)
+cursor.execute(
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, min_uoc, max_uoc, definition) VALUES ('24', '113', 'Engineering (Honours) - Industrial Experience Requirement', 'CC', 0, 0, 'ENGG4999')"""
+)
+cursor.execute(
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, min_uoc, max_uoc, definition) VALUES ('25', '113', 'Computer Science - Stream', 'ST', 96, 96, 'COMPA1,COMPD1,COMPE1,COMPI1,COMPJ1,COMPN1,COMPS1,COMPY1')"""
+)
+
 # user program and stream enrolments
-# engineering 95, commerce 61, comp sci 108, medicine 117, flying 139
+# engineering 95, commerce 61, comp sci 108, medicine 117, flying 139, eng / cs 113
 cursor.execute(
     f"""INSERT INTO program_enrolments(zid, program_id) VALUES ('z5555555', '95')"""
 )
-# cursor.execute(f"""INSERT INTO program_enrolments(zid, program_id) VALUES ('z5263663', '108')""")
-
-# cursor.execute(f"""INSERT INTO stream_enrolments(zid, stream_id) VALUES ('z5555555', '1')""")
+cursor.execute(
+    f"""INSERT INTO stream_enrolments(zid, stream_id) VALUES ('z5555555', '2')"""
+)
+# cursor.execute(
+#     f"""INSERT INTO stream_enrolments(zid, stream_id) VALUES ('z5555555', '9')"""
+# )
 
 # user course enrolments
 cursor.execute(
