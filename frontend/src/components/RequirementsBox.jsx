@@ -97,11 +97,8 @@ const RequirementsBox = ({ title, uocCompleted, minUoc, notCounted, children }) 
             flex-direction: row;
             flex-wrap: wrap;
             justify-content: flex-start;
-            gap: 15px 15px;
-            padding: 15px;
-            &:last-child {
-              padding-bottom: 15px;
-            }
+            gap: 20px 20px;
+            padding: 20px;
           `}>
           {children}
         </CardContent>

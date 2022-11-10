@@ -249,7 +249,7 @@ const CheckerPage = () => {
       };
       try {
         const res = await fetch(
-          tempStreamId === null
+          tempStreamId === null || tempStreamId === -1
             ? `http://127.0.0.1:5000/user/streams?zid=${studentId}`
             : `http://127.0.0.1:5000/stream?stream_id=${tempStreamId}`,
           requestOptions
@@ -594,10 +594,10 @@ const CheckerPage = () => {
         `}>
         <Box
           css={css`
-            padding: 15px 15px 15px 15px;
+            padding: 20px 20px 20px 20px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
             overflow: overlay;
             width: calc(100vw - 300px);
           `}>

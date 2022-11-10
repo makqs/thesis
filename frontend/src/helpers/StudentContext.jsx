@@ -20,7 +20,7 @@ export const studentReducer = (state, action) => {
       return {
         zId: state.zId,
         tempProgramId: action.tempProgramId,
-        tempStreamId: null
+        tempStreamId: -1
       };
     case "updateStream":
       return {

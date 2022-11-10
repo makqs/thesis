@@ -38,7 +38,12 @@ const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses, isS
   }
 
   const children = (
-    <>
+    <div
+      css={css`
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      `}>
       <div
         css={css`
           display: flex;
@@ -76,7 +81,7 @@ const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses, isS
           </Tooltip>
         )}
       </div>
-    </>
+    </div>
   );
 
   let cardVariety;
@@ -94,7 +99,7 @@ const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses, isS
         <CardActionArea
           css={css`
             font-size: 13pt;
-            padding: 8px;
+            padding: 15px;
             display: flex;
             justify-content: center;
             width: 100%;
@@ -111,7 +116,7 @@ const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses, isS
         <CardActionArea
           css={css`
             font-size: 13pt;
-            padding: 8px;
+            padding: 15px;
             display: flex;
             justify-content: center;
             width: 100%;
@@ -127,7 +132,7 @@ const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses, isS
       <CardActionArea
         css={css`
           font-size: 13pt;
-          padding: 8px;
+          padding: 15px;
           cursor: inherit;
         `}>
         {locked ? (
@@ -155,15 +160,14 @@ const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses, isS
   }
   return (
     <Card
-      sx={{ boxShadow: 3 }}
+      sx={{ boxShadow: 4 }}
       css={css`
-        border: 1px solid grey;
-        flex: 0 0 calc(25% - 2px - (15px * 3 / 4));
-        @media (max-width: 1000px) {
-          flex: 0 0 calc(50% - 2px - (15px * 1 / 2));
+        flex: 0 0 calc(25% - 2px - (20px * 3 / 4));
+        @media (max-width: 1100px) {
+          flex: 0 0 calc(50% - 2px - (20px * 1 / 2));
         }
-        @media (min-width: 1000px) and (max-width: 1500px) {
-          flex: 0 0 calc((100% / 3) - 2px - (15px * 2 / 3));
+        @media (min-width: 1100px) and (max-width: 1550px) {
+          flex: 0 0 calc((100% / 3) - 2px - (20px * 2 / 3));
         }
         border-radius: 3px;
         border: 1px solid #b6b6b6;

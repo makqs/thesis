@@ -70,7 +70,7 @@ const NavBar = ({ resetModifiers }) => {
       };
       try {
         const res = await fetch(
-          tempStreamId === null
+          tempStreamId === null || tempStreamId === -1
             ? `http://127.0.0.1:5000/user/streams?zid=${studentId}`
             : `http://127.0.0.1:5000/stream?stream_id=${tempStreamId}`,
           requestOptions
@@ -154,12 +154,12 @@ const NavBar = ({ resetModifiers }) => {
               !studentState ||
               (userState.isStaff && programIsLoading && Object.keys(studentState).length !== 0) ||
               (!userState.isStaff && programIsLoading) ? (
-                "..."
+                "Program: ..."
               ) : (
                 <>
                   {!program || "error" in program
                     ? "No program enrolment"
-                    : `${program.code} ${program.title} ${program.year}`}
+                    : `Program: ${program.code} ${program.title} ${program.year}`}
                 </>
               )}
             </Typography>
@@ -173,12 +173,14 @@ const NavBar = ({ resetModifiers }) => {
               !studentState ||
               (userState.isStaff && streamsIsLoading && Object.keys(studentState).length !== 0) ||
               (!userState.isStaff && streamsIsLoading) ? (
-                "..."
+                "Stream: ..."
               ) : (
                 <>
-                  {!streams || streams.length === 0
+                  {!streams || streams.length === 0 || studentState?.tempStreamId === -1
                     ? "No stream enrolment"
-                    : streams.map(({ code, title }) => `${code} ${title}`).join(" / ")}
+                    : `Stream${streams.length > 1 ? "s" : ""}: ${streams
+                        .map(({ code, title }) => `${code} ${title}`)
+                        .join(" / ")}`}
                 </>
               )}
             </Typography>
