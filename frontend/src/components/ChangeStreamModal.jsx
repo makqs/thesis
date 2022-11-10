@@ -44,7 +44,7 @@ const ChangeStreamModal = ({ open, handleClose, selectedStream, setSelectedStrea
             options={options}
             sx={{ width: 400 }}
             // eslint-disable-next-line react/jsx-props-no-spreading
-            renderInput={(params) => <TextField {...params} label="Course" />}
+            renderInput={(params) => <TextField {...params} label="Stream" />}
             isOptionEqualToValue={(option, value) => option.id === value.id}
           />
           <Button

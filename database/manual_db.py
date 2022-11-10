@@ -198,7 +198,7 @@ cursor.execute(
     f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('5', '61', 'Integrated First Year Courses', 'CC', 48, NULL, 'COMM1100,COMM1110,COMM1120,COMM1140,COMM1150,COMM1170,COMM1180,COMM1190')"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('6', '61', 'myBCom', 'CC', 0, NULL, 'COMM0999,COMM1999,COMM3999')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('6', '61', 'myBCom', 'CC', NULL, 3, 'COMM0999,COMM1999,COMM3999')"""
 )
 cursor.execute(
     f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('7', '61', 'Commerce Streams', 'ST', 48, NULL, 'ACCTA1,COMMJ1,ECONF1,FINSA1,FINSR1,IBUSA1,INFSA1,MARKA1,MGMTH1,TABLC1')"""
@@ -207,13 +207,23 @@ cursor.execute(
     f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('8', '61', 'Prescribed Work Intergrated Learning Course', 'CC', 6, NULL, 'CDEV3000,COMM2222,COMM2233,COMM2244,COMM3020,COMM3030')"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('9', '61', 'Final Year Synthesis', 'CC', 6, NULL, 'ACCT3583,COMM2233,COMM3020,COMM3030,COMM3090,COMM3500,COMM3900,TABL3033')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('9', '61', 'Final Year Synthesis', 'CC', NULL, 1, 'ACCT3583,COMM2233,COMM3020,COMM3030,COMM3090,COMM3500,COMM3900,TABL3033')"""
 )
 cursor.execute(
     f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('10', '61', 'Free Electives', 'FE', 36, NULL, NULL)"""
 )
 cursor.execute(
     f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('11', '61', 'General Education', 'GE', 12, NULL, NULL)"""
+)
+# commerce accounting stream rules
+cursor.execute(
+    f"""INSERT INTO streams(stream_id, year, code, title, total_uoc) VALUES ('14', 2021, 'ACCTA1', 'Accounting', 48)"""
+)
+cursor.execute(
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('14', 'Core Courses', 'CC', 30, NULL, 'ACCT2511,ACCT2522,ACCT2542,ACCT3563,COMM1140')"""
+)
+cursor.execute(
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('14', 'Prescribed Electives', 'DE', 18, NULL, 'ACCT2672,ACCT3583,ACCT3601,ACCT3610,ACCT3625,ACCT3708,COMM2222,COMM2233,COMM3020,COMM3101,COMM3202,FINS3626,TABL2741,TABL3033')"""
 )
 
 # comp sci program rules
@@ -439,6 +449,107 @@ cursor.execute(
 # substitutions
 cursor.execute(
     f"""INSERT INTO substitutions(zid, original_course, substitution_course) VALUES ('z5555555', 'COMP1511', 'COMP1000')"""
+)
+
+# my progression
+cursor.execute(
+    f"""INSERT INTO program_enrolments(zid, program_id) VALUES ('z5263663', '95')"""
+)
+cursor.execute(
+    f"""INSERT INTO stream_enrolments(zid, stream_id) VALUES ('z5263663', '1')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '891', 84, 'DN')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '1453', 85, 'HD')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '1989', 78, 'DN')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '892', 77, 'DN')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '899', 79, 'DN')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '1991', 77, 'DN')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '893', 85, 'HD')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '1986', 76, 'DN')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '909', 50, 'SY')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '910', 50, 'SY')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '2674', 81, 'DN')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '895', 92, 'HD')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '1216', 78, 'DN')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '2005', 50, 'SY')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '2013', 50, 'SY')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '898', 88, 'HD')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '2673', 79, 'DN')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '917', 79, 'DN')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '2676', 80, 'DN')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '902', 75, 'DN')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '952', 96, 'HD')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '1258', 79, 'DN')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '900', 89, 'HD')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '912', 84, 'DN')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '937', 94, 'HD')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '931', 50, 'EC')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '953', 83, 'DN')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '2424', 83, 'DN')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '235', 87, 'HD')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '914', 78, 'DN')"""
+)
+cursor.execute(
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5263663', '932', 50, 'EC')"""
 )
 
 cursor.close()

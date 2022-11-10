@@ -104,7 +104,6 @@ const CheckerPage = () => {
   const [openSubstitution, setOpenSubstitution] = useState(false);
   const handleOpenSubstitution = () => setOpenSubstitution(true);
   const handleCloseSubstitution = () => setOpenSubstitution(false);
-  // const [substitutionValue, setSubstitutionValue] = useState(null);
 
   const [modsOpen, setModsOpen] = useState(true);
   const handleModsClick = () => {
