@@ -17,8 +17,9 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import NavBar from "../components/NavBar";
 import RequirementsBox from "../components/RequirementsBox";
 import CourseCard from "../components/CourseCard";
-import SidebarItem from "../components/SidebarItem";
 import SidebarButton from "../components/SidebarButton";
+import SidebarUocItem from "../components/SidebarUocItem";
+import SidebarWamItem from "../components/SidebarWamItem";
 import AddCourseModal from "../components/AddCourseModal";
 import RemoveCourseModal from "../components/RemoveCourseModal";
 import ChangeStreamModal from "../components/ChangeStreamModal";
@@ -97,6 +98,27 @@ const CheckerPage = () => {
   const handleOpenRemove = () => setOpenRemove(true);
   const handleCloseRemove = () => setOpenRemove(false);
   const [removeValue, setRemoveValue] = useState(null);
+
+  const [modsOpen, setModsOpen] = useState(true);
+  const handleModsClick = () => {
+    setModsOpen(!modsOpen);
+  };
+
+  const [uocOpen, setUocOpen] = useState(true);
+  const handleUocClick = () => {
+    setUocOpen(!uocOpen);
+  };
+
+  const [wamOpen, setWamOpen] = useState(true);
+  const handleWamClick = () => {
+    setWamOpen(!wamOpen);
+  };
+
+  const [totalRules, setTotalRules] = useState({});
+
+  const [modifiersActive, setModifiersActive] = useState(false);
+
+  const [wam, setWam] = useState(0.0);
 
   const { data: courses, isLoading: coursesIsLoading } = useQuery(["coursesData"], async () => {
     const requestOptions = {
@@ -265,18 +287,6 @@ const CheckerPage = () => {
     { enabled: !!streamIds }
   );
 
-  const [modsOpen, setModsOpen] = useState(true);
-  const handleModsClick = () => {
-    setModsOpen(!modsOpen);
-  };
-
-  const [uocOpen, setUocOpen] = useState(true);
-  const handleUocClick = () => {
-    setUocOpen(!uocOpen);
-  };
-
-  const [totalRules, setTotalRules] = useState({});
-
   const getCompletedUoc = (type) =>
     Object.keys(totalRules).reduce(
       (a, b) =>
@@ -297,7 +307,20 @@ const CheckerPage = () => {
     studentDispatch({ type: "resetStudentModifiers" });
   };
 
-  const [modifiersActive, setModifiersActive] = useState(false);
+  useEffect(() => {
+    if (!enrolmentsIsLoading && !("error" in enrolments)) {
+      const filteredEnrolments = enrolments.filter(
+        (e) => !["SY", "XE", "NA", "RS", "AS", "NF", "NC", "RD", "EC", "AW", "PW"].includes(e.grade)
+      );
+      const numerator = filteredEnrolments.reduce(
+        (a, b) => a + parseFloat(b.mark, 10) * parseFloat(b.uoc, 10),
+        0.0
+      );
+      const denominator = filteredEnrolments.reduce((a, b) => a + parseFloat(b.uoc, 10), 0);
+      setWam(numerator / denominator);
+    }
+  }, [enrolments, enrolmentsIsLoading]);
+
   useEffect(() => {
     if (
       addedCourses.length !== 0 ||
@@ -788,7 +811,6 @@ const CheckerPage = () => {
               <IconButton>
                 <ExpandMore
                   expand={modsOpen.toString()}
-                  onClick={handleModsClick}
                   css={css`
                     transform: ${modsOpen && modsOpen ? "rotate(180deg)" : "rotate(0deg)"};
                     margin-left: "auto";
@@ -963,7 +985,6 @@ const CheckerPage = () => {
                     <IconButton>
                       <ExpandMore
                         expand={uocOpen.toString()}
-                        onClick={handleUocClick}
                         css={css`
                           transform: ${uocOpen && uocOpen ? "rotate(180deg)" : "rotate(0deg)"};
                           margin-left: "auto";
@@ -985,7 +1006,7 @@ const CheckerPage = () => {
                     ].map(
                       ({ name, type }) =>
                         Object.keys(totalRules).some((rule) => JSON.parse(rule).type === type) && (
-                          <SidebarItem
+                          <SidebarUocItem
                             key={name}
                             title={name}
                             completedUoc={getCompletedUoc(type)}
@@ -993,6 +1014,36 @@ const CheckerPage = () => {
                           />
                         )
                     )}
+                  </List>
+                </Collapse>
+              </>
+            )}
+            {!enrolmentsIsLoading && !("error" in enrolments) && (
+              <>
+                <ListItemButton
+                  onClick={handleWamClick}
+                  css={css`
+                    background-color: #f3f3f3;
+                    border-style: solid;
+                    border-color: #bfbfbf;
+                    border-width: 1px 0px 0px 0px;
+                  `}>
+                  <ListItemText primary="WAM" />
+                  <IconButton>
+                    <ExpandMore
+                      expand={wamOpen.toString()}
+                      css={css`
+                        transform: ${wamOpen && wamOpen ? "rotate(180deg)" : "rotate(0deg)"};
+                        margin-left: "auto";
+                        transition: 0.2s;
+                      `}>
+                      <ExpandMoreIcon />
+                    </ExpandMore>
+                  </IconButton>
+                </ListItemButton>
+                <Collapse in={wamOpen} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding>
+                    <SidebarWamItem wam={wam} />
                   </List>
                 </Collapse>
               </>

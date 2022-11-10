@@ -5,7 +5,7 @@ import React from "react";
 import { ListItem, ListItemText } from "@mui/material";
 import PropTypes from "prop-types";
 
-const SidebarItem = ({ title, completedUoc, totalUoc }) => {
+const SidebarUocItem = ({ title, completedUoc, totalUoc }) => {
   return (
     <ListItem
       sx={{ pl: 4 }}
@@ -20,27 +20,22 @@ const SidebarItem = ({ title, completedUoc, totalUoc }) => {
         justify-content: space-between;
       `}>
       <ListItemText primary={title} />
-      {completedUoc !== null && totalUoc !== null && (
-        <ListItemText
-          primary={`${completedUoc} / ${totalUoc}`}
-          css={css`
-            text-align: right;
-          `}
-        />
-      )}
+      <ListItemText
+        primary={`${completedUoc} / ${totalUoc}`}
+        css={css`
+          text-align: right;
+        `}
+      />
     </ListItem>
   );
 };
 
-SidebarItem.propTypes = {
+SidebarUocItem.propTypes = {
   title: PropTypes.string.isRequired,
-  completedUoc: PropTypes.number,
-  totalUoc: PropTypes.number
+  completedUoc: PropTypes.number.isRequired,
+  totalUoc: PropTypes.number.isRequired
 };
 
-SidebarItem.defaultProps = {
-  completedUoc: null,
-  totalUoc: null
-};
+SidebarUocItem.defaultProps = {};
 
-export default SidebarItem;
+export default SidebarUocItem;

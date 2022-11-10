@@ -65,10 +65,9 @@ const RequirementsBox = ({ title, uocCompleted, minUoc, notCounted, children }) 
                   {uocCompleted} / {minUoc}
                 </div>
               )}
-              <IconButton>
+              <IconButton onClick={handleExpandClick}>
                 <ExpandMore
                   expand={expanded.toString()}
-                  onClick={handleExpandClick}
                   aria-expanded={expanded}
                   aria-label="show more"
                   css={css`
