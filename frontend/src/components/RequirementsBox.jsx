@@ -8,12 +8,21 @@ import CardContent from "@mui/material/CardContent";
 
 import { Collapse, IconButton, Tooltip } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 import PropTypes from "prop-types";
 import { ExpandMore } from "@mui/icons-material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-const RequirementsBox = ({ title, uocCompleted, minUoc, notCounted, children }) => {
+const RequirementsBox = ({
+  title,
+  uocCompleted,
+  minUoc,
+  notCounted,
+  numToComplete,
+  numCompleted,
+  children
+}) => {
   const [expanded, setExpanded] = useState(false);
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -34,6 +43,7 @@ const RequirementsBox = ({ title, uocCompleted, minUoc, notCounted, children }) 
               flex-direction: row;
               justify-content: space-between;
               align-items: center;
+              font-size: 1.3rem;
             `}>
             <div>{title}</div>
             <div
@@ -62,8 +72,25 @@ const RequirementsBox = ({ title, uocCompleted, minUoc, notCounted, children }) 
                   css={css`
                     margin: auto;
                   `}>
-                  {uocCompleted} / {minUoc}
+                  {numToComplete !== "None"
+                    ? `${numCompleted} / ${parseInt(numToComplete, 10)} Course${
+                        numToComplete > 1 ? "s" : ""
+                      }`
+                    : `${uocCompleted} / ${minUoc} UOC`}
                 </div>
+              )}
+              {!notCounted && (
+                <CheckCircleIcon
+                  css={css`
+                    margin: auto;
+                    visibility: ${(uocCompleted !== "None" && uocCompleted < minUoc) ||
+                    (numToComplete !== "None" &&
+                      parseInt(numCompleted, 10) < parseInt(numToComplete, 10))
+                      ? "hidden"
+                      : "auto"};
+                  `}
+                  style={{ color: "#71ad7b" }}
+                />
               )}
               <IconButton onClick={handleExpandClick}>
                 <ExpandMore
@@ -112,6 +139,8 @@ RequirementsBox.propTypes = {
   uocCompleted: PropTypes.number,
   minUoc: PropTypes.string,
   notCounted: PropTypes.bool,
+  numToComplete: PropTypes.string,
+  numCompleted: PropTypes.number,
   children: PropTypes.node
 };
 
@@ -119,6 +148,8 @@ RequirementsBox.defaultProps = {
   uocCompleted: null,
   minUoc: null,
   notCounted: false,
+  numToComplete: null,
+  numCompleted: 0,
   children: null
 };
 

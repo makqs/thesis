@@ -291,7 +291,7 @@ const CheckerPage = () => {
   const getCompletedUoc = (type) =>
     Object.keys(totalRules).reduce(
       (a, b) =>
-        JSON.parse(b).type !== type
+        JSON.parse(b).type !== type || JSON.parse(b).num_to_complete !== "None"
           ? a
           : a + totalRules[b].reduce((x, y) => x + parseInt(y.uoc, 10), 0),
       0
@@ -299,7 +299,10 @@ const CheckerPage = () => {
 
   const getTotalUoc = (type) =>
     Object.keys(totalRules).reduce(
-      (a, b) => (JSON.parse(b).type !== type ? a : a + parseInt(JSON.parse(b).uoc, 10)),
+      (a, b) =>
+        JSON.parse(b).type !== type || JSON.parse(b).num_to_complete !== "None"
+          ? a
+          : a + parseInt(JSON.parse(b).uoc, 10),
       0
     );
 
@@ -409,12 +412,16 @@ const CheckerPage = () => {
                     ) {
                       if (
                         // havent exceeded UOC for this rule yet
-                        rules[JSON.stringify(streamRule)].reduce(
-                          (a, b) => a + parseInt(b.uoc, 10),
-                          0
-                        ) +
-                          parseInt(course.uoc, 10) <=
-                        parseInt(streamRule.uoc, 10)
+                        (streamRule.num_to_complete === "None" &&
+                          rules[JSON.stringify(streamRule)].reduce(
+                            (a, b) => a + parseInt(b.uoc, 10),
+                            0
+                          ) +
+                            parseInt(course.uoc, 10) <=
+                            parseInt(streamRule.uoc, 10)) ||
+                        streamRule.num_to_complete !== "None" ||
+                        rules[JSON.stringify(streamRule)].length <
+                          parseInt(streamRule.num_to_complete, 10)
                       )
                         rules[JSON.stringify(streamRule)].push(course);
                     }
@@ -494,7 +501,10 @@ const CheckerPage = () => {
                   // havent exceeded UOC for this rule yet
                   rules[JSON.stringify(programRule)].reduce((a, b) => a + parseInt(b.uoc, 10), 0) +
                     parseInt(course.uoc, 10) <=
-                  parseInt(programRule.uoc, 10)
+                    parseInt(programRule.uoc, 10) ||
+                  programRule.num_to_complete !== "None" ||
+                  rules[JSON.stringify(programRule)].length <
+                    parseInt(programRule.num_to_complete, 10)
                 )
                   rules[JSON.stringify(programRule)].push(course);
               }
@@ -617,7 +627,9 @@ const CheckerPage = () => {
                     key={rawRule}
                     title={rule.name}
                     uocCompleted={0}
-                    minUoc={rule.uoc}>
+                    minUoc={rule.uoc}
+                    numToComplete={rule.num_to_complete}
+                    numCompleted={totalRules[rawRule].length}>
                     {children}
                   </RequirementsBox>
                 );
@@ -670,6 +682,8 @@ const CheckerPage = () => {
                         0
                       )}
                       minUoc={rule.uoc}
+                      numToComplete={rule.num_to_complete}
+                      numCompleted={totalRules[rawRule].length}
                       key={rawRule}>
                       {children}
                     </RequirementsBox>
@@ -740,6 +754,8 @@ const CheckerPage = () => {
                     title={`${rule.stream === undefined ? "" : `${rule.stream} - `}${rule.name}`}
                     uocCompleted={totalRules[rawRule].reduce((a, b) => a + parseInt(b.uoc, 10), 0)}
                     minUoc={rule.uoc}
+                    numToComplete={rule.num_to_complete}
+                    numCompleted={totalRules[rawRule].length}
                     key={rawRule}>
                     {children}
                   </RequirementsBox>
@@ -760,6 +776,8 @@ const CheckerPage = () => {
                     title={`${rule.stream === undefined ? "" : `${rule.stream} - `}${rule.name}`}
                     uocCompleted={totalRules[rawRule].reduce((a, b) => a + parseInt(b.uoc, 10), 0)}
                     minUoc={rule.uoc}
+                    numToComplete={rule.num_to_complete}
+                    numCompleted={totalRules[rawRule].length}
                     key={rawRule}>
                     {children}
                   </RequirementsBox>
@@ -947,7 +965,7 @@ const CheckerPage = () => {
                     </>
                   )}
                   {!!modifiersActive && (
-                    <SidebarButton title="Reset modifiers" isRed onClick={resetModifiers} />
+                    <SidebarButton title="Reset" isRed onClick={resetModifiers} />
                   )}
                 </List>
               </Collapse>

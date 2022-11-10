@@ -54,18 +54,18 @@ with open("../backend/programs.txt", "r") as f:
 
 # engineering program rules
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('1', '95', 'Stream', 'ST', 168, 'AEROAH,BINFAH,CEICAH,CEICDH,COMPBH,CVENAH,CVENBH,ELECAH,ELECCH,GMATDH,MANFBH,MECHAH,MINEAH,MTRNAH,PETRAH,SENGAH,SOLAAH,SOLABH,TELEAH')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('1', '95', 'Stream', 'ST', 168, NULL, 'AEROAH,BINFAH,CEICAH,CEICDH,COMPBH,CVENAH,CVENBH,ELECAH,ELECCH,GMATDH,MANFBH,MECHAH,MINEAH,MTRNAH,PETRAH,SENGAH,SOLAAH,SOLABH,TELEAH')"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('2', '95', 'Industrial Experience Requirement', 'CC', 0, 'ENGG4999')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('2', '95', 'Industrial Experience Requirement', 'CC', NULL, 1, 'ENGG4999')"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('3', '95', 'General Education', 'GE', 12, NULL)"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('3', '95', 'General Education', 'GE', 12, NULL, NULL)"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('4', '95', 'Discipline Electives', 'DE', 12, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX,INFS3XXX,INFS4XXX,MATH3XXX,MATH4XXX,MATH6XXX,ELEC3XXX,ELEC4XXX,TELE3XXX,TELE4XXX')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('4', '95', 'Discipline Electives', 'DE', 12, NULL, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX,INFS3XXX,INFS4XXX,MATH3XXX,MATH4XXX,MATH6XXX,ELEC3XXX,ELEC4XXX,TELE3XXX,TELE4XXX')"""
 )
-# cursor.execute(f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('4', '95', 'Discipline Electives', 'DE', 12, 'REFER:ST,DE')""")
+# cursor.execute(f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('4', '95', 'Discipline Electives', 'DE', 12, NULL, 'REFER:ST,DE')""")
 
 # engineering streams
 cursor.execute(
@@ -86,145 +86,145 @@ cursor.execute(
 
 # SENGAH stream rules
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('1', 'Level 1 Core Courses', 'CC', 42, 'COMP1511,COMP1521,COMP1531,ENGG1000,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('1', 'Level 1 Core Courses', 'CC', 42, NULL, 'COMP1511,COMP1521,COMP1531,ENGG1000,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('1', 'Level 2 Core Courses', 'CC', 42, 'COMP2041,COMP2511,COMP2521,DESN2000,MATH2400,MATH2859,SENG2011,SENG2021')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('1', 'Level 2 Core Courses', 'CC', 42, NULL, 'COMP2041,COMP2511,COMP2521,DESN2000,MATH2400,MATH2859,SENG2011,SENG2021')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('1', 'Level 3 Core Courses', 'CC', 24, 'COMP3141,COMP3311,COMP3331,SENG3011')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('1', 'Level 3 Core Courses', 'CC', 24, NULL, 'COMP3141,COMP3311,COMP3331,SENG3011')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('1', 'Level 4 Core Courses', 'CC', 18, 'SENG4920,COMP4951,COMP4952,COMP4953')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('1', 'Level 4 Core Courses', 'CC', 18, NULL, 'SENG4920,COMP4951,COMP4952,COMP4953')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('1', 'Discipline Electives', 'DE', 36, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX,INFS3XXX,INFS4XXX,MATH3XXX,MATH4XXX,MATH6XXX,ELEC3XXX,ELEC4XXX,TELE3XXX,TELE4XXX')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('1', 'Discipline Electives', 'DE', 36, NULL, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX,INFS3XXX,INFS4XXX,MATH3XXX,MATH4XXX,MATH6XXX,ELEC3XXX,ELEC4XXX,TELE3XXX,TELE4XXX')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('1', 'Free Electives', 'FE', 6, NULL)"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('1', 'Free Electives', 'FE', 6, NULL, NULL)"""
 )
 
 # ELECAH stream rules
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('2', 'Level 1 Core Courses', 'CC', 48, 'COMP1521,ELEC1111,ENGG1000,PHYS1231,MATH1131;MATH1141,MATH1231;MATH1241,PHYS1121;PHYS1131,COMP1511;COMP1911')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('2', 'Level 1 Core Courses', 'CC', 48, NULL, 'COMP1521,ELEC1111,ENGG1000,PHYS1231,MATH1131;MATH1141,MATH1231;MATH1241,PHYS1121;PHYS1131,COMP1511;COMP1911')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('2', 'Level 2 Core Courses', 'CC', 36, 'DESN2000,ELEC2133,ELEC2134,ELEC2141,MATH2069,MATH2099')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('2', 'Level 2 Core Courses', 'CC', 36, NULL, 'DESN2000,ELEC2133,ELEC2134,ELEC2141,MATH2069,MATH2099')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('2', 'Level 3 Core Courses', 'CC', 42, 'ELEC3104,ELEC3105,ELEC3106,ELEC3114,ELEC3115,ELEC3117,TELE3113')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('2', 'Level 3 Core Courses', 'CC', 42, NULL, 'ELEC3104,ELEC3105,ELEC3106,ELEC3114,ELEC3115,ELEC3117,TELE3113')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('2', 'Level 4 Core Courses', 'CC', 24, 'ELEC4122,ELEC4123,ELEC4951,ELEC4952,ELEC4953')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('2', 'Level 4 Core Courses', 'CC', 24, NULL, 'ELEC4122,ELEC4123,ELEC4951,ELEC4952,ELEC4953')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('2', 'Breadth Electives', 'DE', 6, 'COMP2041,COMP3211,COMP3231,ELEC2146,ELEC3111,ELEC3145,ELEC3705,ENGG2600,ENGG3001,ENGG3060,ENGG3600,ENGG4060,ENGG4102,ENGG4600,MATH3101,MATH3121,MATH3161,MATH3201,MATH3261,MATH3411,TELE3118,TELE3119')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('2', 'Breadth Electives', 'DE', 6, NULL, 'COMP2041,COMP3211,COMP3231,ELEC2146,ELEC3111,ELEC3145,ELEC3705,ENGG2600,ENGG3001,ENGG3060,ENGG3600,ENGG4060,ENGG4102,ENGG4600,MATH3101,MATH3121,MATH3161,MATH3201,MATH3261,MATH3411,TELE3118,TELE3119')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('2', 'Discipline Electives', 'DE', 12, 'ELEC4445,ELEC4601,ELEC4602,ELEC4603,ELEC4604,ELEC4605,ELEC4611,ELEC4612,ELEC4613,ELEC4614,ELEC4617,ELEC4621,ELEC4622,ELEC4623,ELEC4631,ELEC4632,ELEC4633,PHTN4661,PHTN4662,TELE4642,TELE4651,TELE4652,TELE4653')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('2', 'Discipline Electives', 'DE', 12, NULL, 'ELEC4445,ELEC4601,ELEC4602,ELEC4603,ELEC4604,ELEC4605,ELEC4611,ELEC4612,ELEC4613,ELEC4614,ELEC4617,ELEC4621,ELEC4622,ELEC4623,ELEC4631,ELEC4632,ELEC4633,PHTN4661,PHTN4662,TELE4642,TELE4651,TELE4652,TELE4653')"""
 )
 
 # AEROH stream rules
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('3', 'Level 1 Core Courses', 'CC', 48, 'ELEC1111,ENGG1000,ENGG1300,MMAN1130,MATH1131;MATH1141,MATH1231;MATH1241,PHYS1121;PHYS1131,COMP1511;COMP1911;ENGG1811')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('3', 'Level 1 Core Courses', 'CC', 48, NULL, 'ELEC1111,ENGG1000,ENGG1300,MMAN1130,MATH1131;MATH1141,MATH1231;MATH1241,PHYS1121;PHYS1131,COMP1511;COMP1911;ENGG1811')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('3', 'Level 2 Core Courses', 'CC', 42, 'DESN2000,ENGG2400,ENGG2500,MATH2019,MATH2089,MMAN2300,MMAN2700')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('3', 'Level 2 Core Courses', 'CC', 42, NULL, 'DESN2000,ENGG2400,ENGG2500,MATH2019,MATH2089,MMAN2300,MMAN2700')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('3', 'Level 3 Core Courses', 'CC', 36, 'AERO3110,AERO3410,AERO3630,AERO3660,MMAN3000,MMAN3200')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('3', 'Level 3 Core Courses', 'CC', 36, NULL, 'AERO3110,AERO3410,AERO3630,AERO3660,MMAN3000,MMAN3200')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('3', 'Level 4 Core Courses', 'CC', 12, 'AERO4110,AERO4620')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('3', 'Level 4 Core Courses', 'CC', 12, NULL, 'AERO4110,AERO4620')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('3', 'Thesis Courses', 'CC', 12, 'MMAN4010,MMAN4020,MMAN4951,MMAN4952,MMAN4953')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('3', 'Thesis Courses', 'CC', 12, NULL, 'MMAN4010,MMAN4020,MMAN4951,MMAN4952,MMAN4953')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('3', 'Recommended Disciplinary Electives', 'DE', 6, 'AERO9500,AERO9610,AERO9660,MECH4305,MECH4320,MECH4620,MECH4900,MECH9420,MMAN4200,MMAN4400,MMAN4410')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('3', 'Recommended Disciplinary Electives', 'DE', 6, NULL, 'AERO9500,AERO9610,AERO9660,MECH4305,MECH4320,MECH4620,MECH4900,MECH9420,MMAN4200,MMAN4400,MMAN4410')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('3', 'Discipline Electives', 'DE', 12, 'COMP3141,COMP3331,ELEC4633,ENGG2600,ENGG3001,ENGG3060,ENGG3600,ENGG4600,ENGG4841,MANF4100,MANF4430,MANF4611,MANF6860,MECH4100,MECH4880,MECH9325,MECH9650,MECH9660,MECH9720,MECH9761,MTRN4030,MTRN9400,SOLA5052,SOLA5053,SOLA5056,SOLA5057')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('3', 'Discipline Electives', 'DE', 12, NULL, 'COMP3141,COMP3331,ELEC4633,ENGG2600,ENGG3001,ENGG3060,ENGG3600,ENGG4600,ENGG4841,MANF4100,MANF4430,MANF4611,MANF6860,MECH4100,MECH4880,MECH9325,MECH9650,MECH9660,MECH9720,MECH9761,MTRN4030,MTRN9400,SOLA5052,SOLA5053,SOLA5056,SOLA5057')"""
 )
 # has postgrad courses in it - add later
-# cursor.execute(f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ( '3', 'Discipline Electives', 'DE', 12, 'COMP3141,COMP3331,ELEC4633,ENGG2600,ENGG3001,ENGG3060,ENGG3600,ENGG4600,ENGG4841,MANF4100,MANF4430,MANF4611,MANF6860,MANF9400,MANF9420,MANF9472,MECH4100,MECH4880,MECH9325,MECH9650,MECH9660,MECH9720,MECH9761,MTRN4030,MTRN9400,SOLA5052,SOLA5053,SOLA5056,SOLA5057')""")
+# cursor.execute(f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ( '3', 'Discipline Electives', 'DE', 12, NULL, 'COMP3141,COMP3331,ELEC4633,ENGG2600,ENGG3001,ENGG3060,ENGG3600,ENGG4600,ENGG4841,MANF4100,MANF4430,MANF4611,MANF6860,MANF9400,MANF9420,MANF9472,MECH4100,MECH4880,MECH9325,MECH9650,MECH9660,MECH9720,MECH9761,MTRN4030,MTRN9400,SOLA5052,SOLA5053,SOLA5056,SOLA5057')""")
 
 # BINFAH stream
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('4', 'Level 1 Core Courses', 'CC', 60, 'BABS1201,COMP1511,COMP1521,COMP1531,ENGG1000,MATH1081,CHEM1011;CHEM1031,PHYS1111;PHYS1121;PHYS1131,MATH1131;MATH1141,MATH1231;MATH1241')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('4', 'Level 1 Core Courses', 'CC', 60, NULL, 'BABS1201,COMP1511,COMP1521,COMP1531,ENGG1000,MATH1081,CHEM1011;CHEM1031,PHYS1111;PHYS1121;PHYS1131,MATH1131;MATH1141,MATH1231;MATH1241')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('4', 'Level 2 Core Courses', 'CC', 48, 'BINF2010,BIOC2201,COMP2041,COMP2511,COMP2521,DESN2000,MATH2801;MATH2901,BABS2202;BABS2204;BABS2264;BIOC2101;MICR2011')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('4', 'Level 2 Core Courses', 'CC', 48, NULL, 'BINF2010,BIOC2201,COMP2041,COMP2511,COMP2521,DESN2000,MATH2801;MATH2901,BABS2202;BABS2204;BABS2264;BIOC2101;MICR2011')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('4', 'Level 3 Core Courses', 'CC', 30, 'BABS3121,BINF3010,BINF3020,COMP3121,COMP3311')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('4', 'Level 3 Core Courses', 'CC', 30, NULL, 'BABS3121,BINF3010,BINF3020,COMP3121,COMP3311')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('4', 'Level 4 Core Courses', 'CC', 18, 'COMP4920,COMP4951,COMP4952,COMP4953')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('4', 'Level 4 Core Courses', 'CC', 18, NULL, 'COMP4920,COMP4951,COMP4952,COMP4953')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('4', 'Discipline Electives', 'DE', 12, 'ENGG2600,ENGG3060,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX,BABS3XXX,MICR3XXX,BIOC3XXX')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('4', 'Discipline Electives', 'DE', 12, NULL, 'ENGG2600,ENGG3060,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX,BABS3XXX,MICR3XXX,BIOC3XXX')"""
 )
 
 # MECHAH stream
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('5', 'Level 1 Core Courses', 'CC', 48, 'ELEC1111,ENGG1000,ENGG1300,MMAN1130,MATH1131;MATH1141,MATH1231;MATH1241,PHYS1121;PHYS1131,COMP1511;COMP1911;ENGG1811')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('5', 'Level 1 Core Courses', 'CC', 48, NULL, 'ELEC1111,ENGG1000,ENGG1300,MMAN1130,MATH1131;MATH1141,MATH1231;MATH1241,PHYS1121;PHYS1131,COMP1511;COMP1911;ENGG1811')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('5', 'Level 2 Core Courses', 'CC', 42, 'DESN2000,ENGG2400,ENGG2500,MATH2089,MMAN2300,MMAN2700,MATH2018;MATH2019')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('5', 'Level 2 Core Courses', 'CC', 42, NULL, 'DESN2000,ENGG2400,ENGG2500,MATH2089,MMAN2300,MMAN2700,MATH2018;MATH2019')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('5', 'Level 3 Core Courses', 'CC', 30, 'MECH3110,MECH3610,MMAN3000,MMAN3200,MMAN3400')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('5', 'Level 3 Core Courses', 'CC', 30, NULL, 'MECH3110,MECH3610,MMAN3000,MMAN3200,MMAN3400')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('5', 'Level 4 Core Courses', 'CC', 6, 'MECH4100')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('5', 'Level 4 Core Courses', 'CC', 6, NULL, 'MECH4100')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('5', 'Thesis Courses', 'CC', 12, 'MMAN4010,MMAN4020,MMAN4951,MMAN4952,MMAN4953')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('5', 'Thesis Courses', 'CC', 12, NULL, 'MMAN4010,MMAN4020,MMAN4951,MMAN4952,MMAN4953')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('5', 'Recommended Discipline Electives', 'DE', 18, 'MECH4305,MECH4320,MECH4620,MECH4880,MECH4900,MECH9325,MECH9420,MECH9650,MECH9660,MECH9720,MECH9761,MMAN4400,MMAN4410')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('5', 'Recommended Discipline Electives', 'DE', 18, NULL, 'MECH4305,MECH4320,MECH4620,MECH4880,MECH4900,MECH9325,MECH9420,MECH9650,MECH9660,MECH9720,MECH9761,MMAN4400,MMAN4410')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('5', 'Discipline Electives', 'DE', 12, 'AERO9500,AERO9610,AERO9660,COMP3141,COMP3331,ELEC4633,ENGG2600,ENGG3001,ENGG3060,ENGG3600,ENGG4600,ENGG4841,MANF4100,MANF4430,MANF4611,MANF6860,MECH4100,MTRN4030,MTRN9400,SOLA5052,SOLA5053,SOLA5056,SOLA5057')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('5', 'Discipline Electives', 'DE', 12, NULL, 'AERO9500,AERO9610,AERO9660,COMP3141,COMP3331,ELEC4633,ENGG2600,ENGG3001,ENGG3060,ENGG3600,ENGG4600,ENGG4841,MANF4100,MANF4430,MANF4611,MANF6860,MECH4100,MTRN4030,MTRN9400,SOLA5052,SOLA5053,SOLA5056,SOLA5057')"""
 )
 # add after adding postgrad courses
 # cursor.execute(
-#     f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('5', 'Discipline Electives', 'DE', 12, 'AERO9500,AERO9610,AERO9660,COMP3141,COMP3331,ELEC4633,ENGG2600,ENGG3001,ENGG3060,ENGG3600,ENGG4600,ENGG4841,MANF4100,MANF4430,MANF4611,MANF6860,MANF9400,MANF9420,MANF9472,MECH4100,MTRN4030,MTRN9400,SOLA5052,SOLA5053,SOLA5056,SOLA5057')"""
+#     f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('5', 'Discipline Electives', 'DE', 12, NULL, 'AERO9500,AERO9610,AERO9660,COMP3141,COMP3331,ELEC4633,ENGG2600,ENGG3001,ENGG3060,ENGG3600,ENGG4600,ENGG4841,MANF4100,MANF4430,MANF4611,MANF6860,MANF9400,MANF9420,MANF9472,MECH4100,MTRN4030,MTRN9400,SOLA5052,SOLA5053,SOLA5056,SOLA5057')"""
 # )
 
 # commerce program rules
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('5', '61', 'Integrated First Year Courses', 'CC', 48, 'COMM1100,COMM1110,COMM1120,COMM1140,COMM1150,COMM1170,COMM1180,COMM1190')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('5', '61', 'Integrated First Year Courses', 'CC', 48, NULL, 'COMM1100,COMM1110,COMM1120,COMM1140,COMM1150,COMM1170,COMM1180,COMM1190')"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('6', '61', 'myBCom', 'CC', 0, 'COMM0999,COMM1999,COMM3999')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('6', '61', 'myBCom', 'CC', 0, NULL, 'COMM0999,COMM1999,COMM3999')"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('7', '61', 'Commerce Streams', 'ST', 48, 'ACCTA1,COMMJ1,ECONF1,FINSA1,FINSR1,IBUSA1,INFSA1,MARKA1,MGMTH1,TABLC1')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('7', '61', 'Commerce Streams', 'ST', 48, NULL, 'ACCTA1,COMMJ1,ECONF1,FINSA1,FINSR1,IBUSA1,INFSA1,MARKA1,MGMTH1,TABLC1')"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('8', '61', 'Prescribed Work Intergrated Learning Course', 'CC', 6, 'CDEV3000,COMM2222,COMM2233,COMM2244,COMM3020,COMM3030')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('8', '61', 'Prescribed Work Intergrated Learning Course', 'CC', 6, NULL, 'CDEV3000,COMM2222,COMM2233,COMM2244,COMM3020,COMM3030')"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('9', '61', 'Final Year Synthesis', 'CC', 6, 'ACCT3583,COMM2233,COMM3020,COMM3030,COMM3090,COMM3500,COMM3900,TABL3033')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('9', '61', 'Final Year Synthesis', 'CC', 6, NULL, 'ACCT3583,COMM2233,COMM3020,COMM3030,COMM3090,COMM3500,COMM3900,TABL3033')"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('10', '61', 'Free Electives', 'FE', 36, NULL)"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('10', '61', 'Free Electives', 'FE', 36, NULL, NULL)"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('11', '61', 'General Education', 'GE', 12, NULL)"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('11', '61', 'General Education', 'GE', 12, NULL, NULL)"""
 )
 
 # comp sci program rules
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('12', '108', 'Streams', 'ST', 96, 'COMPA1,COMPD1,COMPE1,COMPI1,COMPJ1,COMPN1,COMPS1,COMPY1')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('12', '108', 'Streams', 'ST', 96, NULL, 'COMPA1,COMPD1,COMPE1,COMPI1,COMPJ1,COMPN1,COMPS1,COMPY1')"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('13', '108', 'Free Electives', 'FE', 36, NULL)"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('13', '108', 'Free Electives', 'FE', 36, NULL, NULL)"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('14', '108', 'General Education', 'GE', 12, NULL)"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('14', '108', 'General Education', 'GE', 12, NULL, NULL)"""
 )
 
 # comp sci streams
@@ -255,123 +255,123 @@ cursor.execute(
 
 # comp sci (stream) rules
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('6', 'Core Courses', 'CC', 66, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('6', 'Core Courses', 'CC', 66, NULL, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('6', 'Computing Electives', 'DE', 30, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('6', 'Computing Electives', 'DE', 30, NULL, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
 )
 
 # database systems rules
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('7', 'Core Courses', 'CC', 72, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3311,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('7', 'Core Courses', 'CC', 72, NULL, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3311,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('7', 'Computing Elective', 'DE', 6, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('7', 'Computing Elective', 'DE', 6, NULL, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('7', 'Database Systems Prescribed Electives', 'DE', 18, 'COMP6714,COMP9313,COMP9315,COMP9318,COMP9319')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('7', 'Database Systems Prescribed Electives', 'DE', 18, NULL, 'COMP6714,COMP9313,COMP9315,COMP9318,COMP9319')"""
 )
 
 # ecommerce systems rules
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('8', 'Core Courses', 'CC', 72, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3311,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('8', 'Core Courses', 'CC', 72, NULL, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3311,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('8', 'Computing Elective', 'DE', 6, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('8', 'Computing Elective', 'DE', 6, NULL, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('8', 'Discipline Electives', 'DE', 18, 'COMP3511,COMP9321,COMP9322,COMP9323')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('8', 'Discipline Electives', 'DE', 18, NULL, 'COMP3511,COMP9321,COMP9322,COMP9323')"""
 )
 
 # artificial intelligence rules
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('9', 'Core Courses', 'CC', 72, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3411,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('9', 'Core Courses', 'CC', 72, NULL, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3411,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('9', 'Artificial Intelligence Prescribed Electives', 'DE', 18, 'COMP3431,COMP4418,COMP9318,COMP9417,COMP9418,COMP9444,COMP9517')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('9', 'Artificial Intelligence Prescribed Electives', 'DE', 18, NULL, 'COMP3431,COMP4418,COMP9318,COMP9417,COMP9418,COMP9444,COMP9517')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('9', 'Computing Elective', 'DE', 6, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('9', 'Computing Elective', 'DE', 6, NULL, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
 )
 
 # programming languages rules
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('10', 'Core Courses', 'CC', 72, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3121,COMP3161,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('10', 'Core Courses', 'CC', 72, NULL, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3121,COMP3161,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('10', 'Computing Elective', 'DE', 6, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('10', 'Computing Elective', 'DE', 6, NULL, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('10', 'Discipline Electives', 'DE', 18, 'COMP3131,COMP3141,COMP3151,COMP6771')"""
-)
-
-# computer networks rules
-cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('11', 'Core Courses', 'CC', 72, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3331,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
-)
-cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('11', 'Computing Elective', 'DE', 6, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
-)
-cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('11', 'Discipline Electives', 'DE', 18, 'COMP4336,COMP4337,COMP6733,COMP9332,COMP9334')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('10', 'Discipline Electives', 'DE', 18, NULL, 'COMP3131,COMP3141,COMP3151,COMP6771')"""
 )
 
 # computer networks rules
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('12', 'Core Courses', 'CC', 78, 'COMP1511,COMP1521,COMP1531,COMP2121,COMP2511,COMP2521,COMP3222,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('11', 'Core Courses', 'CC', 72, NULL, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3331,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('12', 'Prescribed Electives', 'DE', 18, 'COMP3211,COMP3231,COMP3601,COMP4601,COMP9242,COMP9517')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('11', 'Computing Elective', 'DE', 6, NULL, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
+)
+cursor.execute(
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('11', 'Discipline Electives', 'DE', 18, NULL, 'COMP4336,COMP4337,COMP6733,COMP9332,COMP9334')"""
 )
 
 # computer networks rules
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('13', 'Core Courses', 'CC', 72, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3121,COMP3331,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP6441;COMP6841')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('12', 'Core Courses', 'CC', 78, NULL, 'COMP1511,COMP1521,COMP1531,COMP2121,COMP2511,COMP2521,COMP3222,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP3121;COMP3821')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('13', 'Computing Elective', 'DE', 6, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('12', 'Prescribed Electives', 'DE', 18, NULL, 'COMP3211,COMP3231,COMP3601,COMP4601,COMP9242,COMP9517')"""
+)
+
+# computer networks rules
+cursor.execute(
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('13', 'Core Courses', 'CC', 72, NULL, 'COMP1511,COMP1521,COMP1531,COMP2511,COMP2521,COMP3121,COMP3331,COMP3900,COMP4920,MATH1081,MATH1131;MATH1141,MATH1231;MATH1241,COMP6441;COMP6841')"""
 )
 cursor.execute(
-    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, definition) VALUES ('13', 'Security Engineering Prescribed Electives', 'DE', 18, 'COMP4337,COMP6443,COMP6445,COMP6447,COMP6448,COMP6449,COMP6843,COMP6845,COMP9447,MATH3411,TELE3119')"""
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('13', 'Computing Elective', 'DE', 6, NULL, 'ENGG2600,ENGG3600,ENGG4600,COMP3XXX,COMP4XXX,COMP6XXX,COMP9XXX')"""
+)
+cursor.execute(
+    f"""INSERT INTO stream_rules(stream_id, name, type, uoc, num_to_complete, definition) VALUES ('13', 'Security Engineering Prescribed Electives', 'DE', 18, NULL, 'COMP4337,COMP6443,COMP6445,COMP6447,COMP6448,COMP6449,COMP6843,COMP6845,COMP9447,MATH3411,TELE3119')"""
 )
 
 # medicine program rules
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('15', '117', 'Stage 1 Core Courses', 'CC', 96, 'MFAC1501,MFAC1521,MFAC1522,MFAC1523,MFAC1524,MFAC1525,MFAC1526,MFAC1527')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('15', '117', 'Stage 1 Core Courses', 'CC', 96, NULL, 'MFAC1501,MFAC1521,MFAC1522,MFAC1523,MFAC1524,MFAC1525,MFAC1526,MFAC1527')"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('16', '117', 'Stage 2 Core Courses', 'CC', 84, 'MFAC2507,MFAC2511,MFAC2512,MFAC2514,MFAC2515,MFAC2516,MFAC4888')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('16', '117', 'Stage 2 Core Courses', 'CC', 84, NULL, 'MFAC2507,MFAC2511,MFAC2512,MFAC2514,MFAC2515,MFAC2516,MFAC4888')"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('17', '117', 'Stage 3 Core Courses', 'CC', 96, 'MFAC3501,MFAC3502,MFAC3503,MFAC3504,MFAC3505,MFAC3506,MFAC3508,MFAC3509,MFAC3512,MFAC3514,MFAC3515,MFAC3522,MFAC3523')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('17', '117', 'Stage 3 Core Courses', 'CC', 96, NULL, 'MFAC3501,MFAC3502,MFAC3503,MFAC3504,MFAC3505,MFAC3506,MFAC3508,MFAC3509,MFAC3512,MFAC3514,MFAC3515,MFAC3522,MFAC3523')"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('18', '117', 'General Education', 'GE', 12, NULL)"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('18', '117', 'General Education', 'GE', 12, NULL, NULL)"""
 )
 
 # aviation program rules
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('19', '139', 'Level 1 Core Courses', 'CC', 48, 'AVEN1920,AVIA1111,AVIA1901,MATH1031,MATH1041,PHYS1149,PHYS1121')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('19', '139', 'Level 1 Core Courses', 'CC', 48, NULL, 'AVEN1920,AVIA1111,AVIA1901,MATH1031,MATH1041,PHYS1149,PHYS1121')"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('20', '139', 'Level 2 Core Courses', 'CC', 42, 'AVIA2111,AVIA2112,AVIA2113,AVIA2114,AVIA2115,AVIA2116,AVIA2117')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('20', '139', 'Level 2 Core Courses', 'CC', 42, NULL, 'AVIA2111,AVIA2112,AVIA2113,AVIA2114,AVIA2115,AVIA2116,AVIA2117')"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('21', '139', 'Level 3 Core Courses', 'CC', 42, 'AVIA3101,AVIA3111,AVIA3112,AVIA3113,AVIA3114,AVIA3301,AVIA3401')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('21', '139', 'Level 3 Core Courses', 'CC', 42, NULL, 'AVIA3101,AVIA3111,AVIA3112,AVIA3113,AVIA3114,AVIA3301,AVIA3401')"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('22', '139', 'General Education', 'GE', 12, NULL)"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('22', '139', 'General Education', 'GE', 12, NULL, NULL)"""
 )
 
 # engineering / computer science program rules
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('23', '113', 'Engineering (Honours) - Stream', 'ST', 168, 'AEROAH,CEICAH,CEICDH,CVENAH,CVENBH,ELECAH,ELECCH,GMATDH,MANFBH,MECHAH,MINEAH,MTRNAH,PETRAH,SOLAAH,SOLABH,TELEAH')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('23', '113', 'Engineering (Honours) - Stream', 'ST', 168, NULL, 'AEROAH,CEICAH,CEICDH,CVENAH,CVENBH,ELECAH,ELECCH,GMATDH,MANFBH,MECHAH,MINEAH,MTRNAH,PETRAH,SOLAAH,SOLABH,TELEAH')"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('24', '113', 'Engineering (Honours) - Industrial Experience Requirement', 'CC', 0, 'ENGG4999')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('24', '113', 'Engineering (Honours) - Industrial Experience Requirement', 'CC', 0, NULL, 'ENGG4999')"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, definition) VALUES ('25', '113', 'Computer Science - Stream', 'ST', 96, 'COMPA1,COMPD1,COMPE1,COMPI1,COMPJ1,COMPN1,COMPS1,COMPY1')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('25', '113', 'Computer Science - Stream', 'ST', 96, NULL, 'COMPA1,COMPD1,COMPE1,COMPI1,COMPJ1,COMPN1,COMPS1,COMPY1')"""
 )
 
 # user program and stream enrolments
@@ -418,7 +418,7 @@ cursor.execute(
     f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5555555', '912', 76, 'DN')"""
 )
 cursor.execute(
-    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5555555', '893', 76, 'DN')"""
+    f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5555555', '893', 86, 'HD')"""
 )
 cursor.execute(
     f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5555555', '1453', 76, 'DN')"""

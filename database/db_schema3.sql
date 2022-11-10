@@ -78,6 +78,7 @@ CREATE TABLE program_rules (
     name VARCHAR,
     type VARCHAR,
     uoc numeric,
+    num_to_complete numeric,
     definition VARCHAR,
     PRIMARY KEY (program_rule_id),
     FOREIGN KEY (program_id) REFERENCES programs(program_id)
@@ -89,6 +90,7 @@ CREATE TABLE stream_rules (
     name VARCHAR,
     type VARCHAR,
     uoc numeric,
+    num_to_complete numeric,
     definition VARCHAR,
     PRIMARY KEY (stream_rule_id),
     FOREIGN KEY (stream_id) REFERENCES streams(stream_id)
