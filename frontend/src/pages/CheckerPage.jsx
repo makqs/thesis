@@ -299,7 +299,7 @@ const CheckerPage = () => {
 
   const getTotalUoc = (type) =>
     Object.keys(totalRules).reduce(
-      (a, b) => (JSON.parse(b).type !== type ? a : a + parseInt(JSON.parse(b).min_uoc, 10)),
+      (a, b) => (JSON.parse(b).type !== type ? a : a + parseInt(JSON.parse(b).uoc, 10)),
       0
     );
 
@@ -388,7 +388,7 @@ const CheckerPage = () => {
                             0
                           ) +
                             parseInt(course.uoc, 10) <=
-                            parseInt(streamRule.min_uoc, 10)
+                            parseInt(streamRule.uoc, 10)
                         ) {
                           done = exclusion;
                           return false;
@@ -414,7 +414,7 @@ const CheckerPage = () => {
                           0
                         ) +
                           parseInt(course.uoc, 10) <=
-                        parseInt(streamRule.min_uoc, 10)
+                        parseInt(streamRule.uoc, 10)
                       )
                         rules[JSON.stringify(streamRule)].push(course);
                     }
@@ -432,7 +432,7 @@ const CheckerPage = () => {
                     course.faculty !== program.faculty &&
                     rules[JSON.stringify(streamRule)].reduce((a, b) => a + parseInt(b.uoc, 10), 0) +
                       parseInt(course.uoc, 10) <=
-                      parseInt(streamRule.min_uoc, 10)
+                      parseInt(streamRule.uoc, 10)
                   ) {
                     rules[JSON.stringify(streamRule)].push(course);
                     return false;
@@ -471,7 +471,7 @@ const CheckerPage = () => {
                       0
                     ) +
                       parseInt(course.uoc, 10) <=
-                      parseInt(programRule.min_uoc, 10)
+                      parseInt(programRule.uoc, 10)
                   ) {
                     done = exclusion;
                     return false;
@@ -494,7 +494,7 @@ const CheckerPage = () => {
                   // havent exceeded UOC for this rule yet
                   rules[JSON.stringify(programRule)].reduce((a, b) => a + parseInt(b.uoc, 10), 0) +
                     parseInt(course.uoc, 10) <=
-                  parseInt(programRule.min_uoc, 10)
+                  parseInt(programRule.uoc, 10)
                 )
                   rules[JSON.stringify(programRule)].push(course);
               }
@@ -514,7 +514,7 @@ const CheckerPage = () => {
               course.faculty !== program.faculty &&
               rules[JSON.stringify(programRule)].reduce((a, b) => a + parseInt(b.uoc, 10), 0) +
                 parseInt(course.uoc, 10) <=
-                parseInt(programRule.min_uoc, 10)
+                parseInt(programRule.uoc, 10)
             ) {
               rules[JSON.stringify(programRule)].push(course);
               return false;
@@ -530,7 +530,7 @@ const CheckerPage = () => {
             if (
               rules[JSON.stringify(programRule)].reduce((a, b) => a + parseInt(b.uoc, 10), 0) +
                 parseInt(course.uoc, 10) <=
-              parseInt(programRule.min_uoc, 10)
+              parseInt(programRule.uoc, 10)
             ) {
               rules[JSON.stringify(programRule)].push(course);
               return false;
@@ -546,7 +546,7 @@ const CheckerPage = () => {
           enrolmentsLeft = enrolmentsLeft.filter((course) => {
             if (
               rules[rule].reduce((a, b) => a + parseInt(b.uoc, 10), 0) + parseInt(course.uoc, 10) <=
-              parseInt(JSON.parse(rule).min_uoc, 10)
+              parseInt(JSON.parse(rule).uoc, 10)
             ) {
               rules[rule].push(course);
               return false;
@@ -563,7 +563,7 @@ const CheckerPage = () => {
             rule_id: -1,
             name: "Not Counted",
             type: "NC",
-            min_uoc: "0",
+            uoc: "0",
             definition: null
           })
         ] = enrolmentsLeft;
@@ -617,7 +617,7 @@ const CheckerPage = () => {
                     key={rawRule}
                     title={rule.name}
                     uocCompleted={0}
-                    minUoc={rule.min_uoc}>
+                    minUoc={rule.uoc}>
                     {children}
                   </RequirementsBox>
                 );
@@ -669,7 +669,7 @@ const CheckerPage = () => {
                         (a, b) => a + parseInt(b.uoc, 10),
                         0
                       )}
-                      minUoc={rule.min_uoc}
+                      minUoc={rule.uoc}
                       key={rawRule}>
                       {children}
                     </RequirementsBox>
@@ -739,7 +739,7 @@ const CheckerPage = () => {
                   <RequirementsBox
                     title={`${rule.stream === undefined ? "" : `${rule.stream} - `}${rule.name}`}
                     uocCompleted={totalRules[rawRule].reduce((a, b) => a + parseInt(b.uoc, 10), 0)}
-                    minUoc={rule.min_uoc}
+                    minUoc={rule.uoc}
                     key={rawRule}>
                     {children}
                   </RequirementsBox>
@@ -759,7 +759,7 @@ const CheckerPage = () => {
                   <RequirementsBox
                     title={`${rule.stream === undefined ? "" : `${rule.stream} - `}${rule.name}`}
                     uocCompleted={totalRules[rawRule].reduce((a, b) => a + parseInt(b.uoc, 10), 0)}
-                    minUoc={rule.min_uoc}
+                    minUoc={rule.uoc}
                     key={rawRule}>
                     {children}
                   </RequirementsBox>

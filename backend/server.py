@@ -255,7 +255,7 @@ def get_streams():
     return json.dumps(streams), 200
 
 
-# returns [ { program_rule_id, name, type, min_uoc, definition } ]
+# returns [ { program_rule_id, name, type, uoc, definition } ]
 @app.route("/program/rules", methods=["GET"])
 def get_program_rules():
     program_id = request.args.get("program_id")
@@ -263,12 +263,12 @@ def get_program_rules():
     with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
         with conn.cursor() as curs:
             curs.execute(
-                f"""SELECT program_rule_id, name, type, min_uoc, definition FROM program_rules WHERE program_id = '{program_id}'"""
+                f"""SELECT program_rule_id, name, type, uoc, definition FROM program_rules WHERE program_id = '{program_id}'"""
             )
             rule_data = curs.fetchall()
 
             curs.execute(
-                f"""SELECT program_rule_id, name, type, min_uoc, definition FROM program_rules WHERE program_id = '{program_id}'"""
+                f"""SELECT program_rule_id, name, type, uoc, definition FROM program_rules WHERE program_id = '{program_id}'"""
             )
             rule_data = curs.fetchall()
 
@@ -280,7 +280,7 @@ def get_program_rules():
             "program_rule_id": row[0],
             "name": row[1],
             "type": row[2],
-            "min_uoc": str(row[3]),
+            "uoc": str(row[3]),
             "definition": row[4],
         }
         for row in rule_data
@@ -292,7 +292,7 @@ def get_program_rules():
     return json.dumps(rule_data), 200
 
 
-# returns { [code]: [ { stream_rule_id, name, type, min_uoc, definition } ] }
+# returns { [code]: [ { stream_rule_id, name, type, uoc, definition } ] }
 @app.route("/streams/rules", methods=["GET"])
 def get_stream_rules():
     values_list = request.args.getlist("values")
@@ -303,7 +303,7 @@ def get_stream_rules():
             for values in values_list:
                 id, code = values.split(",")
                 curs.execute(
-                    f"""SELECT stream_rule_id, name, type, min_uoc, definition FROM stream_rules WHERE stream_id = '{id}'"""
+                    f"""SELECT stream_rule_id, name, type, uoc, definition FROM stream_rules WHERE stream_id = '{id}'"""
                 )
                 rule_data = curs.fetchall()
 
@@ -321,7 +321,7 @@ def get_stream_rules():
                         "stream": code,
                         "name": rule[1],
                         "type": rule[2],
-                        "min_uoc": str(rule[3]),
+                        "uoc": str(rule[3]),
                         "definition": rule[4],
                     }
                     for rule in rule_data

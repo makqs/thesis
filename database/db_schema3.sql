@@ -77,8 +77,7 @@ CREATE TABLE program_rules (
     program_id SERIAL,
     name VARCHAR,
     type VARCHAR,
-    min_uoc numeric,
-    max_uoc numeric,
+    uoc numeric,
     definition VARCHAR,
     PRIMARY KEY (program_rule_id),
     FOREIGN KEY (program_id) REFERENCES programs(program_id)
@@ -89,8 +88,7 @@ CREATE TABLE stream_rules (
     stream_id VARCHAR,
     name VARCHAR,
     type VARCHAR,
-    min_uoc numeric,
-    max_uoc numeric,
+    uoc numeric,
     definition VARCHAR,
     PRIMARY KEY (stream_rule_id),
     FOREIGN KEY (stream_id) REFERENCES streams(stream_id)
