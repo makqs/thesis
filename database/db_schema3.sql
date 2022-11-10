@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS substitutions;
 DROP TABLE IF EXISTS stream_rules;
 DROP TABLE IF EXISTS program_rules;
 DROP TABLE IF EXISTS course_enrolments;
@@ -94,4 +95,11 @@ CREATE TABLE stream_rules (
     definition VARCHAR,
     PRIMARY KEY (stream_rule_id),
     FOREIGN KEY (stream_id) REFERENCES streams(stream_id)
+);
+
+CREATE TABLE substitutions (
+    zid VARCHAR,
+    original_course VARCHAR,
+    substitution_course VARCHAR,
+    FOREIGN KEY (zid) REFERENCES users(zid)
 );

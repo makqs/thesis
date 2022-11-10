@@ -24,6 +24,7 @@ import AddCourseModal from "../components/AddCourseModal";
 import RemoveCourseModal from "../components/RemoveCourseModal";
 import ChangeStreamModal from "../components/ChangeStreamModal";
 import ChangeProgramModal from "../components/ChangeProgramModal";
+import SubstitutionModal from "../components/SubstitutionModal";
 
 import { UserContext } from "../helpers/UserContext";
 import { StudentContext } from "../helpers/StudentContext";
@@ -100,6 +101,11 @@ const CheckerPage = () => {
   const handleCloseRemove = () => setOpenRemove(false);
   const [removeValue, setRemoveValue] = useState(null);
 
+  const [openSubstitution, setOpenSubstitution] = useState(false);
+  const handleOpenSubstitution = () => setOpenSubstitution(true);
+  const handleCloseSubstitution = () => setOpenSubstitution(false);
+  // const [substitutionValue, setSubstitutionValue] = useState(null);
+
   const [modsOpen, setModsOpen] = useState(true);
   const handleModsClick = () => {
     setModsOpen(!modsOpen);
@@ -113,6 +119,11 @@ const CheckerPage = () => {
   const [wamOpen, setWamOpen] = useState(true);
   const handleWamClick = () => {
     setWamOpen(!wamOpen);
+  };
+
+  const [subsOpen, setSubsOpen] = useState(true);
+  const handleSubsClick = () => {
+    setSubsOpen(!subsOpen);
   };
 
   const [totalRules, setTotalRules] = useState({});
@@ -288,6 +299,34 @@ const CheckerPage = () => {
     { enabled: !!streamIds }
   );
 
+  const isStaff = userState?.isStaff;
+  const {
+    data: substitutions,
+    isLoading: substitutionsIsLoading,
+    refetch: refetchSubstitutions
+  } = useQuery(
+    ["substitutionsData", studentId],
+    async () => {
+      const requestOptions = {
+        method: "GET"
+      };
+      try {
+        const res = await fetch(
+          `http://127.0.0.1:5000/substitutions?zid=${studentId}`,
+          requestOptions
+        );
+        return await res.json();
+      } catch (err) {
+        console.log("SUBSTITUTIONS FETCH ERROR: ", err);
+        return enqueueSnackbar(err, { variant: "error" });
+      }
+    },
+    {
+      enabled: !!studentId
+    }
+  );
+  console.log(studentId, substitutions, substitutionsIsLoading);
+
   const getCompletedUoc = (type) =>
     Object.keys(totalRules).reduce(
       (a, b) =>
@@ -346,7 +385,13 @@ const CheckerPage = () => {
   });
 
   useEffect(() => {
-    if (!enrolmentsIsLoading && !programIsLoading && !programRulesIsLoading && !streamsIsLoading) {
+    if (
+      !enrolmentsIsLoading &&
+      !programIsLoading &&
+      !programRulesIsLoading &&
+      !streamsIsLoading &&
+      !substitutionsIsLoading
+    ) {
       // MANTRA: tie the rule to the courses that fulfil that rule, i.e. do all the calculations here and just pass off to components
       // TODO: add looping through specific rules and split courses based on that rather than all rules altogether
 
@@ -359,15 +404,48 @@ const CheckerPage = () => {
 
       const lockedCoursesToAdd = [];
 
-      programRules.forEach((programRule) => {
+      // add in course substitutions
+      const substitutedProgramRules = programRules.map((rule) => {
+        if (!rule.definition) return rule;
+        const newRule = rule;
+        substitutions.forEach((sub) => {
+          newRule.definition = newRule.definition.replace(
+            sub.original_course,
+            sub.substitution_course
+          );
+        });
+        return newRule;
+      });
+
+      const substitutedStreamsRules = streamsRules;
+      if (!streamsRulesIsLoading) {
+        Object.keys(substitutedStreamsRules).forEach((str) => {
+          const newRuleSet = substitutedStreamsRules[[str]].map((rule) => {
+            if (!rule.definition) return rule;
+            const newRule = rule;
+            substitutions.forEach((sub) => {
+              newRule.definition = newRule.definition.replace(
+                sub.original_course,
+                sub.substitution_course
+              );
+            });
+            return newRule;
+          });
+          substitutedStreamsRules[[str]] = newRuleSet;
+        });
+      }
+
+      substitutedProgramRules.forEach((programRule) => {
         // stream case
         if (programRule.type === "ST") {
           // student has selected a valid stream for this definition
           const matchingStream = streamsRulesIsLoading
             ? undefined
-            : programRule.definition.split(",").find((ruleCode) => ruleCode in streamsRules);
+            : programRule.definition
+                .split(",")
+                .find((ruleCode) => ruleCode in substitutedStreamsRules);
           if (matchingStream !== undefined && !streamsRulesIsLoading) {
-            streamsRules[[matchingStream]].forEach((streamRule) => {
+            substitutedStreamsRules[[matchingStream]].forEach((streamRule) => {
               rules[JSON.stringify(streamRule)] = [];
 
               // rule definition looks like COMP1511,MATH1131;MATH1231 or COMP3XXX,COMP4XXX
@@ -582,7 +660,7 @@ const CheckerPage = () => {
       setLockedCourses(lockedCoursesToAdd);
       setTotalRules(rules);
     }
-  }, [enrolments, programRules, streamsRules, addedCourses]);
+  }, [enrolments, programRules, streamsRules, substitutions, addedCourses]);
 
   return (
     <div
@@ -969,6 +1047,50 @@ const CheckerPage = () => {
                   )}
                 </List>
               </Collapse>
+              {/* staff substitutions */}
+              {isStaff && (
+                <>
+                  <ListItemButton
+                    onClick={handleSubsClick}
+                    css={css`
+                      background-color: #f3f3f3;
+                      border-style: solid;
+                      border-color: #bfbfbf;
+                      border-width: 1px 0px 0px 0px;
+                    `}>
+                    <ListItemText primary="Substitutions" />
+                    <IconButton>
+                      <ExpandMore
+                        expand={subsOpen.toString()}
+                        css={css`
+                          transform: ${subsOpen && subsOpen ? "rotate(180deg)" : "rotate(0deg)"};
+                          margin-left: "auto";
+                          transition: 0.2s;
+                        `}>
+                        <ExpandMoreIcon />
+                      </ExpandMore>
+                    </IconButton>
+                  </ListItemButton>
+                  <Collapse in={subsOpen} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      <>
+                        <SidebarButton
+                          title="Approve course substitution"
+                          onClick={handleOpenSubstitution}
+                        />
+                        <SubstitutionModal
+                          open={openSubstitution}
+                          handleClose={handleCloseSubstitution}
+                          refetchSubstitutions={refetchSubstitutions}
+                          options={courses.map((c) => {
+                            return { label: c.code, id: c.code };
+                          })}
+                        />
+                      </>
+                    </List>
+                  </Collapse>
+                </>
+              )}
               {!programIsLoading && !("error" in program) && (
                 <>
                   <ListItemButton

@@ -454,5 +454,45 @@ def get_students():
     return json.dumps(students), 200
 
 
+# returns [ { zid, original_course, substitution_course }]
+@app.route("/substitutions", methods=["GET"])
+def get_substitutions():
+    zid = request.args.get("zid")
+
+    with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
+        with conn.cursor() as curs:
+            curs.execute(
+                f"""SELECT zid, original_course, substitution_course FROM substitutions WHERE zid = '{zid}' ORDER BY original_course ASC"""
+            )
+            subs = curs.fetchall()
+            subs = [
+                {
+                    "zid": str(row[0]),
+                    "original_course": str(row[1]),
+                    "substitution_course": str(row[2]),
+                }
+                for row in subs
+            ]
+
+    return json.dumps(subs), 200
+
+
+# returns {}
+@app.route("/substitution", methods=["POST"])
+def post_substitution():
+    body = json.loads(request.get_data())
+    zid = body["zid"]
+    orig = body["orig"]
+    sub = body["sub"]
+
+    with psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen") as conn:
+        with conn.cursor() as curs:
+            curs.execute(
+                f"""INSERT INTO substitutions(zid, original_course, substitution_course) VALUES ('{zid}', '{orig}', '{sub}')"""
+            )
+
+    return json.dumps({}), 200
+
+
 if __name__ == "__main__":
     app.run(debug=True)

@@ -436,6 +436,11 @@ cursor.execute(
     f"""INSERT INTO course_enrolments(zid, course_id, mark, grade) VALUES ('z5555555', '1234', 76, 'SY')"""
 )
 
+# substitutions
+cursor.execute(
+    f"""INSERT INTO substitutions(zid, original_course, substitution_course) VALUES ('z5555555', 'COMP1511', 'COMP1000')"""
+)
+
 cursor.close()
 conn.commit()
 conn.close()
