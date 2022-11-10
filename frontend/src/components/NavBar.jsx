@@ -151,6 +151,7 @@ const NavBar = ({ resetModifiers }) => {
                 color: #646c7d;
               `}>
               {!userState ||
+              !studentState ||
               (userState.isStaff && programIsLoading && Object.keys(studentState).length !== 0) ||
               (!userState.isStaff && programIsLoading) ? (
                 "..."
@@ -169,6 +170,7 @@ const NavBar = ({ resetModifiers }) => {
                 color: #818ca1;
               `}>
               {!userState ||
+              !studentState ||
               (userState.isStaff && streamsIsLoading && Object.keys(studentState).length !== 0) ||
               (!userState.isStaff && streamsIsLoading) ? (
                 "..."

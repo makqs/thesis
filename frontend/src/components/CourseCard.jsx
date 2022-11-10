@@ -155,20 +155,20 @@ const CourseCard = ({ code, completed, notCounted, locked, exclusionCourses, isS
   }
   return (
     <Card
+      sx={{ boxShadow: 3 }}
       css={css`
         border: 1px solid grey;
-        flex: 0 0 calc(25% - 2px - (10px * 3 / 4));
+        flex: 0 0 calc(25% - 2px - (15px * 3 / 4));
         @media (max-width: 1000px) {
-          flex: 0 0 calc(50% - 2px - (10px * 1 / 2));
+          flex: 0 0 calc(50% - 2px - (15px * 1 / 2));
         }
         @media (min-width: 1000px) and (max-width: 1500px) {
-          flex: 0 0 calc((100% / 3) - 2px - (10px * 2 / 3));
+          flex: 0 0 calc((100% / 3) - 2px - (15px * 2 / 3));
         }
         border-radius: 3px;
         border: 1px solid #b6b6b6;
         color: ${textColor};
         background-color: ${bgColor};
-        box-shadow: 0px;
         cursor: ${locked ? "not-allowed" : "pointer"};
       `}>
       {cardVariety}

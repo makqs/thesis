@@ -17,7 +17,7 @@ export const userReducer = (state, action) => {
         token: action.token
       };
     case "logout":
-      return {};
+      return null;
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
   }

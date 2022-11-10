@@ -35,7 +35,7 @@ export const studentReducer = (state, action) => {
         tempStreamId: null
       };
     case "resetStudent":
-      return {};
+      return null;
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
   }

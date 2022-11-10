@@ -37,12 +37,9 @@ import { StudentContext } from "../helpers/StudentContext";
 //  - add clickable-ness to add course
 
 // TODOs:
-//  - add multiple stream support
-//    - double counting aaaaaaaaaaaaaa
 //  - add eng program discipline elective same as stream thing
-//  - add school exceptions to gen eds (eng and maths)
 //  - add course substitutions
-//  - add wam calculation
+//  - other program requirements
 
 // BACKBURNERs:
 //  - automate program and stream rules with api
@@ -54,8 +51,12 @@ import { StudentContext } from "../helpers/StudentContext";
 //  - add mobile support
 //    - might be more effort than it's worth at the moment
 //  - add tokens and cookies
+//  - add multiple stream support
+//    - double counting aaaaaaaaaaaaaa
+//  - add school exceptions to gen eds (eng and maths)
 
 // DONE
+//  - add wam calculation
 //  - add program changing
 //  - add stream changing
 //  - order gen eds by decreasing UOC
@@ -316,7 +317,7 @@ const CheckerPage = () => {
         (a, b) => a + parseFloat(b.mark, 10) * parseFloat(b.uoc, 10),
         0.0
       );
-      const denominator = filteredEnrolments.reduce((a, b) => a + parseFloat(b.uoc, 10), 0);
+      const denominator = filteredEnrolments.reduce((a, b) => a + parseFloat(b.uoc, 10), 0.0);
       setWam(numerator / denominator);
     }
   }, [enrolments, enrolmentsIsLoading]);
@@ -593,11 +594,11 @@ const CheckerPage = () => {
         `}>
         <Box
           css={css`
-            margin: 10px 10px 0px 10px;
+            padding: 15px 15px 15px 15px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            overflow: auto;
+            gap: 15px;
+            overflow: overlay;
             width: calc(100vw - 300px);
           `}>
           {programRulesIsLoading || streamsIsLoading ? (
@@ -781,275 +782,282 @@ const CheckerPage = () => {
             })
           )}
         </Box>
-        <Box
-          css={css`
-            background-color: #f7fafc;
-            min-width: 300px;
-            flex-grow: 1;
-            height: 100%;
-          `}>
-          <List
+        {/* sidebar section */}
+        {!(userState?.isStaff && studentState === null) && (
+          <Box
             css={css`
-              width: 100%;
-              padding-top: 0;
-              padding-bottom: 0;
-              border-style: solid;
-              border-color: #bfbfbf;
-              border-width: 0px 0px 1px 1px;
-            `}
-            component="nav"
-            aria-labelledby="nested-list-subheader">
-            <ListItemButton
-              onClick={handleModsClick}
+              background-color: #f7fafc;
+              min-width: 300px;
+              flex-grow: 1;
+              height: 100%;
+            `}>
+            <List
               css={css`
-                background-color: #f3f3f3;
+                width: 100%;
+                padding-top: 0;
+                padding-bottom: 0;
                 border-style: solid;
                 border-color: #bfbfbf;
-                border-width: 1px 0px 0px 0px;
-              `}>
-              <ListItemText primary="Modifiers" />
-              <IconButton>
-                <ExpandMore
-                  expand={modsOpen.toString()}
-                  css={css`
-                    transform: ${modsOpen && modsOpen ? "rotate(180deg)" : "rotate(0deg)"};
-                    margin-left: "auto";
-                    transition: 0.2s;
-                  `}>
-                  <ExpandMoreIcon />
-                </ExpandMore>
-              </IconButton>
-            </ListItemButton>
-            <Collapse in={modsOpen} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                {/* change program section */}
-                {!programsIsLoading && (
-                  <>
-                    <SidebarButton title="Change program" onClick={handleOpenChangeProgram} />
-                    <ChangeProgramModal
-                      open={openChangeProgram}
-                      handleClose={handleCloseChangeProgram}
-                      selectedProgram={changeProgramValue}
-                      setSelectedProgram={setChangeProgramValue}
-                      options={
-                        programsIsLoading
-                          ? []
-                          : programs
-                              .filter((p) => !(!!programId && p.program_id === programId))
-                              .map((p) => {
-                                return { label: `${p.code} - ${p.title}`, id: p.program_id };
-                              })
-                      }
-                    />
-                  </>
-                )}
-                {/* change stream section */}
-                {!programStreamsIsLoading && programStreams.length !== 0 && (
-                  <>
-                    <SidebarButton title="Change stream" onClick={handleOpenChangeStream} />
-                    <ChangeStreamModal
-                      open={openChangeStream}
-                      handleClose={handleCloseChangeStream}
-                      selectedStream={changeStreamValue}
-                      setSelectedStream={setChangeStreamValue}
-                      options={
-                        programStreamsIsLoading
-                          ? []
-                          : programStreams
-                              .filter((s) => !(!!streamIds && s.stream_id === streamIds))
-                              .map((s) => {
-                                return { label: `${s.code} - ${s.title}`, id: s.stream_id };
-                              })
-                      }
-                    />
-                  </>
-                )}
-                {/* add course section */}
-                {!programIsLoading && !("error" in program) && (
-                  <>
-                    <SidebarButton title="Add course" onClick={handleOpenAdd} />
-                    <AddCourseModal
-                      open={openAdd}
-                      handleClose={handleCloseAdd}
-                      selectedCourse={addValue}
-                      setSelectedCourse={setAddValue}
-                      options={
-                        coursesIsLoading || !enrolments || "error" in enrolments
-                          ? []
-                          : courses
-                              .filter((c) =>
-                                enrolments
-                                  .concat(addedCourses)
-                                  .every(
-                                    (e) =>
-                                      (c.course_id !== e.course_id ||
-                                        !["PS", "CR", "DN", "HD", "SY", "EC"].includes(e.grade)) &&
-                                      !lockedCourses.includes(c.code)
-                                  )
-                              )
-                              .map((c) => {
-                                return { label: c.code, id: c.course_id };
-                              })
-                      }
-                      doneFunc={() => {
-                        if (addValue === null) return;
-                        const course = courses.find((c) => c.course_id === addValue.id);
-                        setAddedCourses([
-                          ...addedCourses,
-                          ...[
-                            {
-                              course_id: course.course_id,
-                              code: course.code,
-                              title: course.title,
-                              year: course.year,
-                              uoc: course.uoc,
-                              mark: "50",
-                              grade: "SY",
-                              is_ge: course.is_ge,
-                              faculty: course.faculty,
-                              school: course.school
-                            }
-                          ]
-                        ]);
-                        setAddValue(null);
-                        handleCloseAdd();
-                      }}
-                    />
-                  </>
-                )}
-                {/* remove course section */}
-                {addedCourses.length !== 0 && (
-                  <>
-                    <SidebarButton title="Remove course" onClick={handleOpenRemove} />
-                    <RemoveCourseModal
-                      open={openRemove}
-                      handleClose={handleCloseRemove}
-                      selectedCourse={removeValue}
-                      setSelectedCourse={setRemoveValue}
-                      options={addedCourses.map((c) => {
-                        return { label: c.code, id: c.course_id };
-                      })}
-                      doneFunc={() => {
-                        if (removeValue === null) return;
-                        const newCourses = addedCourses.filter(
-                          (c) => c.course_id !== removeValue.id
-                        );
-                        setAddedCourses(newCourses);
-                        setRemoveValue(null);
-                        handleCloseRemove();
-                      }}
-                    />
-                  </>
-                )}
-                {!!modifiersActive && (
-                  <SidebarButton title="Reset modifiers" isRed onClick={resetModifiers} />
-                )}
-              </List>
-            </Collapse>
-            {!programIsLoading && !("error" in program) && (
-              <>
-                <ListItemButton
-                  onClick={handleUocClick}
-                  css={css`
-                    background-color: #f3f3f3;
-                    border-style: solid;
-                    border-color: #bfbfbf;
-                    border-width: 1px 0px 0px 0px;
-                    padding: 8px 16px;
-                  `}>
-                  <ListItemText primary="UOC" />
-                  <div
+                border-width: 0px 0px 1px 1px;
+              `}
+              component="nav"
+              aria-labelledby="nested-list-subheader">
+              <ListItemButton
+                onClick={handleModsClick}
+                css={css`
+                  background-color: #f3f3f3;
+                  border-style: solid;
+                  border-color: #bfbfbf;
+                  border-width: 1px 0px 0px 0px;
+                `}>
+                <ListItemText primary="Modifiers" />
+                <IconButton>
+                  <ExpandMore
+                    expand={modsOpen.toString()}
                     css={css`
-                      display: flex;
-                      flex-direction: row;
-                      gap: 5px;
+                      transform: ${modsOpen && modsOpen ? "rotate(180deg)" : "rotate(0deg)"};
+                      margin-left: "auto";
+                      transition: 0.2s;
                     `}>
-                    <ListItemText
+                    <ExpandMoreIcon />
+                  </ExpandMore>
+                </IconButton>
+              </ListItemButton>
+              <Collapse in={modsOpen} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  {/* change program section */}
+                  {!programsIsLoading && (
+                    <>
+                      <SidebarButton title="Change program" onClick={handleOpenChangeProgram} />
+                      <ChangeProgramModal
+                        open={openChangeProgram}
+                        handleClose={handleCloseChangeProgram}
+                        selectedProgram={changeProgramValue}
+                        setSelectedProgram={setChangeProgramValue}
+                        options={
+                          programsIsLoading
+                            ? []
+                            : programs
+                                .filter((p) => !(!!programId && p.program_id === programId))
+                                .map((p) => {
+                                  return { label: `${p.code} - ${p.title}`, id: p.program_id };
+                                })
+                        }
+                      />
+                    </>
+                  )}
+                  {/* change stream section */}
+                  {!programStreamsIsLoading && programStreams.length !== 0 && (
+                    <>
+                      <SidebarButton title="Change stream" onClick={handleOpenChangeStream} />
+                      <ChangeStreamModal
+                        open={openChangeStream}
+                        handleClose={handleCloseChangeStream}
+                        selectedStream={changeStreamValue}
+                        setSelectedStream={setChangeStreamValue}
+                        options={
+                          programStreamsIsLoading
+                            ? []
+                            : programStreams
+                                .filter((s) => !(!!streamIds && s.stream_id === streamIds))
+                                .map((s) => {
+                                  return { label: `${s.code} - ${s.title}`, id: s.stream_id };
+                                })
+                        }
+                      />
+                    </>
+                  )}
+                  {/* add course section */}
+                  {!programIsLoading && !("error" in program) && (
+                    <>
+                      <SidebarButton title="Add course" onClick={handleOpenAdd} />
+                      <AddCourseModal
+                        open={openAdd}
+                        handleClose={handleCloseAdd}
+                        selectedCourse={addValue}
+                        setSelectedCourse={setAddValue}
+                        options={
+                          coursesIsLoading || !enrolments || "error" in enrolments
+                            ? []
+                            : courses
+                                .filter((c) =>
+                                  enrolments
+                                    .concat(addedCourses)
+                                    .every(
+                                      (e) =>
+                                        (c.course_id !== e.course_id ||
+                                          !["PS", "CR", "DN", "HD", "SY", "EC"].includes(
+                                            e.grade
+                                          )) &&
+                                        !lockedCourses.includes(c.code)
+                                    )
+                                )
+                                .map((c) => {
+                                  return { label: c.code, id: c.course_id };
+                                })
+                        }
+                        doneFunc={() => {
+                          if (addValue === null) return;
+                          const course = courses.find((c) => c.course_id === addValue.id);
+                          setAddedCourses([
+                            ...addedCourses,
+                            ...[
+                              {
+                                course_id: course.course_id,
+                                code: course.code,
+                                title: course.title,
+                                year: course.year,
+                                uoc: course.uoc,
+                                mark: "50",
+                                grade: "SY",
+                                is_ge: course.is_ge,
+                                faculty: course.faculty,
+                                school: course.school
+                              }
+                            ]
+                          ]);
+                          setAddValue(null);
+                          handleCloseAdd();
+                        }}
+                      />
+                    </>
+                  )}
+                  {/* remove course section */}
+                  {addedCourses.length !== 0 && (
+                    <>
+                      <SidebarButton title="Remove course" onClick={handleOpenRemove} />
+                      <RemoveCourseModal
+                        open={openRemove}
+                        handleClose={handleCloseRemove}
+                        selectedCourse={removeValue}
+                        setSelectedCourse={setRemoveValue}
+                        options={addedCourses.map((c) => {
+                          return { label: c.code, id: c.course_id };
+                        })}
+                        doneFunc={() => {
+                          if (removeValue === null) return;
+                          const newCourses = addedCourses.filter(
+                            (c) => c.course_id !== removeValue.id
+                          );
+                          setAddedCourses(newCourses);
+                          setRemoveValue(null);
+                          handleCloseRemove();
+                        }}
+                      />
+                    </>
+                  )}
+                  {!!modifiersActive && (
+                    <SidebarButton title="Reset modifiers" isRed onClick={resetModifiers} />
+                  )}
+                </List>
+              </Collapse>
+              {!programIsLoading && !("error" in program) && (
+                <>
+                  <ListItemButton
+                    onClick={handleUocClick}
+                    css={css`
+                      background-color: #f3f3f3;
+                      border-style: solid;
+                      border-color: #bfbfbf;
+                      border-width: 1px 0px 0px 0px;
+                      padding: 8px 16px;
+                    `}>
+                    <ListItemText primary="UOC" />
+                    <div
                       css={css`
-                        margin: auto;
-                      `}
-                      primary={`${
-                        getCompletedUoc("CC") +
-                        getCompletedUoc("DE") +
-                        getCompletedUoc("GE") +
-                        getCompletedUoc("FE") +
-                        getCompletedUoc("ST")
-                      } / ${
-                        getTotalUoc("CC") +
-                        getTotalUoc("DE") +
-                        getTotalUoc("GE") +
-                        getTotalUoc("FE") +
-                        getTotalUoc("ST")
-                      }`}
-                    />
+                        display: flex;
+                        flex-direction: row;
+                        gap: 5px;
+                      `}>
+                      <ListItemText
+                        css={css`
+                          margin: auto;
+                        `}
+                        primary={`${
+                          getCompletedUoc("CC") +
+                          getCompletedUoc("DE") +
+                          getCompletedUoc("GE") +
+                          getCompletedUoc("FE") +
+                          getCompletedUoc("ST")
+                        } / ${
+                          getTotalUoc("CC") +
+                          getTotalUoc("DE") +
+                          getTotalUoc("GE") +
+                          getTotalUoc("FE") +
+                          getTotalUoc("ST")
+                        }`}
+                      />
+                      <IconButton>
+                        <ExpandMore
+                          expand={uocOpen.toString()}
+                          css={css`
+                            transform: ${uocOpen && uocOpen ? "rotate(180deg)" : "rotate(0deg)"};
+                            margin-left: "auto";
+                            transition: 0.2s;
+                          `}>
+                          <ExpandMoreIcon />
+                        </ExpandMore>
+                      </IconButton>
+                    </div>
+                  </ListItemButton>
+                  <Collapse in={uocOpen} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      {[
+                        { name: "Stream", type: "ST" },
+                        { name: "Core Courses", type: "CC" },
+                        { name: "Discipline Electives", type: "DE" },
+                        { name: "General Education", type: "GE" },
+                        { name: "Free Electives", type: "FE" }
+                      ].map(
+                        ({ name, type }) =>
+                          Object.keys(totalRules).some(
+                            (rule) => JSON.parse(rule).type === type
+                          ) && (
+                            <SidebarUocItem
+                              key={name}
+                              title={name}
+                              completedUoc={getCompletedUoc(type)}
+                              totalUoc={getTotalUoc(type)}
+                            />
+                          )
+                      )}
+                    </List>
+                  </Collapse>
+                </>
+              )}
+              {!enrolmentsIsLoading && !("error" in enrolments) && !Number.isNaN(wam) && (
+                <>
+                  <ListItemButton
+                    onClick={handleWamClick}
+                    css={css`
+                      background-color: #f3f3f3;
+                      border-style: solid;
+                      border-color: #bfbfbf;
+                      border-width: 1px 0px 0px 0px;
+                    `}>
+                    <ListItemText primary="WAM" />
                     <IconButton>
                       <ExpandMore
-                        expand={uocOpen.toString()}
+                        expand={wamOpen.toString()}
                         css={css`
-                          transform: ${uocOpen && uocOpen ? "rotate(180deg)" : "rotate(0deg)"};
+                          transform: ${wamOpen && wamOpen ? "rotate(180deg)" : "rotate(0deg)"};
                           margin-left: "auto";
                           transition: 0.2s;
                         `}>
                         <ExpandMoreIcon />
                       </ExpandMore>
                     </IconButton>
-                  </div>
-                </ListItemButton>
-                <Collapse in={uocOpen} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding>
-                    {[
-                      { name: "Stream", type: "ST" },
-                      { name: "Core Courses", type: "CC" },
-                      { name: "Discipline Electives", type: "DE" },
-                      { name: "General Education", type: "GE" },
-                      { name: "Free Electives", type: "FE" }
-                    ].map(
-                      ({ name, type }) =>
-                        Object.keys(totalRules).some((rule) => JSON.parse(rule).type === type) && (
-                          <SidebarUocItem
-                            key={name}
-                            title={name}
-                            completedUoc={getCompletedUoc(type)}
-                            totalUoc={getTotalUoc(type)}
-                          />
-                        )
-                    )}
-                  </List>
-                </Collapse>
-              </>
-            )}
-            {!enrolmentsIsLoading && !("error" in enrolments) && (
-              <>
-                <ListItemButton
-                  onClick={handleWamClick}
-                  css={css`
-                    background-color: #f3f3f3;
-                    border-style: solid;
-                    border-color: #bfbfbf;
-                    border-width: 1px 0px 0px 0px;
-                  `}>
-                  <ListItemText primary="WAM" />
-                  <IconButton>
-                    <ExpandMore
-                      expand={wamOpen.toString()}
-                      css={css`
-                        transform: ${wamOpen && wamOpen ? "rotate(180deg)" : "rotate(0deg)"};
-                        margin-left: "auto";
-                        transition: 0.2s;
-                      `}>
-                      <ExpandMoreIcon />
-                    </ExpandMore>
-                  </IconButton>
-                </ListItemButton>
-                <Collapse in={wamOpen} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding>
-                    <SidebarWamItem wam={wam} />
-                  </List>
-                </Collapse>
-              </>
-            )}
-          </List>
-        </Box>
+                  </ListItemButton>
+                  <Collapse in={wamOpen} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      <SidebarWamItem wam={wam} />
+                    </List>
+                  </Collapse>
+                </>
+              )}
+            </List>
+          </Box>
+        )}
       </Box>
     </div>
   );
