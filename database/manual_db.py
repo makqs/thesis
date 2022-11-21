@@ -6,7 +6,7 @@ import psycopg2, re
 conn = psycopg2.connect(host="127.0.0.1", database="pc", user="maxowen")
 cursor = conn.cursor()
 
-cursor.execute(open("db_schema3.sql", "r").read())
+cursor.execute(open("db_schema.sql", "r").read())
 
 # users
 cursor.execute(
@@ -20,6 +20,9 @@ cursor.execute(
 )
 cursor.execute(
     f"""INSERT INTO users(zid, name, is_staff) VALUES ('z6666666', 'Liam Lecturer', true)"""
+)
+cursor.execute(
+    f"""INSERT INTO users(zid, name, is_staff) VALUES ('z4444444', 'Nelly Nothing', false)"""
 )
 
 # courses
@@ -378,7 +381,7 @@ cursor.execute(
     f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('23', '113', 'Engineering (Honours) - Stream', 'ST', 168, NULL, 'AEROAH,CEICAH,CEICDH,CVENAH,CVENBH,ELECAH,ELECCH,GMATDH,MANFBH,MECHAH,MINEAH,MTRNAH,PETRAH,SOLAAH,SOLABH,TELEAH')"""
 )
 cursor.execute(
-    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('24', '113', 'Engineering (Honours) - Industrial Experience Requirement', 'CC', 0, NULL, 'ENGG4999')"""
+    f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('24', '113', 'Engineering (Honours) - Industrial Experience Requirement', 'CC', NULL, 0, 'ENGG4999')"""
 )
 cursor.execute(
     f"""INSERT INTO program_rules(program_rule_id, program_id, name, type, uoc, num_to_complete, definition) VALUES ('25', '113', 'Computer Science - Stream', 'ST', 96, NULL, 'COMPA1,COMPD1,COMPE1,COMPI1,COMPJ1,COMPN1,COMPS1,COMPY1')"""
@@ -395,6 +398,16 @@ cursor.execute(
 # cursor.execute(
 #     f"""INSERT INTO stream_enrolments(zid, stream_id) VALUES ('z5555555', '9')"""
 # )
+
+cursor.execute(
+    f"""INSERT INTO program_enrolments(zid, program_id) VALUES ('z4444444', '113')"""
+)
+cursor.execute(
+    f"""INSERT INTO stream_enrolments(zid, stream_id) VALUES ('z4444444', '2')"""
+)
+cursor.execute(
+    f"""INSERT INTO stream_enrolments(zid, stream_id) VALUES ('z4444444', '9')"""
+)
 
 # user course enrolments
 cursor.execute(
